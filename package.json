@@ -2,8 +2,8 @@
   "name": "@tiles/entity-system",
   "version": "1.0.0",
   "description": "data oriented entity component system",
-  "main": "./dist/index.js",
-  "typings": "./dist/index.d.ts",
+  "main": "dist/index.js",
+  "types": "dist/index.d.ts",
   "author": "Felix Wolf",
   "license": "ISC",
   "files": [
