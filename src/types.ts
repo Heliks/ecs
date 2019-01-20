@@ -12,7 +12,7 @@ export interface EntityQuery {
  *
  * This is a workaround for bundling BitSet.js with webpack without getting
  * an import errors as the BitSet.d appears to be not working correctly.
- * (webpack transpiles to ``new BitSet()`` to new ``bitset_1.BitSet()``
+ * (webpack transpiles ``new BitSet()`` to new ``bitset_1.BitSet()``
  * when ``bitset_1`` itself already contains the constructor).
  *
  * todo: remove this when fixed or a better workaround is found
