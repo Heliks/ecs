@@ -1,5 +1,6 @@
 import BaseSystem from "./base-system";
 import Bootable from "./bootable";
+import ComponentMapper from "./component-mapper";
 import EntityManager from "./entity-manager";
 import { ComponentType, Entity } from "./types";
 
@@ -61,6 +62,15 @@ export default class World {
      */
     removeComponent(entity: Entity, type: ComponentType<any>): void {
         this.entityManager.componentManager.removeComponent(entity, type);
+    }
+
+    /**
+     * @see {ComponentManager.mapper}
+     * @param {ComponentType<T>} type
+     * @returns {ComponentMapper<T>}
+     */
+    getMapper<T>(type: ComponentType<T>): ComponentMapper<T> {
+        return this.entityManager.componentManager.mapper(type);
     }
 
     /**

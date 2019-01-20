@@ -1,7 +1,6 @@
-import { BitSet } from "bitset/bitset";
 import ComponentMapper from "./component-mapper";
 import EntityPool from "./entity-pool";
-import { ComponentType, Entity } from "./types";
+import { _BITSET, Bitset, ComponentType, Entity } from "./types";
 
 export default class ComponentManager {
 
@@ -10,7 +9,7 @@ export default class ComponentManager {
      *
      * @type {Map<Entity, BitSet>}
      */
-    protected compositionIds = new Map<Entity, BitSet>();
+    protected compositionIds = new Map<Entity, Bitset>();
 
     /**
      * Collection of entities that had components added to their composition
@@ -75,14 +74,14 @@ export default class ComponentManager {
      * @param {Entity} entity
      * @returns {BitSet}
      */
-    compositionId(entity: Entity): BitSet {
+    compositionId(entity: Entity): Bitset {
         let bitset = this.compositionIds.get(entity);
 
         if (bitset) {
             return bitset;
         }
 
-        bitset = new BitSet();
+        bitset = new _BITSET();
 
         this.compositionIds.set(entity, bitset);
 
@@ -97,7 +96,7 @@ export default class ComponentManager {
      * @param {BitSet} compositionId
      * @returns {boolean}
      */
-    matchesEntityComposition(entity: Entity, compositionId: BitSet): boolean {
+    matchesEntityComposition(entity: Entity, compositionId: Bitset): boolean {
         return this.compositionId(entity).and(compositionId).equals(compositionId);
     }
 
@@ -127,8 +126,8 @@ export default class ComponentManager {
      * @param {ComponentType<any>[]} types
      * @returns {BitSet}
      */
-    createCompositionId(types: ComponentType<any>[]): BitSet {
-        const compositionId = new BitSet();
+    createCompositionId(types: ComponentType<any>[]): Bitset {
+        const compositionId = new _BITSET();
 
         for (const type of types) {
             compositionId.set(this.mapper(type).id);

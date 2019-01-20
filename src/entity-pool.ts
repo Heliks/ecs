@@ -1,6 +1,5 @@
-import { BitSet } from "bitset/bitset";
 import Filter from "./filter";
-import { Entity } from "./types";
+import { Bitset, Entity } from "./types";
 
 export default class EntityPool {
 
@@ -31,7 +30,7 @@ export default class EntityPool {
      * @param {BitSet} compositionId
      * @returns {boolean}
      */
-    check(compositionId: BitSet): boolean {
+    check(compositionId: Bitset): boolean {
         return this.filter.check(compositionId);
     }
 

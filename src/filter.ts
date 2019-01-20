@@ -1,4 +1,4 @@
-import { BitSet } from "bitset/bitset";
+import { Bitset, _BITSET } from "./types";
 
 export default class Filter {
 
@@ -7,8 +7,8 @@ export default class Filter {
      * @param {BitSet} exclusions   not allowed bits
      */
     constructor(
-        readonly inclusions = new BitSet(),
-        readonly exclusions = new BitSet()
+        readonly inclusions = new _BITSET(),
+        readonly exclusions = new _BITSET()
     ) {}
 
     /**
@@ -17,7 +17,7 @@ export default class Filter {
      * @param {BitSet} compositionId
      * @returns {boolean}
      */
-    check(compositionId: BitSet): boolean {
+    check(compositionId: Bitset): boolean {
         return this.inclusions.and(compositionId).equals(this.inclusions)
             && this.exclusions.and(compositionId).isEmpty();
     }
