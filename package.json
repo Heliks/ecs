@@ -10,7 +10,7 @@
     "dist"
   ],
   "scripts": {
-    "test": "jest --config jestconfig.json",
+    "test": "jest --config jest.config.json",
     "build": "tsc"
   },
   "dependencies": {

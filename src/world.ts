@@ -87,6 +87,20 @@ export default class World {
     }
 
     /**
+     * @param {{new(...params: any[]): T}} type
+     * @returns {T}
+     */
+    getSystem<T extends BaseSystem>(type: new (...params: any[]) => T): T {
+        const system = this.systems.find(item => item instanceof type);
+
+        if (! system) {
+            throw new Error('System of type "' + type.name + '" does not exist.');
+        }
+        
+        return <T>system;
+    }
+
+    /**
      * Handles all relevant updates. Should be called once every frame.
      *
      * @param {number} delta
