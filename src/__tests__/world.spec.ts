@@ -12,7 +12,7 @@ describe('World', () => {
         expect(system.booted).toBeTruthy();
     });
 
-    it('should return a system', () => {
+    it('should return an added game system', () => {
         world.addSystem(new TestSystem());
 
         expect(world.getSystem(TestSystem).prop).toBe('test');

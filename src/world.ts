@@ -94,7 +94,7 @@ export default class World {
         const system = this.systems.find(item => item instanceof type);
 
         if (! system) {
-            throw new Error('System of type "' + type.name + '" does not exist.');
+            throw new Error(`System of type "${type.name}" does not exist.`);
         }
         
         return <T>system;
