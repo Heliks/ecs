@@ -1,13 +1,11 @@
 {
-  "testPathIgnorePatterns": [
-    "/node_modules/",
-    "/dist/",
-    "/src/__tests__/shared.ts"
+  "collectCoverageFrom": [
+    "./src/**/*.ts"
   ],
   "transform": {
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
-  "testRegex": "(/__tests__/.*|(\\.|/)(test|spec))\\.(jsx?|tsx?)$",
+  "testMatch": [ "**/*.spec.ts" ],
   "moduleFileExtensions": [
     "ts",
     "tsx",

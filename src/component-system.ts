@@ -38,8 +38,8 @@ export default abstract class ComponentSystem<T = any> extends BaseSystem implem
      */
     run(): void {
         if (this.componentMapper) {
-            // todo: should probably be benchmarked if would be faster to cast the component map to
-            // an array before iteration to avoid the forEach() performance loss.
+            // todo: should probably be benchmarked if it would be faster to cast the component
+            // map to an array before iteration to avoid the forEach() performance loss.
             this.componentMapper.instances.forEach(item => this.process(item));
         }
     }
