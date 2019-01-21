@@ -115,3 +115,21 @@ class TestSystem extends EntitySystem {
     
 }
 ```
+
+##### ComponentSystem
+
+Iterates over all instances of a ``ComponentType``
+
+```
+class TestSystem extends ComponentSystem {
+
+    constructor() {
+        super(TestComp1);
+    }
+    
+    process(component: TestComp1): void {
+        // called for every instance of TestComp1
+    }
+    
+}
+```
