@@ -20,4 +20,34 @@ describe('EntityPool', () => {
         expect(pool.check(em.componentManager.compositionId(entity1))).toBeTruthy();
         expect(pool.check(em.componentManager.compositionId(entity2))).toBeFalsy();
     });
+
+    it('should emit an event when an entity is added / removed', async () => {
+        const pool = new EntityPool(em.createFilter({}));
+        const entity = em.create();
+
+        const onAddEntity = new Promise(resolve => {
+            pool.on('add', added => {
+                expect(added).toBe(entity);
+
+                resolve();
+            });
+        });
+
+        const onRemoveEntity = new Promise(resolve => {
+            pool.on('remove', removed => {
+                expect(removed).toBe(entity);
+
+                resolve();
+            });
+        });
+
+        pool.add(entity);
+        pool.remove(entity);
+
+        return Promise.all([
+            onAddEntity,
+            onRemoveEntity
+        ]);
+    });
+
 });

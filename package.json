@@ -14,7 +14,8 @@
     "build": "tsc"
   },
   "dependencies": {
-    "bitset": "^5.0.5"
+    "bitset": "^5.0.5",
+    "event-emitter3": "^1.0.4"
   },
   "devDependencies": {
     "@types/jest": "^23.3.11",

@@ -1,7 +1,8 @@
+import { EventEmitter } from 'event-emitter3';
 import Filter from "./filter";
 import { Bitset, Entity } from "./types";
 
-export default class EntityPool {
+export default class EntityPool extends EventEmitter {
 
     /**
      * Contains references of entity symbols that satisfy this pools requirements
@@ -22,7 +23,9 @@ export default class EntityPool {
     /**
      * @param {Filter} filter
      */
-    constructor(readonly filter: Filter) {}
+    constructor(readonly filter: Filter) {
+        super();
+    }
 
     /**
      * Returns ``true`` if the entity satisfies the pools requirements
@@ -41,6 +44,8 @@ export default class EntityPool {
      */
     add(entity: Entity): void {
         this.entities.push(entity);
+
+        this.emit('add', entity);
     }
 
     /**
@@ -60,6 +65,8 @@ export default class EntityPool {
      */
     remove(entity: Entity): void {
         this.entities.splice(this.index(entity), 1);
+
+        this.emit('remove', entity);
     }
 
     /**
