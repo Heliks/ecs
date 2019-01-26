@@ -30,6 +30,22 @@ describe('ComponentManager', () => {
         expect(cm.hasComponent(entity2, TestComp2)).toBeTruthy();
     });
 
+    it('should add components with a constructor type', () => {
+        class NameComponent {
+            constructor(
+                public first: string,
+                public last: string
+            ) {}
+        }
+
+        const entity = em.create();
+
+        const name = cm.addComponent(entity, NameComponent, 'foo', 'bar');
+
+        expect(name.first).toBe('foo');
+        expect(name.last).toBe('bar');
+    });
+
     it('should remove components from an entity', () => {
         const entity = em.create();
 

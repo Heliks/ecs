@@ -8,10 +8,15 @@ export interface EntityQuery {
     excludes?: ComponentType<any>[];
 }
 
+export interface HasEntityListeners {
+    onAddEntity(entity: Entity): void;
+    onRemoveEntity(entity: Entity): void;
+}
+
 /**
  *
  * This is a workaround for bundling BitSet.js with webpack without getting
- * an import errors as the BitSet.d appears to be not working correctly.
+ * any import errors as the BitSet.d appears to be not working correctly.
  * (webpack transpiles ``new BitSet()`` to new ``bitset_1.BitSet()``
  * when ``bitset_1`` itself already contains the constructor).
  *

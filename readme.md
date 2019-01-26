@@ -5,7 +5,7 @@ Data oriented [Entity Component System](https://en.wikipedia.org/wiki/Entity%E2%
 Create build:
 
 ```
-$ npm build
+$ npm run build
 ```
 
 Run integration tests:
@@ -55,6 +55,19 @@ world.addComponent(entity, DirectionComponent);
 
 console.log(world.getComponent(entity, PositionComponent).x) // 0
 console.log(world.getComponent(entity, DirectionComponent).direction) // left
+```
+
+If you have a component that requires constructor parameters you can spread them on ``addComponent()``:
+
+```
+class NameComponent {
+    constructor(public first: string, public last: string) {}
+}
+
+const name = world.addComponent(entity, NameComponent, 'foo', 'bar');
+
+console.log(name.first) // 'foo'
+console.log(name.last) // 'bar'
 ```
 
 
