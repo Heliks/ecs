@@ -10,12 +10,26 @@ export default abstract class BaseSystem {
     /**
      * @type {boolean}
      */
-    public disabled: boolean = false;
+    protected disabled: boolean = false;
 
     /**
      * System behavior implementation
      */
     abstract run(): void;
+
+    /**
+     * Disables the system so that it no longer will be ``run``
+     */
+    disable(): void {
+        this.disabled = true;
+    }
+
+    /**
+     * Enables the system so that its ``run`` implementation will be called.
+     */
+    enable(): void {
+        this.disabled = false;
+    }
 
     /**
      * Called on every update cycle. Calls ``run()`` unless this system is disabled
