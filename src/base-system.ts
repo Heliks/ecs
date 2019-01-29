@@ -10,7 +10,7 @@ export default abstract class BaseSystem {
     /**
      * @type {boolean}
      */
-    protected disabled: boolean = false;
+    public disabled: boolean = false;
 
     /**
      * System behavior implementation
