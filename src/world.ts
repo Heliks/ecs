@@ -5,10 +5,9 @@ import EntityManager from "./entity-manager";
 import { ComponentType, Entity } from "./types";
 
 /**
- * Returns true if the target is a bootable system
+ * Returns true if the target is ``Bootable``
  *
  * @param target
- * @returns {boolean}
  */
 export function isBootable(target: any): target is Bootable {
     return typeof target.boot === 'function';
@@ -16,60 +15,33 @@ export function isBootable(target: any): target is Bootable {
 
 export default class World {
 
-    /**
-     * @type {EntityManager}
-     */
+    /** {@see EntityManager} */
     readonly entityManager = new EntityManager();
 
-    /**
-     * @type {BaseSystem[]}
-     */
+    /** Collection of all registered systems */
     protected systems: BaseSystem[] = [];
 
-    /**
-     * @see EntityManager.create
-     * @param {string} description
-     * @returns {Entity}
-     */
+    /** {@see EntityManager.create} */
     create(description: string = 'entity'): Entity {
         return this.entityManager.create(description);
     }
 
-    /**
-     * @see ComponentManager.addComponent
-     * @param {Entity} entity
-     * @param {ComponentType<T>} type
-     * @param {any[]} params
-     * @returns {T}
-     */
+    /** {@see EntityManager.addComponent} */
     addComponent<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
         return this.entityManager.componentManager.addComponent(entity, type, ...params);
     }
 
-    /**
-     * @see ComponentManager.getComponent
-     * @param {Entity} entity
-     * @param {ComponentType<T>} type
-     * @returns {T}
-     */
+    /** {@see EntityManager.getComponent} */
     getComponent<T>(entity: Entity, type: ComponentType<T>): T {
         return this.entityManager.componentManager.getComponent(entity, type);
     }
 
-    /**
-     * @see ComponentManager.removeComponent
-     * @param {Entity} entity
-     * @param {ComponentType<any>} type
-     */
+    /** {@see EntityManager.removeComponent} */
     removeComponent(entity: Entity, type: ComponentType<any>): void {
         this.entityManager.componentManager.removeComponent(entity, type);
     }
 
-    /**
-     * @see {ComponentManager.mapper}
-     * @param {ComponentType<T>} type
-     * @returns {ComponentMapper<T>}
-     */
+    /** {@see EntityManager.mapper} */
     getMapper<T>(type: ComponentType<T>): ComponentMapper<T> {
         return this.entityManager.componentManager.mapper(type);
     }
@@ -77,7 +49,7 @@ export default class World {
     /**
      * Adds a new system. If the system is bootable it will also be booted.
      *
-     * @param {BaseSystem} system
+     * @param system
      */
     addSystem(system: BaseSystem): void {
         this.systems.push(system);
@@ -88,8 +60,9 @@ export default class World {
     }
 
     /**
-     * @param {{new(...params: any[]): T}} type
-     * @returns {T}
+     * Returns the initialized instance of the given system type.
+     *
+     * @param type
      */
     getSystem<T extends BaseSystem>(type: new (...params: any[]) => T): T {
         const system = this.systems.find(item => item instanceof type);
@@ -104,13 +77,13 @@ export default class World {
     /**
      * Handles all relevant updates. Should be called once every frame.
      *
-     * @param {number} delta
+     * @param delta
      */
     update(delta: number): void {
         this.entityManager.update();
 
         for (const system of this.systems) {
-            system.update(delta, this.entityManager);
+            system.update(delta);
         }
     }
 

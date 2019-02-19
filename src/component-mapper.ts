@@ -2,16 +2,12 @@ import { ComponentType, Entity } from "./types";
 
 export default class ComponentMapper<T> {
 
-    /**
-     * Contains all instances of the mapped component assigned to an entity.
-     *
-     * @type {Map<Entity, T>}
-     */
+    /** Contains all instances of the mapped component assigned to an entity */
     readonly instances = new Map<Entity, T>();
 
     /**
-     * @param {id} id
-     * @param {ComponentType<T>} component  Component type
+     * @param id
+     * @param component  Component type
      */
     constructor(
         readonly id: number,
@@ -21,9 +17,8 @@ export default class ComponentMapper<T> {
     /**
      * Creates a new instance of the mapped component type and assigns it to an entity.
      *
-     * @param {Entity} entity
+     * @param entity
      * @param params
-     * @returns {T}
      */
     create(entity: Entity, ...params: any[]): T {
         const component = new this.component(...params);
@@ -36,8 +31,7 @@ export default class ComponentMapper<T> {
     /**
      * Returns the instance of the mapped component for an entity.
      *
-     * @param {Entity} entity
-     * @returns {T}
+     * @param entity
      */
     get(entity: Entity): T {
         const instance = this.instances.get(entity);
@@ -54,17 +48,16 @@ export default class ComponentMapper<T> {
     /**
      * Removes the component instance of an entity.
      *
-     * @param {Entity} entity
+     * @param entity
      */
     remove(entity: Entity): void {
         this.instances.delete(entity);
     }
 
     /**
-     * Returns true if a component instance exists for an entity.
+     * Returns ``true`` if a component instance exists for an entity.
      *
-     * @param {Entity} entity
-     * @returns {boolean}
+     * @param entity
      */
     has(entity: Entity): boolean {
         return this.instances.has(entity);

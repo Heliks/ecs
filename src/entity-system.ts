@@ -8,7 +8,6 @@ import { EntityQuery, HasEntityListeners } from "./types";
  * Typeguard to check wether the given target has entity listener functions.
  *
  * @param target
- * @returns {boolean}
  */
 export function hasEntityListeners(target: any): target is HasEntityListeners {
     return target.onAddEntity && target.onRemoveEntity;
@@ -19,21 +18,17 @@ export function hasEntityListeners(target: any): target is HasEntityListeners {
  */
 export default abstract class EntitySystem extends BaseSystem implements Bootable {
 
-    /**
-     * @type {EntityPool}
-     */
+    /** Pool based on this systems ``EntityQuery`` from which entities will be fetched */
     protected pool?: EntityPool;
 
     /**
-     * @param {EntityQuery} query
+     * @param query
      */
     protected constructor(protected query: EntityQuery) {
         super();
     }
 
-    /**
-     * @returns {EntityPool}
-     */
+    /** Safe getter for the entity pool */
     getPool(): EntityPool {
         if (! this.pool) {
             throw new Error('Not booted');
@@ -43,7 +38,7 @@ export default abstract class EntitySystem extends BaseSystem implements Bootabl
     }
 
     /**
-     * @param {EntityManager} entityManager
+     * @param entityManager
      */
     boot(entityManager: EntityManager): void {
         const pool = this.pool = entityManager.registerPool(this.query);

@@ -6,13 +6,11 @@ import { ComponentType } from './types';
 
 export default abstract class ComponentSystem<T = any> extends BaseSystem implements Bootable {
 
-    /**
-     * @type {ComponentMapper}
-     */
+    /** Mapper that belongs to the targeted ``ComponentType`` of this system */
     protected componentMapper?: ComponentMapper<T>;
 
     /**
-     * @param {ComponentType<T>} componentType  The component type over which we want to iterate
+     * @param componentType  The component type over which we want to iterate
      */
     protected constructor(protected componentType: ComponentType<T>) {
         super();
@@ -21,20 +19,20 @@ export default abstract class ComponentSystem<T = any> extends BaseSystem implem
     /**
      * Called for each available instance of our component type
      *
-     * @param {T} component
+     * @param component
      */
     abstract process(component: T): void;
 
     /**
-     * @param {EntityManager} entityManager
+     * @param entityManager
      */
     boot(entityManager: EntityManager): void {
         this.componentMapper = entityManager.componentManager.mapper(this.componentType);
     }
 
     /**
-     * Iterates over all component instances of our component type and calls
-     * ``process()`` for each one.
+     * Iterates over all component instances of our component type and calls ``process()``
+     * for each one.
      */
     run(): void {
         if (this.componentMapper) {

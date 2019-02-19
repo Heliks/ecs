@@ -4,45 +4,25 @@ import { _BITSET, Bitset, ComponentType, Entity } from "./types";
 
 export default class ComponentManager {
 
-    /**
-     * Contains unique composition ids mapped to entities.
-     *
-     * @type {Map<Entity, BitSet>}
-     */
+    /** Contains unique composition ids mapped to entities */
     protected compositionIds = new Map<Entity, Bitset>();
 
-    /**
-     * Collection of entities that had components added to their composition
-     *
-     * @type {Entity[]}
-     */
+    /** Collection of entities that had components added to their composition */
     readonly compositionAdditions: Entity[] = [];
 
-    /**
-     * Collection of entities that had components removed from their composition
-     *
-     * @type {Entity[]}
-     */
+    /** Collection of entities that had components removed from their composition */
     readonly compositionRemovals: Entity[] = [];
 
-    /**
-     * Contains component mappers for all registered component types.
-     *
-     * @type {Map<ComponentType<any>, ComponentMapper<any>>}
-     */
+    /** Contains component mappers for all registered component types. */
     protected mappers = new Map<ComponentType<any>, ComponentMapper<any>>();
 
-    /**
-     * The id of the next component mapper that will be created
-     *
-     * @type {number}
-     */
+    /** ID of the next component mapper that will be created */
     protected nextMapperId: number = 0;
 
     /**
      * Registers a component type
      *
-     * @param {ComponentType<any>} type
+     * @param type
      */
     register(type: ComponentType<any>): void {
         this.mappers.set(type, new ComponentMapper(
@@ -54,11 +34,10 @@ export default class ComponentManager {
     }
 
     /**
-     * Getter for component mappers. If the given component type is not yet
-     * registered it will be automatically.
+     * Returns the ``ComponentMapper`` of a ``ComponentType``
      *
-     * @param {ComponentType<T>} type
-     * @returns {ComponentMapper<T>}
+     * @param type      The type of component of which we want to retrieve the mapper
+     * @returns         Mapper belonging to the given type
      */
     mapper<T>(type: ComponentType<T>): ComponentMapper<T> {
         if (! this.mappers.has(type)) {
@@ -71,8 +50,8 @@ export default class ComponentManager {
     /**
      * Returns the composition id of an entity
      *
-     * @param {Entity} entity
-     * @returns {BitSet}
+     * @param entity    Entity of which we want to know the composition id
+     * @returns         A bitset that represents the entities composition id
      */
     compositionId(entity: Entity): Bitset {
         let bitset = this.compositionIds.get(entity);
@@ -92,9 +71,8 @@ export default class ComponentManager {
      * Returns ``true`` if an entity contains all components that are contained in
      * the given compositionId.
      *
-     * @param {Entity} entity
-     * @param {BitSet} compositionId
-     * @returns {boolean}
+     * @param entity
+     * @param compositionId
      */
     matchesEntityComposition(entity: Entity, compositionId: Bitset): boolean {
         return this.compositionId(entity).and(compositionId).equals(compositionId);
@@ -103,8 +81,7 @@ export default class ComponentManager {
     /**
      * Returns ``true`` if an entity recently had components added to their composition
      *
-     * @param {Entity} entity
-     * @returns {boolean}
+     * @param entity
      */
     hasCompositionAdditions(entity: Entity): boolean {
         return this.compositionAdditions.indexOf(entity) > -1;
@@ -113,8 +90,7 @@ export default class ComponentManager {
     /**
      * Returns ``true`` if an entity recently had components removed from their composition
      *
-     * @param {Entity} entity
-     * @returns {boolean}
+     * @param entity
      */
     hasCompositionRemovals(entity: Entity): boolean {
         return this.compositionRemovals.indexOf(entity) > -1;
@@ -123,8 +99,7 @@ export default class ComponentManager {
     /**
      * Creates a compositionId from a collection of component types.
      *
-     * @param {ComponentType<any>[]} types
-     * @returns {BitSet}
+     * @param types
      */
     createCompositionId(types: ComponentType<any>[]): Bitset {
         const compositionId = new _BITSET();
@@ -139,10 +114,10 @@ export default class ComponentManager {
     /**
      * Adds a component to an entity.
      *
-     * @param {Entity} entity   The target entity to which the component will be added
-     * @param {ComponentType<T>} type   The component type that will be added to the entity
-     * @param {any[]} params    Constructor parameters that will be used to instantiate the component type
-     * @returns {T}
+     * @param entity    The target entity to which the component will be added
+     * @param type      The component type that will be added to the entity
+     * @param params    Constructor parameters that will be used to instantiate the component type
+     * @returns         Instance of the component that was added to the entity
      */
     addComponent<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
         const mapper = this.mapper(type);
@@ -160,9 +135,8 @@ export default class ComponentManager {
     /**
      * Returns ``true`` if an entity has a component.
      *
-     * @param {Entity} entity
-     * @param {ComponentType<any>} type
-     * @returns {boolean}
+     * @param entity
+     * @param type
      */
     hasComponent(entity: Entity, type: ComponentType<any>): boolean {
         return this.mapper(type).has(entity);
@@ -171,9 +145,9 @@ export default class ComponentManager {
     /**
      * Returns the instance of a component that belongs to the given entity.
      *
-     * @param {Entity} entity
-     * @param {ComponentType<T>} type
-     * @returns {T}
+     * @param entity
+     * @param type
+     * @returns         A component
      */
     getComponent<T>(entity: Entity, type: ComponentType<T>): T {
         return this.mapper(type).get(entity);
@@ -182,8 +156,8 @@ export default class ComponentManager {
     /**
      * Removes a component from an entity
      *
-     * @param {Entity} entity
-     * @param {ComponentType<any>} type
+     * @param entity
+     * @param type
      */
     removeComponent(entity: Entity, type: ComponentType<any>): void {
         const mapper = this.mapper(type);
@@ -199,6 +173,8 @@ export default class ComponentManager {
 
     /**
      * Synchronizes composition transforms on a collection of entity pools.
+     *
+     * @param pools
      */
     synchronize(pools: EntityPool[]): void {
         for (const pool of pools) {
@@ -219,8 +195,8 @@ export default class ComponentManager {
     }
 
     /**
-     * Clears all disposable data. If you want to ``synchronize`` this data
-     * you must do so before ``clear`` is called.
+     * Clears all disposable data. If you want to synchronize this data you must do so
+     * before this is called during the ``update`` phase.
      */
     clear(): void {
         this.compositionAdditions.length = 0;

@@ -5,28 +5,19 @@ import { Entity, EntityQuery } from "./types";
 
 export default class EntityManager {
 
-    /**
-     * @type {ComponentManager}
-     */
+    /** {@see ComponentManager} */
     readonly componentManager = new ComponentManager();
 
-    /**
-     * Contains all entities created by the entity manager
-     *
-     * @type {Entity[]}
-     */
+    /** Contains all entities created by the entity manager */
     protected entities: Entity[] = [];
 
     /**
-     * @type {EntityPool[]}
+     * Collection of all registered entitity pools that will be synchronized automatically
+     * during the ``update`` phase
      */
     protected pools: EntityPool[] = [];
 
-    /**
-     * Total amount of entities
-     *
-     * @type {number}
-     */
+    /** Total amount of entities */
     get totalEntities(): number {
         return this.entities.length;
     }
@@ -34,8 +25,9 @@ export default class EntityManager {
     /**
      * Creates an entity
      *
-     * @param {string} description
-     * @returns {Entity}
+     * @param description   Description of the entity. This is purely for debugging purposes and has no
+     *  functionality attached to it whatsoever
+     * @returns             The entitity that we just created
      */
     create(description: string = 'entity'): Entity {
         const entity = Symbol(description);
@@ -48,8 +40,7 @@ export default class EntityManager {
     /**
      * Creates a component filter based on an EntityQuery
      *
-     * @param {EntityQuery} query
-     * @returns {Filter}
+     * @param query
      */
     createFilter(query: EntityQuery): Filter {
         return new Filter(
@@ -61,8 +52,7 @@ export default class EntityManager {
     /**
      * Registers an EntityPool that filters entities based on an EntityQuery
      *
-     * @param {EntityQuery} query
-     * @returns {EntityPool}
+     * @param query
      */
     registerPool(query: EntityQuery): EntityPool {
         const filter = this.createFilter(query);
@@ -90,9 +80,7 @@ export default class EntityManager {
         return pool;
     }
 
-    /**
-     * Called on every update cycle.
-     */
+    /** Called on every update cycle */
     update(): void {
         this.componentManager.synchronize(this.pools);
         this.componentManager.clear();

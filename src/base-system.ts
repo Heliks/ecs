@@ -1,46 +1,35 @@
-import EntityManager from "./entity-manager";
-
 export default abstract class BaseSystem {
 
-    /**
-     * @type {number}
-     */
+    /** Delta time */
     protected delta: number = 0;
 
     /**
-     * @type {boolean}
+     * Flag that indicates if the system is currently disabled. If set to true the ``run``
+     * implementation will no longer be executed during the ``update`` phase.
      */
     protected disabled: boolean = false;
 
-    /**
-     * System behavior implementation
-     */
+    /** System behavior implementation */
     abstract run(): void;
 
-    /**
-     * Disables the system so that it no longer will be ``run``
-     */
+    /** {@see disabled} */
     disable(): void {
         this.disabled = true;
     }
 
-    /**
-     * Enables the system so that its ``run`` implementation will be called.
-     */
+    /** {@see disabled} */
     enable(): void {
         this.disabled = false;
     }
 
     /**
-     * Called on every update cycle. Calls ``run()`` unless this system is disabled
+     * Runs the system if it is enabled
      *
-     * @param {number} delta
-     * @param {EntityManager} entityManager
+     * @param delta
      */
-    update(delta: number, entityManager: EntityManager): void {
+    update(delta: number): void {
         if (! this.disabled) {
             this.delta = delta;
-
             this.run();
         }
     }
