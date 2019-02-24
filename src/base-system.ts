@@ -12,12 +12,12 @@ export default abstract class BaseSystem {
     /** System behavior implementation */
     abstract run(): void;
 
-    /** {@see disabled} */
+    /** Disables the system from being run. {@see disabled} */
     disable(): void {
         this.disabled = true;
     }
 
-    /** {@see disabled} */
+    /** Enables a system to be run again after it was disabled. {@see disabled} */
     enable(): void {
         this.disabled = false;
     }

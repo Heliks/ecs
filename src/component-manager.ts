@@ -36,8 +36,8 @@ export default class ComponentManager {
     /**
      * Returns the ``ComponentMapper`` of a ``ComponentType``
      *
-     * @param type      The type of component of which we want to retrieve the mapper
-     * @returns         Mapper belonging to the given type
+     * @param type Type of component of which we want to retrieve the mapper
+     * @returns ComponentMapper that belongs to the given ComponentType
      */
     mapper<T>(type: ComponentType<T>): ComponentMapper<T> {
         if (! this.mappers.has(type)) {
@@ -50,8 +50,8 @@ export default class ComponentManager {
     /**
      * Returns the composition id of an entity
      *
-     * @param entity    Entity of which we want to know the composition id
-     * @returns         A bitset that represents the entities composition id
+     * @param entity Entity of which we want to know the composition id
+     * @returns A bitset that represents the entities composition id
      */
     compositionId(entity: Entity): Bitset {
         let bitset = this.compositionIds.get(entity);
@@ -114,10 +114,10 @@ export default class ComponentManager {
     /**
      * Adds a component to an entity.
      *
-     * @param entity    The target entity to which the component will be added
-     * @param type      The component type that will be added to the entity
-     * @param params    Constructor parameters that will be used to instantiate the component type
-     * @returns         Instance of the component that was added to the entity
+     * @param entity The target entity to which the component will be added
+     * @param type The component type that will be added to the entity
+     * @param params Constructor parameters that will be used to instantiate the component type
+     * @returns Instance of the component that was added to the entity
      */
     addComponent<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
         const mapper = this.mapper(type);
@@ -147,7 +147,7 @@ export default class ComponentManager {
      *
      * @param entity
      * @param type
-     * @returns         A component
+     * @returns A component
      */
     getComponent<T>(entity: Entity, type: ComponentType<T>): T {
         return this.mapper(type).get(entity);

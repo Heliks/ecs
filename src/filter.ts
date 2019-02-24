@@ -3,8 +3,8 @@ import { Bitset, _BITSET } from "./types";
 export default class Filter {
 
     /**
-     * @param inclusions   bits that must be included
-     * @param exclusions   not allowed bits
+     * @param inclusions bits that must be included
+     * @param exclusions not allowed bits
      */
     constructor(
         readonly inclusions = new _BITSET(),

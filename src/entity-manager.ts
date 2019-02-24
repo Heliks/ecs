@@ -25,9 +25,9 @@ export default class EntityManager {
     /**
      * Creates an entity
      *
-     * @param description   Description of the entity. This is purely for debugging purposes and has no
+     * @param description Description of the entity. This is purely for debugging purposes and has no
      *  functionality attached to it whatsoever
-     * @returns             The entitity that we just created
+     * @returns Entity that was just created
      */
     create(description: string = 'entity'): Entity {
         const entity = Symbol(description);
