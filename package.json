@@ -6,12 +6,10 @@
   "types": "dist/index.d.ts",
   "author": "Felix Wolf",
   "license": "ISC",
-  "files": [
-    "dist"
-  ],
   "scripts": {
     "test": "jest --config jest.config.json",
-    "build": "tsc"
+    "build": "tsc",
+    "postinstall": "npm run build"
   },
   "dependencies": {
     "bitset": "^5.0.5",
