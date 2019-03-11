@@ -27,7 +27,7 @@ export interface HasEntityListeners {
 export interface Bitset {
     new (input?: string | number | Bitset | Array<number> | Uint8Array): Bitset;
     and(bitset: Bitset): Bitset;
-    clear(index: number): Bitset;
+    clear(from?: number, to?: number): Bitset;
     equals(bitset: Bitset): boolean;
     get(index: number): 0 | 1;
     isEmpty(): boolean;

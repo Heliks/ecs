@@ -38,6 +38,40 @@ export default class EntityManager {
     }
 
     /**
+     * Destroys an entity
+     *
+     * @param entity The entity to destroy
+     */
+    destroy(entity: Entity) {
+        if (! this.exists(entity)) {
+            return;
+        }
+
+        // remove all components
+        this.componentManager.removeAllComponents(entity);
+
+        this.entities.splice(this.getIndex(entity), 1);
+    }
+
+    /**
+     * Returns the index of an existing entity
+     *
+     * @param entity The entity that we want to get the index of
+     */
+    getIndex(entity: Entity): number {
+        return this.entities.indexOf(entity);
+    }
+
+    /**
+     * Returns true if an entity exists.
+     *
+     * @param entity
+     */
+    exists(entity: Entity): boolean {
+        return this.getIndex(entity) > -1;
+    }
+
+    /**
      * Creates a component filter based on an EntityQuery
      *
      * @param query
@@ -68,7 +102,7 @@ export default class EntityManager {
 
         // populate pool with eligible entities
         for (const entity of this.entities) {
-            const compositionId = this.componentManager.compositionId(entity);
+            const compositionId = this.componentManager.getComposition(entity);
 
             if (pool.check(compositionId)) {
                 pool.add(entity);

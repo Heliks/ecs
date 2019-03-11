@@ -12,7 +12,7 @@ export default class Filter {
     ) {}
 
     /**
-     * Returns ``true`` if the compositionId satisfies this filter
+     * Returns ``true`` if the getComposition satisfies this filter
      *
      * @param compositionId
      */

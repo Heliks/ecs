@@ -17,8 +17,8 @@ describe('EntityPool', () => {
         em.componentManager.addComponent(entity2, TestComp2);
         em.componentManager.addComponent(entity2, TestComp3);
 
-        expect(pool.check(em.componentManager.compositionId(entity1))).toBeTruthy();
-        expect(pool.check(em.componentManager.compositionId(entity2))).toBeFalsy();
+        expect(pool.check(em.componentManager.getComposition(entity1))).toBeTruthy();
+        expect(pool.check(em.componentManager.getComposition(entity2))).toBeFalsy();
     });
 
     it('should emit an event when an entity is added / removed', async () => {

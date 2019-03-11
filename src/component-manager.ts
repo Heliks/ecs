@@ -53,7 +53,7 @@ export default class ComponentManager {
      * @param entity Entity of which we want to know the composition id
      * @returns A bitset that represents the entities composition id
      */
-    compositionId(entity: Entity): Bitset {
+    getComposition(entity: Entity): Bitset {
         let bitset = this.compositionIds.get(entity);
 
         if (bitset) {
@@ -75,7 +75,7 @@ export default class ComponentManager {
      * @param compositionId
      */
     matchesEntityComposition(entity: Entity, compositionId: Bitset): boolean {
-        return this.compositionId(entity).and(compositionId).equals(compositionId);
+        return this.getComposition(entity).and(compositionId).equals(compositionId);
     }
 
     /**
@@ -123,7 +123,7 @@ export default class ComponentManager {
         const mapper = this.mapper(type);
         const component = mapper.create(entity, ...params);
 
-        this.compositionId(entity).set(mapper.id);
+        this.getComposition(entity).set(mapper.id);
 
         if (! this.hasCompositionAdditions(entity)) {
             this.compositionAdditions.push(entity);
@@ -164,11 +164,26 @@ export default class ComponentManager {
 
         mapper.remove(entity);
 
-        this.compositionId(entity).clear(mapper.id);
+        this.getComposition(entity).clear(mapper.id);
 
         if (! this.hasCompositionRemovals(entity)) {
             this.compositionRemovals.push(entity);
         }
+    }
+
+    /**
+     * Removes all components of an entity
+     *
+     * @param entity
+     */
+    removeAllComponents(entity: Entity): void {
+        this.getComposition(entity).clear();
+
+        this.mappers.forEach(mapper => {
+            if (mapper.has(entity)) {
+                mapper.remove(entity);
+            }
+        });
     }
 
     /**
@@ -180,14 +195,14 @@ export default class ComponentManager {
         for (const pool of pools) {
             // entities with composition additions
             for (const entity of this.compositionAdditions) {
-                if (! pool.has(entity) && pool.check(this.compositionId(entity))) {
+                if (! pool.has(entity) && pool.check(this.getComposition(entity))) {
                     pool.add(entity);
                 }
             }
 
             // entities with composition removals
             for (const entity of this.compositionRemovals) {
-                if (pool.has(entity) && ! pool.check(this.compositionId(entity))) {
+                if (pool.has(entity) && ! pool.check(this.getComposition(entity))) {
                     pool.remove(entity);
                 }
             }
