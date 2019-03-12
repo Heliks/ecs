@@ -1,6 +1,7 @@
-import ComponentMapper from "./component-mapper";
-import EntityPool from "./entity-pool";
-import { _BITSET, Bitset, ComponentType, Entity } from "./types";
+import { Bitset, _BITSET } from './bitset';
+import ComponentMapper from './component-mapper';
+import EntityPool from './entity-pool';
+import { ComponentType, Entity } from './types';
 
 export default class ComponentManager {
 

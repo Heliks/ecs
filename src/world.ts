@@ -70,8 +70,19 @@ export default class World {
         if (! system) {
             throw new Error(`System of type "${type.name}" does not exist.`);
         }
-        
+
         return <T>system;
+    }
+
+    /** Clears all data */
+    clear(): void {
+        for (const system of this.systems) {
+            if (system.clear) {
+                system.clear();
+            }
+        }
+
+        this.entityManager.clear();
     }
 
     /**

@@ -2,8 +2,9 @@ import ComponentManager from "./component-manager";
 import EntityPool from "./entity-pool";
 import Filter from "./filter";
 import { Entity, EntityQuery } from "./types";
+import { EventEmitter } from 'event-emitter3';
 
-export default class EntityManager {
+export default class EntityManager extends EventEmitter {
 
     /** {@see ComponentManager} */
     readonly componentManager = new ComponentManager();
@@ -23,6 +24,15 @@ export default class EntityManager {
     }
 
     /**
+     * Returns an array of pools of which the given entity is a member of
+     *
+     * @param entity
+     */
+    getMemberingPools(entity: Entity): EntityPool[] {
+        return this.pools.filter(pool => pool.has(entity));
+    }
+
+    /**
      * Creates an entity
      *
      * @param description Description of the entity. This is purely for debugging purposes and has no
@@ -38,19 +48,47 @@ export default class EntityManager {
     }
 
     /**
-     * Destroys an entity
+     * Unsafely destroys an enemy
      *
-     * @param entity The entity to destroy
+     * @param entity Entity to destroy
      */
-    destroy(entity: Entity) {
-        if (! this.exists(entity)) {
-            return;
-        }
-
+    destroyUnsafe(entity: Entity): void {
         // remove all components
         this.componentManager.removeAllComponents(entity);
 
         this.entities.splice(this.getIndex(entity), 1);
+    }
+
+    /**
+     * Destroys an enemy and cleans up (now) junk left behind
+     *
+     * @param entity The entity to destroy
+     */
+    destroy(entity: Entity): void {
+        if (! this.exists(entity)) {
+            return;
+        }
+
+        const pools = this.getMemberingPools(entity);
+
+        for (const pool of pools) {
+            pool.remove(entity);
+        }
+
+        this.destroyUnsafe(entity);
+    }
+
+    /** Destroys all existing entities */
+    clear(): void {
+        // empty entity pools
+        for (const pool of this.pools) {
+            pool.clear();
+        }
+
+        // destroy entities
+        for (const entity of this.entities) {
+            this.destroyUnsafe(entity);
+        }
     }
 
     /**

@@ -1,4 +1,4 @@
-import { Bitset, _BITSET } from "./types";
+import { Bitset, _BITSET } from "./bitset";
 
 export default class Filter {
 
