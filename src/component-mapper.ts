@@ -3,7 +3,7 @@ import { ComponentType, Entity } from "./types";
 export default class ComponentMapper<T> {
 
     /** Contains all instances of the mapped component assigned to an entity */
-    readonly instances = new Map<Entity, T>();
+    public readonly instances = new Map<Entity, T>();
 
     /**
      * @param id
