@@ -69,9 +69,9 @@ describe('ComponentManager', () => {
 
         cm.removeComponent(entity, TestComp3);
 
-        expect(cm.compositionId(entity).get(cm.mapper(TestComp1).id)).toBeTruthy();
-        expect(cm.compositionId(entity).get(cm.mapper(TestComp2).id)).toBeTruthy();
-        expect(cm.compositionId(entity).get(cm.mapper(TestComp3).id)).toBeFalsy();
+        expect(cm.getComposition(entity).get(cm.mapper(TestComp1).id)).toBeTruthy();
+        expect(cm.getComposition(entity).get(cm.mapper(TestComp2).id)).toBeTruthy();
+        expect(cm.getComposition(entity).get(cm.mapper(TestComp3).id)).toBeFalsy();
     });
 
     it('should match other composition ids if they contain the same components', () => {
@@ -90,8 +90,8 @@ describe('ComponentManager', () => {
         cm.addComponent(testMask2, TestComp1);
         cm.addComponent(testMask2, TestComp3);
 
-        expect(cm.matchesEntityComposition(entity, cm.compositionId(testMask1))).toBeTruthy();
-        expect(cm.matchesEntityComposition(entity, cm.compositionId(testMask2))).toBeFalsy();
+        expect(cm.matchesEntityComposition(entity, cm.getComposition(testMask1))).toBeTruthy();
+        expect(cm.matchesEntityComposition(entity, cm.getComposition(testMask2))).toBeFalsy();
     });
 
     it('should directly add component instances to the correct component mapper', () => {

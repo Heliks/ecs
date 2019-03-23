@@ -6,4 +6,4 @@ export { default as EntityManager } from './entity-manager';
 export { default as EntitySystem } from './entity-system';
 export { default as ProcessingSystem } from './processing-system';
 export { default as World } from './world';
-export { Entity, EntityQuery, HasEntityListeners } from './types';
+export * from './types';

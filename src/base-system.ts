@@ -22,6 +22,9 @@ export default abstract class BaseSystem {
         this.disabled = false;
     }
 
+    /** Clears this system. */
+    clear?(): void;
+
     /**
      * Runs the system if it is enabled
      *
