@@ -67,6 +67,20 @@ export default class ComponentManager {
 
         return bitset;
     }
+  
+    /**
+     * Adds an id to the composition of an entity.
+     *
+     * @param entity The entity of which the composition should be updated
+     * @param id The Id that we want to add to the composition
+     */
+    protected addComposition(entity: Entity, id: number): void {
+        this.getComposition(entity).set(id);
+
+        if (! this.hasCompositionAdditions(entity)) {
+            this.compositionAdditions.push(entity);
+        }
+    }
 
     /**
      * Returns ``true`` if an entity contains all components that are contained in
@@ -124,13 +138,23 @@ export default class ComponentManager {
         const mapper = this.mapper(type);
         const component = mapper.create(entity, ...params);
 
-        this.getComposition(entity).set(mapper.id);
-
-        if (! this.hasCompositionAdditions(entity)) {
-            this.compositionAdditions.push(entity);
-        }
-
+        this.addComposition(entity, mapper.id);
+      
         return component;
+    }
+
+    /**
+     * Directly adds the instance of a component to the appropriate mappers component pool
+     *
+     * @param entity The entity to which the component should be assigned to
+     * @param instance Component instance
+     */
+    addComponentInstance<T = any>(entity: Entity, instance: T): void {
+        const mapper = this.mapper(instance.constructor as ComponentType<any>);
+
+        mapper.instances.set(entity, instance);
+
+        this.addComposition(entity, mapper.id);
     }
 
     /**

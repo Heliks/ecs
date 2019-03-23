@@ -1,5 +1,6 @@
 import BaseSystem from "./base-system";
 import Bootable from "./bootable";
+import ComponentManager from './component-manager';
 import ComponentMapper from "./component-mapper";
 import EntityManager from "./entity-manager";
 import { ComponentType, Entity } from "./types";
@@ -16,34 +17,47 @@ export function isBootable(target: any): target is Bootable {
 export default class World {
 
     /** {@see EntityManager} */
-    readonly entityManager = new EntityManager();
+    public readonly entityManager = new EntityManager();
+
+    /** {@see ComponentManager} */
+    public readonly componentManager: ComponentManager;
 
     /** Collection of all registered systems */
     protected systems: BaseSystem[] = [];
+
+    /***/
+    constructor() {
+        this.componentManager = this.entityManager.componentManager;
+    }
 
     /** {@see EntityManager.create} */
     create(description: string = 'entity'): Entity {
         return this.entityManager.create(description);
     }
 
-    /** {@see EntityManager.addComponent} */
+    /** {@see ComponentManager.addComponent} */
     addComponent<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
-        return this.entityManager.componentManager.addComponent(entity, type, ...params);
+        return this.componentManager.addComponent(entity, type, ...params);
     }
 
-    /** {@see EntityManager.getComponent} */
+    /** {@see ComponentManager.addComponentInstance} */
+    addComponentInstance<T = any>(entity: Entity, instance: T): void {
+        this.componentManager.addComponentInstance(entity, instance);
+    }
+
+    /** {@see ComponentManager.getComponent} */
     getComponent<T>(entity: Entity, type: ComponentType<T>): T {
-        return this.entityManager.componentManager.getComponent(entity, type);
+        return this.componentManager.getComponent(entity, type);
     }
 
-    /** {@see EntityManager.removeComponent} */
+    /** {@see ComponentManager.removeComponent} */
     removeComponent(entity: Entity, type: ComponentType<any>): void {
-        this.entityManager.componentManager.removeComponent(entity, type);
+        this.componentManager.removeComponent(entity, type);
     }
 
-    /** {@see EntityManager.mapper} */
+    /** {@see ComponentManager.mapper} */
     getMapper<T>(type: ComponentType<T>): ComponentMapper<T> {
-        return this.entityManager.componentManager.mapper(type);
+        return this.componentManager.mapper(type);
     }
 
     /**

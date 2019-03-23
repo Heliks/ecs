@@ -93,4 +93,23 @@ describe('ComponentManager', () => {
         expect(cm.matchesEntityComposition(entity, cm.getComposition(testMask1))).toBeTruthy();
         expect(cm.matchesEntityComposition(entity, cm.getComposition(testMask2))).toBeFalsy();
     });
+
+    it('should directly add component instances to the correct component mapper', () => {
+        const entityA = em.create();
+        const entityB = em.create();
+
+        const cm = new ComponentManager();
+
+        cm.addComponent(entityA, TestComp1);
+        cm.addComponentInstance(entityB, new TestComp1(10));
+
+        const mapper = cm.mapper(TestComp1);
+
+        expect(cm.hasComponent(entityA, TestComp1)).toBeTruthy();
+        expect(cm.hasComponent(entityB, TestComp1)).toBeTruthy();
+
+        expect(mapper.has(entityA)).toBeTruthy();
+        expect(mapper.has(entityB)).toBeTruthy();
+    });
+
 });
