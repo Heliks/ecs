@@ -1,16 +1,18 @@
 import BaseSystem from '../base-system';
 import Bootable from '../bootable';
 import EntityManager from "../entity-manager";
+import { Entity } from '../types';
 
-export class TestComp1 {
-    constructor(public a?: number) {}
-}
-
+export class TestComp1 { a?: number; }
 export class TestComp2 { b?: number; }
 export class TestComp3 { c?: number; }
 export class TestComp4 { d?: number; }
 
 export const em = new EntityManager();
+
+export function createEntity(): Entity {
+    return em.create();
+}
 
 export class TestSystem extends BaseSystem implements Bootable {
 
@@ -30,5 +32,3 @@ export class TestSystem extends BaseSystem implements Bootable {
     }
 
 }
-
-

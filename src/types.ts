@@ -10,3 +10,7 @@ export interface HasEntityListeners {
     onAddEntity(entity: Entity): void;
     onRemoveEntity(entity: Entity): void;
 }
+
+export interface HasEntityQuery {
+    $$query: EntityQuery;
+}

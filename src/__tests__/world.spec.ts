@@ -2,7 +2,11 @@ import World from '../world';
 import { TestSystem } from './shared';
 
 describe('World', () => {
-    const world = new World();
+    let world: World;
+
+    beforeEach(() => {
+        world = new World();
+    });
 
     it('should boot bootable systems', () => {
         const system = new TestSystem();
@@ -12,9 +16,11 @@ describe('World', () => {
         expect(system.booted).toBeTruthy();
     });
 
-    it('should return an added game system', () => {
+    it('should add game system', () => {
         world.addSystem(new TestSystem());
 
-        expect(world.getSystem(TestSystem).prop).toBe('test');
+        const prop = world.getSystem(TestSystem).prop;
+
+        expect(prop).toBe('test');
     });
 });

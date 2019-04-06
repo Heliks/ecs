@@ -12,32 +12,30 @@ export default class EntityManager extends EventEmitter {
     /** Contains all entities created by the entity manager */
     protected entities: Entity[] = [];
 
-    /**
-     * Collection of all registered entitity pools that will be synchronized automatically
-     * during the ``update`` phase
-     */
+    /** Contains all registered entity pools */
     protected pools: EntityPool[] = [];
 
     /** Total amount of entities */
-    get totalEntities(): number {
+    get length(): number {
         return this.entities.length;
     }
 
     /**
-     * Returns an array of pools of which the given entity is a member of
+     * Returns all pools of which the given entity is a member of
      *
-     * @param entity
+     * @param entity An entity
+     * @returns Matching entity pools
      */
     getMemberingPools(entity: Entity): EntityPool[] {
         return this.pools.filter(pool => pool.has(entity));
     }
 
     /**
-     * Creates an entity
+     * Creates a new entity
      *
      * @param description Description of the entity. This is purely for debugging purposes and has no
-     *  functionality attached to it whatsoever
-     * @returns Entity that was just created
+     *        functionality attached to it whatsoever
+     * @returns The entity that was just created
      */
     create(description: string = 'entity'): Entity {
         const entity = Symbol(description);
@@ -60,7 +58,7 @@ export default class EntityManager extends EventEmitter {
     }
 
     /**
-     * Destroys an enemy and cleans up (now) junk left behind
+     * Destroys an entity and cleans up the junk that is produced in that process.
      *
      * @param entity The entity to destroy
      */
@@ -85,16 +83,18 @@ export default class EntityManager extends EventEmitter {
             pool.clear();
         }
 
-        // destroy entities
         for (const entity of this.entities) {
+            // we can use destroyUnsafe here because we already cleaned sub systems of
+            // all entity traces with their respective clear() implementations
             this.destroyUnsafe(entity);
         }
     }
 
     /**
-     * Returns the index of an existing entity
+     * Returns the index of an entity
      *
-     * @param entity The entity that we want to get the index of
+     * @param entity An entity
+     * @returns The entities index
      */
     getIndex(entity: Entity): number {
         return this.entities.indexOf(entity);
@@ -103,7 +103,8 @@ export default class EntityManager extends EventEmitter {
     /**
      * Returns true if an entity exists.
      *
-     * @param entity
+     * @param entity An entity
+     * @returns Boolean indicating if an entity exists or not
      */
     exists(entity: Entity): boolean {
         return this.getIndex(entity) > -1;

@@ -1,23 +1,23 @@
 export default abstract class BaseSystem {
 
     /** Delta time */
-    protected delta: number = 0;
+    protected delta = 0;
+
+    /** If set to true the system won't be executed during the update phase. {@see run} */
+    protected disabled = false;
 
     /**
-     * Flag that indicates if the system is currently disabled. If set to true the ``run``
-     * implementation will no longer be executed during the ``update`` phase.
+     * Executes the systems behavioral logic. This will be called on every frame during the update
+     * phase unless this system is``disabled``.
      */
-    protected disabled: boolean = false;
-
-    /** System behavior implementation */
     abstract run(): void;
 
-    /** Disables the system from being run. {@see disabled} */
+    /** Disables the system from being run. {@see run} */
     disable(): void {
         this.disabled = true;
     }
 
-    /** Enables a system to be run again after it was disabled. {@see disabled} */
+    /** Enables a system to be run again after it was disabled. {@see run} */
     enable(): void {
         this.disabled = false;
     }

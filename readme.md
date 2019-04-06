@@ -18,13 +18,17 @@ $ npm test
 
 #### Setup
 
-```
+```typescript
 import { World } from '@tiles/entity-system';
 
 const world = new World();
 
+/** Game Loop */
 function update(delta: number): void {
+    // move the entity world forward in time
     world.update(delta);
+    
+    // request next animation frame
     window.requestAnimationFrame(update);
 }
 
@@ -34,13 +38,13 @@ update();
 
 #### Creating entities
 
-```
+```typescript
 const entity = world.create();
 ```
 
 #### Adding components
 
-```
+```typescript
 class PositionComponent {
     public x: number = 0;
     public y: number = 0;
@@ -75,7 +79,7 @@ console.log(name.last) // 'bar'
 
 Systems can be added at any point during runtime. If a system is ``Bootable`` it will also be booted. 
 
-```
+```typescript
 class TestSystem extends EntitySystem {
     ...
 }
@@ -87,19 +91,17 @@ Note: Systems that pool entities are empty until they were booted and synchroniz
 
 
 ##### EntitySystem
-Pools entities matching the ``EntityQuery`` provided in the constructor. 
 
-Example:
+Pools entities. This serves mostly as a base system for systems like ``ProcessingSystem`` that deal with entities. EntitySystems and all sub systems must provide an ``EntityQuery`` for pooling their entities. This can either be done with the ``@EntityPool`` decorator or as constructor parameter for the ``EntitySystem`` itself.
 
-```
+Decorated system:
+
+```typescript
+@EntityQuery({
+    contains: [ TestComp1, TestComp2 ],
+    excludes: [ TestComp3 ]
+})
 class TestSystem extends EntitySystem {
-
-    constructor() {
-        super({
-            contains: [ TestComp1, TestComp2 ],
-            excludes: [ TestComp3 ]
-        });
-    }
     
     run() {
         const pool = this.getPool();
@@ -108,22 +110,32 @@ class TestSystem extends EntitySystem {
 }
 ```
 
+Constructor parameter
+
+```typescript
+const system = new EntitySystem({
+    contains: [ FooComponent ]
+});
+
+console.log(system.getPool());
+```
+
+
+
 ##### ProcessingSystem
 
-Iterates over all entities matching the ``EntityQuery`` provided in the constructor.
+Pools entities and iterates over all of them on each frame. This is a sub-System of ``EntitySystem`` and must therefore specify an ``EntityQuery``.
 
-```
+```typescript
+@EntityQuery({
+    contains: [ TestComp1, TestComp2 ],
+    excludes: [ TestComp3 ]
+})
 class TestSystem extends EntitySystem {
-
-    constructor() {
-        super({
-            contains: [ TestComp1, TestComp2 ],
-            excludes: [ TestComp3 ]
-        });
-    }
     
+    // iterates over all entities that are contained in this systems entity pool
     process(entity: Entity): void {
-        // called for every entity that matches the query
+        console.log(entity);
     }
     
 }

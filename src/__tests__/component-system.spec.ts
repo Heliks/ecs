@@ -1,6 +1,6 @@
 import ComponentSystem from '../component-system';
 import World from '../world';
-import { TestComp1, TestComp2 } from './shared';
+import { TestComp1 } from './shared';
 
 class TestSystem extends ComponentSystem {
 

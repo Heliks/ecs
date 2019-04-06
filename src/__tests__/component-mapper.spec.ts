@@ -1,18 +1,18 @@
 import ComponentMapper from "../component-mapper";
-import { em, TestComp1 } from "./shared";
+import { createEntity, em, TestComp1 } from './shared';
 
 describe('ComponentMapper', () => {
-    const positionMapper = new ComponentMapper(0, TestComp1);
+    let mapper: ComponentMapper<TestComp1>;
 
-    it('should create a new mapper', () => {
-        expect(positionMapper.create(em.create())).toBeInstanceOf(TestComp1);
+    beforeEach(() => {
+        mapper = new ComponentMapper(0, TestComp1);
     });
 
-    it('should store a component instance for an entity', () => {
-        const entity = em.create();
+    it('should add the mapped component to an entity', () => {
+        const entity = createEntity();
 
-        positionMapper.create(entity);
+        mapper.create(entity);
 
-        expect(positionMapper.get(entity)).toBeInstanceOf(TestComp1);
+        expect(mapper.get(entity)).toBeInstanceOf(TestComp1);
     });
 });

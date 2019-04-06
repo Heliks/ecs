@@ -1,51 +1,57 @@
+import { EntityQuery } from '../decorators';
 import EntitySystem from "../entity-system";
+import { Entity } from '../types';
 import World from "../world";
-import { TestComp1, TestComp2 } from "./shared";
-
-class TestSystem extends EntitySystem {
-
-    public called: boolean = false;
-
-    constructor() {
-        super({ contains: [ TestComp1, TestComp2 ] });
-    }
-
-    run(): void {
-        this.called = true;
-    }
-
-}
+import { TestComp1, TestComp2, TestComp3 } from "./shared";
 
 describe('EntitySystem', () => {
-    const world = new World();
+    @EntityQuery({
+        contains: [
+            TestComp1,
+            TestComp2
+        ]
+    })
+    class TestSystem extends EntitySystem {}
 
-    it('should be called on world update', () => {
-        const system = new TestSystem();
+    let entity: Entity;
+    let system: TestSystem;
+    let world: World;
 
+
+    beforeEach(() => {
+        system = new TestSystem();
+
+        world = new World();
         world.addSystem(system);
-        world.update(0);
 
-        expect(system.called).toBeTruthy();
+        entity = world.create();
     });
 
-    it('should pool entities', () => {
-        const system = new TestSystem();
+    it('should pool entities that match the systems filter', () => {
+        world.addComponent(entity, TestComp1);
+        world.addComponent(entity, TestComp2);
+        world.update();
+
+        expect(system.getPool().has(entity)).toBeTruthy();
+    });
+
+    it('should not pool entities that don\'t match the systems filter', () => {
+        world.addComponent(entity, TestComp2);
+        world.addComponent(entity, TestComp3);
+
+        expect(system.getPool().has(entity)).toBeFalsy();
+    });
+
+    it('should use a custom entity queries', () => {
+        const system = new TestSystem({
+            contains: [ TestComp3 ]
+        });
 
         world.addSystem(system);
 
-        const entity1 = world.entityManager.create();
-        const entity2 = world.entityManager.create();
+        world.addComponent(entity, TestComp3);
+        world.update();
 
-        world.addComponent(entity1, TestComp1);
-        world.addComponent(entity1, TestComp2);
-
-        world.addComponent(entity2, TestComp1);
-        world.addComponent(entity2, TestComp2);
-        world.removeComponent(entity2, TestComp2);
-
-        world.update(0);
-
-        expect(system.getPool().has(entity1)).toBeTruthy();
-        expect(system.getPool().has(entity2)).toBeFalsy();
+        expect(system.getPool().has(entity)).toBeTruthy();
     });
 });

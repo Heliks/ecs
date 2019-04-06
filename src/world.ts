@@ -100,11 +100,11 @@ export default class World {
     }
 
     /**
-     * Handles all relevant updates. Should be called once every frame.
+     * Handles all relevant updates on sub-systems. Should be called on every frame.
      *
-     * @param delta
+     * @param delta Delta time since the last frame
      */
-    update(delta: number): void {
+    update(delta: number = 0): void {
         this.entityManager.update();
 
         for (const system of this.systems) {
