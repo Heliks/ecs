@@ -8,7 +8,7 @@ Create build:
 $ npm run build
 ```
 
-Run integration tests:
+Run unit tests:
 
 ```
 $ npm test
