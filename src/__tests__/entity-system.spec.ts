@@ -17,7 +17,6 @@ describe('EntitySystem', () => {
     let system: TestSystem;
     let world: World;
 
-
     beforeEach(() => {
         system = new TestSystem();
 
