@@ -2,24 +2,26 @@ import BaseSystem from "./base-system";
 import Bootable from "./bootable";
 import EntityManager from "./entity-manager";
 import EntityPool from "./entity-pool";
-import { EntityQuery, HasEntityListeners } from "./types";
+import { EntityEvent, EntityQuery, OnEntityChanges } from "./types";
 import { hasEntityQuery } from './utils';
 
 /**
- * Typeguard to check wether the given target has entity listener functions.
+ * Type guard to check if the given target has lifecycle functions for entity changes
  *
- * @param target
+ * @param target The target that should be checked
+ * @returns A boolean indicating if the given target can listen to entity changes
  */
-export function hasEntityListeners(target: any): target is HasEntityListeners {
+export function canListenToEntityChanges(target: any): target is OnEntityChanges {
     return target.onAddEntity && target.onRemoveEntity;
 }
 
 /**
- * A system that pools entities
+ * This is the most basic system of a sub-system type that is in any way responsible
+ * for pooling entities.
  */
 export default class EntitySystem extends BaseSystem implements Bootable {
 
-    /** A pool of entities that all match this systems component constrains */
+    /** A pool of entities that all match the entity query of this component */
     protected pool?: EntityPool;
 
     /**
@@ -55,9 +57,10 @@ export default class EntitySystem extends BaseSystem implements Bootable {
 
         const pool = entityManager.registerPool(this.query);
 
-        if (hasEntityListeners(this)) {
-            pool.on('add', this.onAddEntity.bind(this));
-            pool.on('remove', this.onRemoveEntity.bind(this));
+        // lifecycle: entity changes
+        if (canListenToEntityChanges(this)) {
+            pool.on(EntityEvent.Add, this.onAddEntity.bind(this));
+            pool.on(EntityEvent.Remove, this.onRemoveEntity.bind(this));
         }
 
         this.pool = pool;

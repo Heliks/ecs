@@ -1,11 +1,11 @@
-import { EntityQuery } from '../decorators';
+import { EntityPool } from '../decorators';
 import EntitySystem from "../entity-system";
 import { Entity } from '../types';
 import World from "../world";
 import { TestComp1, TestComp2, TestComp3 } from "./shared";
 
 describe('EntitySystem', () => {
-    @EntityQuery({
+    @EntityPool({
         contains: [
             TestComp1,
             TestComp2
