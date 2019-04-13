@@ -1,7 +1,7 @@
 import BaseSystem from './base-system';
 import Bootable from './bootable';
 import ComponentMapper from './component-mapper';
-import { EntityManager } from './index';
+import EntityManager from './entity-manager';
 import { ComponentType } from './types';
 
 export default abstract class ComponentSystem<T = any> extends BaseSystem implements Bootable {
