@@ -1,16 +1,15 @@
-export * from './base-system';
-export * from './bootable';
-export * from './component-mapper';
-export * from './component-manager';
-export * from './component-system';
+export { default as BaseSystem } from './base-system';
+export { default as Bootable } from './bootable';
+export { default as ComponentManager } from './component-manager';
+export { default as ComponentMapper } from './component-mapper';
+export { default as ComponentSystem } from './component-system';
+export { default as EntityManager } from './entity-manager';
+export { default as EntityPool } from './entity-pool';
+export { default as EntitySystem } from './entity-system';
+export { default as Filter } from './filter';
+export { default as ProcessingSystem } from './processing-system';
+export { default as SystemType } from './system-type';
+export { default as World } from './world';
 export * from './decorators';
-export * from './entity-manager';
-export * from './entity-pool';
-export * from './entity-system';
-export * from './filter';
-export * from './processing-system';
 export * from './types';
 export * from './utils';
-export * from './world';
-
-
