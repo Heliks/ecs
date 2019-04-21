@@ -61,14 +61,17 @@ console.log(world.getComponent(entity, PositionComponent).x) // 0
 console.log(world.getComponent(entity, DirectionComponent).direction) // left
 ```
 
-If you have a component that requires constructor parameters you can spread them on ``addComponent()``:
+Constructor parameters can be set with the third argument:
 
-```
+```typescript
 class NameComponent {
     constructor(public first: string, public last: string) {}
 }
 
-const name = world.addComponent(entity, NameComponent, 'foo', 'bar');
+const name = world.addComponent(entity, NameComponent, [
+    'foo', 
+    'bar'
+]);
 
 console.log(name.first) // 'foo'
 console.log(name.last) // 'bar'
@@ -145,7 +148,7 @@ class TestSystem extends EntitySystem {
 
 Iterates over all instances of a ``ComponentType``
 
-```
+```typescript
 class TestSystem extends ComponentSystem {
 
     constructor() {
