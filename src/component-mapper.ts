@@ -25,7 +25,7 @@ export default class ComponentMapper<T> {
      * @param params Constructor parameters used to instantiate the component instance
      * @returns Instance of the component that we just created
      */
-    create(entity: Entity, ...params: any[]): T {
+    create(entity: Entity, params: any[] = []): T {
         const component = new this.component(...params);
 
         this.instances.set(entity, component);

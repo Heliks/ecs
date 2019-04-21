@@ -34,12 +34,10 @@ describe('ComponentManager', () => {
 
         const entity = createEntity();
 
-        const component = componentMgr.addComponent(
-            entity,
-            NameComponent,
+        const component = componentMgr.addComponent(entity, NameComponent, [
             'foo',
             'bar'
-        );
+        ]);
 
         expect(component.firstName).toBe('foo');
         expect(component.lastName).toBe('bar');

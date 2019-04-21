@@ -134,9 +134,9 @@ export default class ComponentManager {
      * @param params Class constructor parameters used to instantiate the component
      * @returns Instance of the component that was just added to the entity
      */
-    addComponent<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
+    addComponent<T>(entity: Entity, type: ComponentType<T>, params: any[] = []): T {
         const mapper = this.mapper(type);
-        const component = mapper.create(entity, ...params);
+        const component = mapper.create(entity, params);
 
         this.addComposition(entity, mapper.id);
       
