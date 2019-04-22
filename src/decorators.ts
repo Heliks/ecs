@@ -7,7 +7,7 @@ import { EntityQuery } from './types';
  * @param query An entity query
  * @returns constructor
  */
-export function EntityPool(query: EntityQuery): ClassDecorator {
+export function StaticEntityQuery(query: EntityQuery): ClassDecorator {
     return (target: any): any => {
         target.$$query = query;
 

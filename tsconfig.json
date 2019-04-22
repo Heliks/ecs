@@ -19,7 +19,7 @@
     "node_modules",
     "src/__tests__/**/*",
     "old",
-    "lib"
+    "lib/**/*"
   ]
 }
 

@@ -1,11 +1,12 @@
-import { EntityPool } from '../decorators';
+import { StaticEntityQuery } from '../decorators';
 import EntitySystem from "../entity-system";
 import { Entity } from '../types';
 import World from "../world";
 import { TestComp1, TestComp2, TestComp3 } from "./shared";
 
 describe('EntitySystem', () => {
-    @EntityPool({
+
+    @StaticEntityQuery({
         contains: [
             TestComp1,
             TestComp2
@@ -53,4 +54,5 @@ describe('EntitySystem', () => {
 
         expect(system.getPool().has(entity)).toBeTruthy();
     });
+
 });

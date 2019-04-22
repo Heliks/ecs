@@ -10,6 +10,6 @@ export { default as Filter } from './filter';
 export { default as ProcessingSystem } from './processing-system';
 export { default as SystemType } from './system-type';
 export { default as World } from './world';
-export * from './decorators';
-export * from './types';
+export { ComponentType, Entity, OnEntityChanges, EntityEvent } from './types';
+export { StaticEntityQuery } from './decorators';
 export * from './utils';
