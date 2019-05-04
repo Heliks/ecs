@@ -61,6 +61,16 @@ export default class World {
     }
 
     /**
+     * Maps the given component types to their respective component mappers
+     *
+     * @param types The component types to map
+     * @returns An array containing component mappers
+     */
+    getMappers(...types: ComponentType<any>[]): ComponentMapper<any>[] {
+        return types.map(type => this.componentManager.mapper(type));
+    }
+
+    /**
      * Adds a new system. If the system is bootable it will also be booted.
      *
      * @param system

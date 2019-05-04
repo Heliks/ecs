@@ -70,4 +70,15 @@ export default class ComponentMapper<T> {
         return this.instances.has(entity);
     }
 
+    /**
+     * Returns true if the given type is an instance of the mapped
+     * component of this mapper.
+     *
+     * @param type The type to check
+     * @returns True if the type is an instance of the mapped component
+     */
+    isComponentInstance(type: InstanceType<any>): boolean {
+        return type instanceof this.component;
+    }
+
 }

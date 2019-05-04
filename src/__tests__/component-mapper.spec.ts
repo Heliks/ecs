@@ -15,4 +15,9 @@ describe('ComponentMapper', () => {
 
         expect(mapper.get(entity)).toBeInstanceOf(TestComp1);
     });
+
+    it('should match instance types', () => {
+        expect(mapper.isComponentInstance(new TestComp1())).toBeTruthy();
+    });
+
 });
