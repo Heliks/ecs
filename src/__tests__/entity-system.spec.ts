@@ -54,5 +54,5 @@ describe('EntitySystem', () => {
 
         expect(system.getPool().has(entity)).toBeTruthy();
     });
-
+    
 });

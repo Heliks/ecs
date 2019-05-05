@@ -2,18 +2,8 @@ import BaseSystem from "./base-system";
 import Bootable from "./bootable";
 import EntityManager from "./entity-manager";
 import EntityPool from "./entity-pool";
-import { EntityEvent, EntityQuery, OnEntityChanges } from "./types";
+import { EntityQuery, } from "./types";
 import { hasEntityQuery } from './utils';
-
-/**
- * Type guard to check if the given target has lifecycle functions for entity changes
- *
- * @param target The target that should be checked
- * @returns A boolean indicating if the given target can listen to entity changes
- */
-export function canListenToEntityChanges(target: any): target is OnEntityChanges {
-    return target.onAddEntity && target.onRemoveEntity;
-}
 
 /**
  * This is the most basic system of a sub-system type that is in any way responsible
@@ -55,15 +45,7 @@ export default class EntitySystem extends BaseSystem implements Bootable {
             this.query = this.constructor.$$query;
         }
 
-        const pool = entityManager.registerPool(this.query);
-
-        // lifecycle: entity changes
-        if (canListenToEntityChanges(this)) {
-            pool.on(EntityEvent.Add, this.onAddEntity.bind(this));
-            pool.on(EntityEvent.Remove, this.onRemoveEntity.bind(this));
-        }
-
-        this.pool = pool;
+        this.pool = entityManager.registerPool(this.query);
     }
 
     /** {@inheritDoc BaseSystem.run} */

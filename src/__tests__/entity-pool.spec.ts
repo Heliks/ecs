@@ -1,4 +1,5 @@
 import EntityPool from "../entity-pool";
+import { ENTITY_EVENT_ADD, ENTITY_EVENT_REMOVE } from '../types';
 import { em, TestComp1, TestComp2, TestComp3 } from "./shared";
 
 describe('EntityPool', () => {
@@ -26,7 +27,7 @@ describe('EntityPool', () => {
         const entity = em.create();
 
         const onAddEntity = new Promise(resolve => {
-            pool.on('add', added => {
+            pool.on(ENTITY_EVENT_ADD, added => {
                 expect(added).toBe(entity);
 
                 resolve();
@@ -34,7 +35,7 @@ describe('EntityPool', () => {
         });
 
         const onRemoveEntity = new Promise(resolve => {
-            pool.on('remove', removed => {
+            pool.on(ENTITY_EVENT_REMOVE, removed => {
                 expect(removed).toBe(entity);
 
                 resolve();

@@ -6,16 +6,11 @@ export interface EntityQuery {
     excludes?: ComponentType<any>[];
 }
 
-export interface OnEntityChanges {
-    onAddEntity(entity: Entity): void;
-    onRemoveEntity(entity: Entity): void;
-}
-
 export interface HasEntityQuery {
     $$query: EntityQuery;
 }
 
-export enum EntityEvent {
-    Add = 'add',
-    Remove = 'remove'
-}
+export const ENTITY_EVENT_ADD = Symbol();
+export const ENTITY_EVENT_REMOVE = Symbol();
+export const ENTITY_EVENT_CLEAR = Symbol();
+

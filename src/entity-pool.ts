@@ -1,7 +1,7 @@
 import { EventEmitter } from 'event-emitter3';
 import { Bitset } from './bitset';
 import Filter from "./filter";
-import { Entity } from "./types";
+import { Entity, ENTITY_EVENT_ADD, ENTITY_EVENT_CLEAR, ENTITY_EVENT_REMOVE } from "./types";
 
 export default class EntityPool extends EventEmitter {
 
@@ -37,7 +37,7 @@ export default class EntityPool extends EventEmitter {
     add(entity: Entity): void {
         this.entities.push(entity);
 
-        this.emit('add', entity);
+        this.emit(ENTITY_EVENT_ADD, entity);
     }
 
     /**
@@ -57,14 +57,14 @@ export default class EntityPool extends EventEmitter {
     remove(entity: Entity): void {
         this.entities.splice(this.index(entity), 1);
 
-        this.emit('remove', entity);
+        this.emit(ENTITY_EVENT_REMOVE, entity);
     }
 
     /** Removes all entities from this pool */
     clear(): void {
         this.entities.length = 0;
 
-        this.emit('clear');
+        this.emit(ENTITY_EVENT_CLEAR);
     }
 
     /**
