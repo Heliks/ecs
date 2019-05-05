@@ -1,4 +1,5 @@
 import { StaticEntityQuery } from '../decorators';
+import EntityPool from '../entity-pool';
 import EntitySystem from "../entity-system";
 import { Entity } from '../types';
 import World from "../world";
@@ -12,7 +13,9 @@ describe('EntitySystem', () => {
             TestComp2
         ]
     })
-    class TestSystem extends EntitySystem {}
+    class TestSystem extends EntitySystem {
+        onBoot = jest.fn();
+    }
 
     let entity: Entity;
     let system: TestSystem;
@@ -22,9 +25,14 @@ describe('EntitySystem', () => {
         system = new TestSystem();
 
         world = new World();
+
         world.addSystem(system);
 
         entity = world.create();
+    });
+
+    it('should call the onBoot event', () => {
+        expect(system.onBoot).toHaveBeenCalled();
     });
 
     it('should pool entities that match the systems filter', () => {
@@ -54,5 +62,5 @@ describe('EntitySystem', () => {
 
         expect(system.getPool().has(entity)).toBeTruthy();
     });
-    
+
 });

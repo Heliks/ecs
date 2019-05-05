@@ -22,6 +22,13 @@ export default class EntitySystem extends BaseSystem implements Bootable {
     }
 
     /**
+     * Will be called after the system was booted.
+     *
+     * @param pool The entity pool with which the system was booted
+     */
+    onBoot?(pool: EntityPool): void;
+
+    /**
      * Safe getter for the entity pool.
      *
      * @returns Entity pool of this system
@@ -46,6 +53,10 @@ export default class EntitySystem extends BaseSystem implements Bootable {
         }
 
         this.pool = entityManager.registerPool(this.query);
+
+        if (this.onBoot) {
+            this.onBoot(this.pool);
+        }
     }
 
     /** {@inheritDoc BaseSystem.run} */
