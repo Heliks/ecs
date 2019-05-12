@@ -7,13 +7,13 @@ import { EventEmitter } from 'event-emitter3';
 export default class EntityManager extends EventEmitter {
 
     /** {@see ComponentManager} */
-    readonly componentManager = new ComponentManager();
+    public readonly componentManager = new ComponentManager();
 
     /** Contains all entities created by the entity manager */
-    protected entities: Entity[] = [];
+    protected readonly entities: Entity[] = [];
 
     /** Contains all registered entity pools */
-    protected pools: EntityPool[] = [];
+    protected readonly pools: EntityPool[] = [];
 
     /** Total amount of entities */
     get length(): number {
@@ -115,7 +115,7 @@ export default class EntityManager extends EventEmitter {
      *
      * @param query
      */
-    createFilter(query: EntityQuery): Filter {
+    createFilter(query: EntityQuery = {}): Filter {
         return new Filter(
             this.componentManager.createCompositionId(query.contains || []),
             this.componentManager.createCompositionId(query.excludes || []),

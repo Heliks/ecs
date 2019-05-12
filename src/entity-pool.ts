@@ -1,7 +1,7 @@
 import { EventEmitter } from 'event-emitter3';
 import { Bitset } from './bitset';
 import Filter from "./filter";
-import { Entity, ENTITY_EVENT_ADD, ENTITY_EVENT_CLEAR, ENTITY_EVENT_REMOVE } from "./types";
+import { Entity } from "./types";
 
 export default class EntityPool extends EventEmitter {
 
@@ -32,18 +32,22 @@ export default class EntityPool extends EventEmitter {
     /**
      * Add an entity
      *
-     * @param entity
+     * @param entity Entity that will be added
+     * @returns this
      */
-    add(entity: Entity): void {
+    add(entity: Entity): this {
         this.entities.push(entity);
 
-        this.emit(ENTITY_EVENT_ADD, entity);
+        this.emit('add', entity);
+
+        return this;
     }
 
     /**
      * Returns ``true`` if have an entity
      *
-     * @param entity
+     * @param entity Entity that must be contained
+     * @returns True if the entity exists. False otherwise.
      */
     has(entity: Entity): boolean {
         return this.index(entity) > -1;
@@ -52,19 +56,24 @@ export default class EntityPool extends EventEmitter {
     /**
      * Removes an entity
      *
-     * @param entity
+     * @param entity Entity that should be removed
+     * @returns this
      */
-    remove(entity: Entity): void {
+    remove(entity: Entity): this {
         this.entities.splice(this.index(entity), 1);
 
-        this.emit(ENTITY_EVENT_REMOVE, entity);
+        this.emit('remove', entity);
+
+        return this;
     }
 
     /** Removes all entities from this pool */
-    clear(): void {
+    clear(): this {
         this.entities.length = 0;
 
-        this.emit(ENTITY_EVENT_CLEAR);
+        this.emit('clear');
+
+        return this;
     }
 
     /**

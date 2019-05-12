@@ -1,5 +1,4 @@
 import EntityPool from "../entity-pool";
-import { ENTITY_EVENT_ADD, ENTITY_EVENT_REMOVE } from '../types';
 import { em, TestComp1, TestComp2, TestComp3 } from "./shared";
 
 describe('EntityPool', () => {
@@ -22,33 +21,35 @@ describe('EntityPool', () => {
         expect(pool.check(em.componentManager.getComposition(entity2))).toBeFalsy();
     });
 
-    it('should emit an event when an entity is added / removed', async () => {
-        const pool = new EntityPool(em.createFilter({}));
-        const entity = em.create();
+    describe('events', () => {
+        let emit: jest.SpyInstance;
+        let pool: EntityPool;
 
-        const onAddEntity = new Promise(resolve => {
-            pool.on(ENTITY_EVENT_ADD, added => {
-                expect(added).toBe(entity);
-
-                resolve();
-            });
+        beforeEach(() => {
+            pool = new EntityPool(em.createFilter());
+            emit = jest.spyOn(pool, 'emit');
         });
 
-        const onRemoveEntity = new Promise(resolve => {
-            pool.on(ENTITY_EVENT_REMOVE, removed => {
-                expect(removed).toBe(entity);
+        it('should emit "add" when an entity is added', () => {
+            const entity = em.create();
 
-                resolve();
-            });
+            pool.add(entity);
+
+            expect(emit).toHaveBeenCalledWith('add', entity);
         });
 
-        pool.add(entity);
-        pool.remove(entity);
+        it('should emit "remove" when an entity is removed', () => {
+            const entity = em.create();
 
-        return Promise.all([
-            onAddEntity,
-            onRemoveEntity
-        ]);
+            pool.add(entity).remove(entity);
+
+            expect(emit).toHaveBeenCalledWith('remove', entity);
+        });
+
+        it('should emit "clear" when the pool is cleared', () => {
+           pool.clear();
+
+           expect(emit).toHaveBeenCalledWith('clear');
+        });
     });
-
 });
