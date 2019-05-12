@@ -3,7 +3,7 @@ import Bootable from "./bootable";
 import EntityManager from "./entity-manager";
 import EntityPool from "./entity-pool";
 import { EntityQuery, } from "./types";
-import { hasEntityQuery } from './utils';
+import { hasEntityQuery, hasOnBootEvent } from './utils';
 
 /**
  * This is the most basic system of a sub-system type that is in any way responsible
@@ -22,13 +22,6 @@ export default class EntitySystem extends BaseSystem implements Bootable {
     }
 
     /**
-     * Will be called after the system was booted.
-     *
-     * @param pool The entity pool with which the system was booted
-     */
-    onBoot?(pool: EntityPool): void;
-
-    /**
      * Safe getter for the entity pool.
      *
      * @returns Entity pool of this system
@@ -41,7 +34,7 @@ export default class EntitySystem extends BaseSystem implements Bootable {
         return this.pool;
     }
 
-    /** {@inheritDoc Bootable} */
+    /** {@inheritDoc Bootable.boot} */
     boot(entityManager: EntityManager): void {
         // if no instance query was set try to resolve a static one
         if (! this.query) {
@@ -54,8 +47,8 @@ export default class EntitySystem extends BaseSystem implements Bootable {
 
         this.pool = entityManager.registerPool(this.query);
 
-        if (this.onBoot) {
-            this.onBoot(this.pool);
+        if (hasOnBootEvent(this)) {
+            this.onBoot();
         }
     }
 

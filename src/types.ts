@@ -14,3 +14,10 @@ export const ENTITY_EVENT_ADD = Symbol();
 export const ENTITY_EVENT_REMOVE = Symbol();
 export const ENTITY_EVENT_CLEAR = Symbol();
 
+/** Lifecycle event for {@see Bootable} systems */
+export interface OnBoot {
+
+    /** Called after the event was booted. */
+    onBoot(): void;
+
+}

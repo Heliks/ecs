@@ -1,7 +1,7 @@
 import { StaticEntityQuery } from '../decorators';
 import EntityPool from '../entity-pool';
 import EntitySystem from "../entity-system";
-import { Entity } from '../types';
+import { Entity, OnBoot } from '../types';
 import World from "../world";
 import { TestComp1, TestComp2, TestComp3 } from "./shared";
 
@@ -13,7 +13,7 @@ describe('EntitySystem', () => {
             TestComp2
         ]
     })
-    class TestSystem extends EntitySystem {
+    class TestSystem extends EntitySystem implements OnBoot {
         onBoot = jest.fn();
     }
 
@@ -56,7 +56,6 @@ describe('EntitySystem', () => {
         });
 
         world.addSystem(system);
-
         world.addComponent(entity, TestComp3);
         world.update();
 
