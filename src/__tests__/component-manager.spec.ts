@@ -16,10 +16,10 @@ describe('ComponentManager', () => {
         expect(mapper.id).toBe(0);
     });
 
-    it('should add components to an entity', () => {
+    it('should add component types to an entity', () => {
         const entity = createEntity();
 
-        componentMgr.addComponent(entity, TestComp1);
+        componentMgr.addComponentType(entity, TestComp1);
 
         expect(componentMgr.hasComponent(entity, TestComp1)).toBeTruthy();
     });
@@ -34,7 +34,7 @@ describe('ComponentManager', () => {
 
         const entity = createEntity();
 
-        const component = componentMgr.addComponent(entity, NameComponent, [
+        const component = componentMgr.addComponentType(entity, NameComponent, [
             'foo',
             'bar'
         ]);
@@ -47,7 +47,7 @@ describe('ComponentManager', () => {
         const entity = createEntity();
 
         // add component and remove it again
-        componentMgr.addComponent(entity, TestComp2);
+        componentMgr.addComponentType(entity, TestComp2);
         componentMgr.removeComponent(entity, TestComp2);
 
         const check = componentMgr.hasComponent(entity, TestComp2);
@@ -58,9 +58,9 @@ describe('ComponentManager', () => {
     it('should update the composition of an entity', () => {
         const entity = createEntity();
 
-        componentMgr.addComponent(entity, TestComp1);
-        componentMgr.addComponent(entity, TestComp2);
-        componentMgr.addComponent(entity, TestComp3);
+        componentMgr.addComponentType(entity, TestComp1);
+        componentMgr.addComponentType(entity, TestComp2);
+        componentMgr.addComponentType(entity, TestComp3);
 
         componentMgr.removeComponent(entity, TestComp3);
 
@@ -74,19 +74,19 @@ describe('ComponentManager', () => {
     it('should compare composition masks with entity compositions', () => {
         const entity = createEntity();
 
-        componentMgr.addComponent(entity, TestComp2);
-        componentMgr.addComponent(entity, TestComp3);
-        componentMgr.addComponent(entity, TestComp4);
+        componentMgr.addComponentType(entity, TestComp2);
+        componentMgr.addComponentType(entity, TestComp3);
+        componentMgr.addComponentType(entity, TestComp4);
 
         // build masks with which we can compare the entities composition
         const testMask1 = createEntity();
         const testMask2 = createEntity();
 
-        componentMgr.addComponent(testMask1, TestComp2);
-        componentMgr.addComponent(testMask1, TestComp4);
+        componentMgr.addComponentType(testMask1, TestComp2);
+        componentMgr.addComponentType(testMask1, TestComp4);
 
-        componentMgr.addComponent(testMask2, TestComp1);
-        componentMgr.addComponent(testMask2, TestComp3);
+        componentMgr.addComponentType(testMask2, TestComp1);
+        componentMgr.addComponentType(testMask2, TestComp3);
 
         const composition1 = componentMgr.getComposition(testMask1);
         const composition2 = componentMgr.getComposition(testMask2);

@@ -22,8 +22,8 @@ describe('EntityManager', () => {
         const entity1 = entityManager.create();
         const entity2 = entityManager.create();
 
-        entityManager.componentManager.addComponent(entity1, TestComp1);
-        entityManager.componentManager.addComponent(entity2, TestComp2);
+        entityManager.componentManager.addComponentType(entity1, TestComp1);
+        entityManager.componentManager.addComponentType(entity2, TestComp2);
 
         // run the update phase so pools are synchronized
         entityManager.update();
@@ -43,8 +43,8 @@ describe('EntityManager', () => {
     it('should reset the composition of destroyed entities', () => {
         const entity = entityManager.create();
 
-        entityManager.componentManager.addComponent(entity, TestComp1);
-        entityManager.componentManager.addComponent(entity, TestComp2);
+        entityManager.componentManager.addComponentType(entity, TestComp1);
+        entityManager.componentManager.addComponentType(entity, TestComp2);
 
         entityManager.destroy(entity);
 

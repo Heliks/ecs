@@ -23,7 +23,7 @@ describe('ComponentSystem', () => {
         const system = new TestSystem();
 
         const entity = world.entityManager.create();
-        const component = world.addComponent(entity, TestComp1);
+        const component = world.addComponentType(entity, TestComp1);
 
         component.a = 999;
 

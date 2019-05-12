@@ -11,11 +11,11 @@ describe('EntityPool', () => {
         const entity1 = em.create();
         const entity2 = em.create();
 
-        em.componentManager.addComponent(entity1, TestComp1);
-        em.componentManager.addComponent(entity1, TestComp3);
+        em.componentManager.addComponentType(entity1, TestComp1);
+        em.componentManager.addComponentType(entity1, TestComp3);
 
-        em.componentManager.addComponent(entity2, TestComp2);
-        em.componentManager.addComponent(entity2, TestComp3);
+        em.componentManager.addComponentType(entity2, TestComp2);
+        em.componentManager.addComponentType(entity2, TestComp3);
 
         expect(pool.check(em.componentManager.getComposition(entity1))).toBeTruthy();
         expect(pool.check(em.componentManager.getComposition(entity2))).toBeFalsy();

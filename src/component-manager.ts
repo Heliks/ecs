@@ -127,14 +127,14 @@ export default class ComponentManager {
     }
 
     /**
-     * Adds a component to an entity.
+     * Creates a new instance of the given component type and adds it to an entity.
      *
-     * @param entity The entity to which the component will be added
-     * @param type Type of component that should be added
-     * @param params Class constructor parameters used to instantiate the component
-     * @returns Instance of the component that was just added to the entity
+     * @param entity An entity
+     * @param type A component type
+     * @param params (optional) Constructor parameters
+     * @returns An instance of the given component type
      */
-    addComponent<T>(entity: Entity, type: ComponentType<T>, params: any[] = []): T {
+    addComponentType<T>(entity: Entity, type: ComponentType<T>, params: any[] = []): T {
         const mapper = this.mapper(type);
         const component = mapper.create(entity, params);
 

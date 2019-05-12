@@ -35,9 +35,9 @@ export default class World {
         return this.entityManager.create(description);
     }
 
-    /** {@see ComponentManager.addComponent} */
-    addComponent<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
-        return this.componentManager.addComponent(entity, type, ...params);
+    /** {@see ComponentManager.addComponentType} */
+    addComponentType<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
+        return this.componentManager.addComponentType(entity, type, ...params);
     }
 
     /** {@see ComponentManager.addComponentInstance} */
