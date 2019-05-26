@@ -1,16 +1,20 @@
-import { EntityQuery } from './types';
+import EntitySystem from './entity-system';
+import { ClassType, ComponentArray, HasEntityQuery } from './types';
 
 /**
- * Decorates a class with a static entity query that can be used for the entity
- * pool by sub-systems of {@see EntitySystem}.
+ * Assigns a static entity query to an entity system.
  *
- * @param query An entity query
- * @returns constructor
+ * @param contains (optional) The set of components that all entities must contain.
+ * @param excludes (optional) The set of components that all entities must not contain.
+ * @returns A class decorator
  */
-export function StaticEntityQuery(query: EntityQuery): ClassDecorator {
-    return (target: any): any => {
-        target.$$query = query;
+export function assignEntityQueryDecorator(contains: ComponentArray = [], excludes: ComponentArray = []) {
+    return <T extends EntitySystem>(target: ClassType<T> & Partial<HasEntityQuery>) => {
+        target.ecsEntityQuery = {
+            contains,
+            excludes
+        };
 
         return target;
-    };
+    }
 }

@@ -42,7 +42,7 @@ export default class EntitySystem extends BaseSystem implements Bootable {
                 throw new Error('Entity systems must specify a query.');
             }
 
-            this.query = this.constructor.$$query;
+            this.query = this.constructor.ecsEntityQuery;
         }
 
         this.pool = entityManager.registerPool(this.query);

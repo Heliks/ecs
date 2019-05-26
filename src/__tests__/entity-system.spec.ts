@@ -1,18 +1,10 @@
-import { StaticEntityQuery } from '../decorators';
-import EntityPool from '../entity-pool';
 import EntitySystem from "../entity-system";
-import { Entity, OnBoot } from '../types';
-import World from "../world";
+import { entityQuery, Entity, OnBoot, World  } from '../index';
 import { TestComp1, TestComp2, TestComp3 } from "./shared";
 
 describe('EntitySystem', () => {
 
-    @StaticEntityQuery({
-        contains: [
-            TestComp1,
-            TestComp2
-        ]
-    })
+    @entityQuery([ TestComp1, TestComp2 ])
     class TestSystem extends EntitySystem implements OnBoot {
         onBoot = jest.fn();
     }

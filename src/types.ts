@@ -1,4 +1,6 @@
-export type ComponentType<T> = new (...params: any[]) => T;
+export type ClassType<T> = new (...params: any[]) => T;
+export type ComponentType<T> = ClassType<T>;
+export type ComponentArray<T = any> = ComponentType<T>[];
 export type Entity = symbol;
 
 export interface EntityQuery {
@@ -6,8 +8,12 @@ export interface EntityQuery {
     excludes?: ComponentType<any>[];
 }
 
+/**
+ * This symbol contains a static entity query that can be used to statically
+ * assign the pooling criteria for entity systems.
+ */
 export interface HasEntityQuery {
-    $$query: EntityQuery;
+    ecsEntityQuery: EntityQuery;
 }
 
 /** Lifecycle event for {@see Bootable} systems */
