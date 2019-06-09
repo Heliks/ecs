@@ -30,44 +30,16 @@ export default class World {
         this.componentManager = this.entityManager.componentManager;
     }
 
-    /** {@see EntityManager.create} */
-    create(description: string = 'entity'): Entity {
-        return this.entityManager.create(description);
+
+
+    /** {@link EntityManager.create()} */
+    create(components: ComponentType[] = []): Entity {
+        return this.entityManager.create(components);
     }
 
-    /** {@see ComponentManager.addComponentType} */
-    addComponentType<T>(entity: Entity, type: ComponentType<T>, ...params: any[]): T {
-        return this.componentManager.addComponentType(entity, type, ...params);
-    }
-
-    /** {@see ComponentManager.addComponentInstance} */
-    addComponentInstance<T = any>(entity: Entity, instance: T): void {
-        this.componentManager.addComponentInstance(entity, instance);
-    }
-
-    /** {@see ComponentManager.getComponent} */
-    getComponent<T>(entity: Entity, type: ComponentType<T>): T {
-        return this.componentManager.getComponent(entity, type);
-    }
-
-    /** {@see ComponentManager.removeComponent} */
-    removeComponent(entity: Entity, type: ComponentType<any>): void {
-        this.componentManager.removeComponent(entity, type);
-    }
-
-    /** {@see ComponentManager.mapper} */
+    /** {@link ComponentManager.mapper()} */
     getMapper<T>(type: ComponentType<T>): ComponentMapper<T> {
         return this.componentManager.mapper(type);
-    }
-
-    /**
-     * Maps the given component types to their respective component mappers
-     *
-     * @param types The component types to map
-     * @returns An array containing component mappers
-     */
-    getMappers(...types: ComponentType<any>[]): ComponentMapper<any>[] {
-        return types.map(type => this.componentManager.mapper(type));
     }
 
     /**
@@ -115,7 +87,7 @@ export default class World {
      * @param delta Delta time since the last frame
      */
     update(delta: number = 0): void {
-        this.entityManager.update();
+        this.entityManager.synchronize();
 
         for (const system of this.systems) {
             system.update(delta);

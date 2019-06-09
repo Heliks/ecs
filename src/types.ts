@@ -1,5 +1,5 @@
-export type ClassType<T> = new (...params: any[]) => T;
-export type ComponentType<T> = ClassType<T>;
+export type ClassType<T = unknown> = new (...params: any[]) => T;
+export type ComponentType<T = unknown> = ClassType<T>;
 export type ComponentArray<T = any> = ComponentType<T>[];
 export type Entity = symbol;
 

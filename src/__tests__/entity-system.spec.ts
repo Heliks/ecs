@@ -27,6 +27,7 @@ describe('EntitySystem', () => {
         expect(system.onBoot).toHaveBeenCalled();
     });
 
+    /*
     it('should pool entities that match the systems filter', () => {
         world.addComponentType(entity, TestComp1);
         world.addComponentType(entity, TestComp2);
@@ -52,6 +53,6 @@ describe('EntitySystem', () => {
         world.update();
 
         expect(system.getPool().has(entity)).toBeTruthy();
-    });
+    });*/
 
 });

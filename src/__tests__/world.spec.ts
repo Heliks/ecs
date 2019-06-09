@@ -23,11 +23,4 @@ describe('World', () => {
 
         expect(prop).toBe('test');
     });
-
-    it('should map an array of components to their respective mappers', () => {
-        const [ mapper1, mapper2 ] = world.getMappers(TestComp1, TestComp2);
-
-        expect(mapper1.isComponentInstance(new TestComp1())).toBeTruthy();
-        expect(mapper2.isComponentInstance(new TestComp2())).toBeTruthy();
-    });
 });

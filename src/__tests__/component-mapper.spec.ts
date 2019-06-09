@@ -1,23 +1,23 @@
 import ComponentMapper from "../component-mapper";
-import { createEntity, em, TestComp1 } from './shared';
+import { Entity } from '../types';
+import { FooBar } from './shared';
 
 describe('ComponentMapper', () => {
-    let mapper: ComponentMapper<TestComp1>;
+    let entity: Entity;
+    let mapper: ComponentMapper<FooBar>;
 
     beforeEach(() => {
-        mapper = new ComponentMapper(0, TestComp1);
+        entity = Symbol();
+        mapper = new ComponentMapper(FooBar);
     });
 
-    it('should add the mapped component to an entity', () => {
-        const entity = createEntity();
+    it('should add components', () => {
+        const component = mapper.create(entity, {
+            bar: 'foo',
+            foo: 'bar'
+        });
 
-        mapper.create(entity);
-
-        expect(mapper.get(entity)).toBeInstanceOf(TestComp1);
+        expect(component.bar).toBe('foo');
+        expect(component.foo).toBe('bar');
     });
-
-    it('should match instance types', () => {
-        expect(mapper.isComponentInstance(new TestComp1())).toBeTruthy();
-    });
-
 });

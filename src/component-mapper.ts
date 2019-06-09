@@ -6,31 +6,46 @@ export default class ComponentMapper<T> {
      * Contains all instances of the mapped component, mapped to the entity to
      * which the component belongs
      */
-    public readonly instances = new Map<Entity, T>();
+    public readonly components = new Map<Entity, T>();
 
     /**
-     * @param id Id of the mapper. Will usually be set by the component manager that has created this mapper.
-     *        This will later be used as the value that is added to an entities composition.
      * @param component The type of component that for which this mapper is responsible
+     * @param id The mappers Id. Will be set by the component manager to create entity compositions.
      */
     constructor(
-        readonly id: number,
-        protected component: ComponentType<T>
+        public readonly component: ComponentType<T>,
+        public readonly id = -1
     ) {}
 
     /**
      * Creates a new instance of the mapped component type and assigns it to an entity.
      *
-     * @param entity Entity to which the component belongs
-     * @param params Constructor parameters used to instantiate the component instance
+     * @param entity An Entity
+     * @param data (optional) Data that should be set on the newly created instance.
      * @returns Instance of the component that we just created
      */
-    create(entity: Entity, params: any[] = []): T {
-        const component = new this.component(...params);
+    create(entity: Entity, data: Partial<T> = {}): T {
+        const component = new this.component();
 
-        this.instances.set(entity, component);
+        Object.assign(component, data);
 
-        return component;
+        this.components.set(entity, component);
+
+        return component
+    }
+
+    /**
+     * Calls {@link create()} internally, but returns the class context instead
+     * of the created component.
+     *
+     * @param entity An entity
+     * @param data (optional) Data that should be set on the newly created instance.
+     * @returns this
+     */
+    add(entity: Entity, data: Partial<T> = {}): this {
+        this.create(entity, data);
+
+        return this;
     }
 
     /**
@@ -40,12 +55,10 @@ export default class ComponentMapper<T> {
      * @returns Instance of the component that belongs to the given entity
      */
     get(entity: Entity): T {
-        const instance = this.instances.get(entity);
+        const instance = this.components.get(entity);
 
         if (! instance) {
-            throw new Error(
-                `Entity ${entity.toString()} does not have a ${this.component.toString()} component`
-            );
+            throw new Error(`Entity ${entity.toString()} does not have a ${this.component.toString()} component`);
         }
 
         return instance;
@@ -54,31 +67,23 @@ export default class ComponentMapper<T> {
     /**
      * Removes the component instance of an entity.
      *
-     * @param entity Entity to which the component belongs
+     * @param entity An Entity
+     * @returns this
      */
-    remove(entity: Entity): void {
-        this.instances.delete(entity);
+    remove(entity: Entity): this {
+        this.components.delete(entity);
+
+        return this
     }
 
     /**
      * Returns ``true`` if a component instance exists for an entity.
      *
-     * @param entity Entity to which the component belongs
+     * @param entity An Entity
      * @returns Boolean indicating if the entity has a component or not
      */
     has(entity: Entity): boolean {
-        return this.instances.has(entity);
-    }
-
-    /**
-     * Returns true if the given type is an instance of the mapped
-     * component of this mapper.
-     *
-     * @param type The type to check
-     * @returns True if the type is an instance of the mapped component
-     */
-    isComponentInstance(type: InstanceType<any>): boolean {
-        return type instanceof this.component;
+        return this.components.has(entity);
     }
 
 }

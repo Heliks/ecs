@@ -8,6 +8,11 @@ export class TestComp2 { b?: number; }
 export class TestComp3 { c?: number; }
 export class TestComp4 { d?: number; }
 
+export class FooBar {
+    public readonly foo: string = 'foo';
+    public readonly bar: string = 'bar';
+}
+
 export const em = new EntityManager();
 
 export function createEntity(): Entity {

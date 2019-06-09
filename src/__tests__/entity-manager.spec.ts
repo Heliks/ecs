@@ -1,55 +1,52 @@
-import EntityManager from "../entity-manager";
+import EntityManager from '../entity-manager';
 import { TestComp1, TestComp2 } from "./shared";
 
 describe('EntityManager', () => {
-    let entityManager: EntityManager;
+    let manager: EntityManager;
 
     beforeEach(() => {
-        entityManager = new EntityManager();
+        manager = new EntityManager();
     });
 
-    it('should store created entities', () => {
-        const entity = entityManager.create();
-
-        expect(entityManager.exists(entity)).toBeTruthy();
-    });
-
-    it('should sort entities into their matching pools', () => {
-        const pool = entityManager.registerPool({
-            contains: [ TestComp1 ]
-        });
-
-        const entity1 = entityManager.create();
-        const entity2 = entityManager.create();
-
-        entityManager.componentManager.addComponentType(entity1, TestComp1);
-        entityManager.componentManager.addComponentType(entity2, TestComp2);
-
-        // run the update phase so pools are synchronized
-        entityManager.update();
-
-        expect(pool.has(entity1)).toBeTruthy();
-        expect(pool.has(entity2)).toBeFalsy();
+    it('should create entities', () => {
+        expect(typeof manager.create()).toBe('symbol');
     });
 
     it('should destroy an entity', () => {
-        const entity = entityManager.create();
+        const entity = manager.create();
 
-        entityManager.destroy(entity);
+        manager.destroy(entity);
 
-        expect(entityManager.exists(entity)).toBeFalsy();
+        expect(manager.exists(entity)).toBeFalsy();
     });
 
     it('should reset the composition of destroyed entities', () => {
-        const entity = entityManager.create();
+        const entity = manager.create([
+            TestComp1,
+            TestComp2
+        ]);
 
-        entityManager.componentManager.addComponentType(entity, TestComp1);
-        entityManager.componentManager.addComponentType(entity, TestComp2);
+        // destroy entity and get composition
+        manager.destroy(entity);
 
-        entityManager.destroy(entity);
+        expect(manager.componentManager.getCompositionId(entity).isEmpty()).toBeTruthy();
+    });
 
-        const composition = entityManager.componentManager.getComposition(entity);
+    it('should synchronize pools', () => {
+        const pool1 = manager.registerPool({ contains: [ TestComp1 ] });
+        const pool2 = manager.registerPool({ contains: [ TestComp2 ] });
 
-        expect(composition.isEmpty()).toBeTruthy();
+        const entity1 = manager.create([ TestComp1 ]);
+        const entity2 = manager.create([ TestComp2 ]);
+
+        manager.synchronize();
+
+        // validate size
+        expect(pool1.length).toBe(1);
+        expect(pool2.length).toBe(1);
+
+        // validate membership
+        expect(pool1.has(entity1)).toBeTruthy();
+        expect(pool2.has(entity2)).toBeTruthy();
     });
 });

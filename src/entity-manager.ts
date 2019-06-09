@@ -1,13 +1,13 @@
 import ComponentManager from "./component-manager";
 import EntityPool from "./entity-pool";
 import Filter from "./filter";
-import { Entity, EntityQuery } from "./types";
+import { ComponentType, Entity, EntityQuery } from "./types";
 import { EventEmitter } from 'event-emitter3';
 
-export default class EntityManager extends EventEmitter {
+export default class EntityManager {
 
-    /** {@see ComponentManager} */
-    public readonly componentManager = new ComponentManager();
+    /** {@link ComponentManager} */
+    public readonly componentManager = new ComponentManager()
 
     /** Contains all entities created by the entity manager */
     protected readonly entities: Entity[] = [];
@@ -16,31 +16,24 @@ export default class EntityManager extends EventEmitter {
     protected readonly pools: EntityPool[] = [];
 
     /** Total amount of entities */
-    get length(): number {
+    get size(): number {
         return this.entities.length;
     }
 
     /**
-     * Returns all pools of which the given entity is a member of
+     * Creates an entity.
      *
-     * @param entity An entity
-     * @returns Matching entity pools
+     * @param components (optional) The entities initial component types.
+     * @returns A new entity.
      */
-    getMemberingPools(entity: Entity): EntityPool[] {
-        return this.pools.filter(pool => pool.has(entity));
-    }
-
-    /**
-     * Creates a new entity
-     *
-     * @param description Description of the entity. This is purely for debugging purposes and has no
-     *        functionality attached to it whatsoever
-     * @returns The entity that was just created
-     */
-    create(description: string = 'entity'): Entity {
-        const entity = Symbol(description);
+    create(components: ComponentType[] = []): Entity {
+        const entity = Symbol();
 
         this.entities.push(entity);
+
+        if (components.length) {
+            this.componentManager.addMany(entity, components);
+        }
 
         return entity;
     }
@@ -52,7 +45,7 @@ export default class EntityManager extends EventEmitter {
      */
     destroyUnsafe(entity: Entity): void {
         // remove all components
-        this.componentManager.removeAllComponents(entity);
+        this.componentManager.removeAll(entity);
 
         this.entities.splice(this.getIndex(entity), 1);
     }
@@ -61,19 +54,23 @@ export default class EntityManager extends EventEmitter {
      * Destroys an entity and cleans up the junk that is produced in that process.
      *
      * @param entity The entity to destroy
+     * @returns this
      */
-    destroy(entity: Entity): void {
+    destroy(entity: Entity): this {
         if (! this.exists(entity)) {
-            return;
+            return this;
         }
 
-        const pools = this.getMemberingPools(entity);
+        // get pools that this entity is a member of
+        const pools = this.pools.filter(pool => pool.has(entity));
 
         for (const pool of pools) {
             pool.remove(entity);
         }
 
         this.destroyUnsafe(entity);
+
+        return this;
     }
 
     /** Destroys all existing entities */
@@ -141,7 +138,7 @@ export default class EntityManager extends EventEmitter {
 
         // populate pool with eligible entities
         for (const entity of this.entities) {
-            const compositionId = this.componentManager.getComposition(entity);
+            const compositionId = this.componentManager.getCompositionId(entity);
 
             if (pool.check(compositionId)) {
                 pool.add(entity);
@@ -153,9 +150,32 @@ export default class EntityManager extends EventEmitter {
         return pool;
     }
 
-    /** Called on every update cycle */
-    update(): void {
-        this.componentManager.synchronize(this.pools);
+    /**
+     * Synchronizes entity pools with composition updates. Should be called once on
+     * each frame.
+     */
+    synchronize(): void {
+        const entities = this.componentManager.updated;
+
+        if (! entities.length) {
+            return;
+        }
+
+        for (const pool of this.pools) {
+            for (const entity of entities) {
+                if (! pool.has(entity)) {
+                    if (pool.check(this.componentManager.getCompositionId(entity))) {
+                        pool.add(entity);
+                    }
+                }
+                else {
+                    if (! pool.check(this.componentManager.getCompositionId(entity))) {
+                        pool.remove(entity);
+                    }
+                }
+            }
+        }
+
         this.componentManager.clear();
     }
 

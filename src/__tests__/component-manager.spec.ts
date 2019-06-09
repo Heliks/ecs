@@ -1,97 +1,75 @@
 import ComponentManager from "../component-manager";
 import ComponentMapper from "../component-mapper";
-import { createEntity, TestComp1, TestComp2, TestComp3, TestComp4 } from './shared';
+import { Entity } from '../types';
+import { createEntity, FooBar, TestComp1, TestComp2, TestComp3, TestComp4 } from './shared';
 
 describe('ComponentManager', () => {
-    let componentMgr: ComponentManager;
+    let entity: Entity;
+    let manager: ComponentManager;
 
     beforeEach(() => {
-        componentMgr = new ComponentManager();
+        entity = Symbol();
+        manager = new ComponentManager();
     });
 
-    it('should dynamically create new component mappers', () => {
-        const mapper = componentMgr.mapper(TestComp1);
-
-        expect(mapper).toBeInstanceOf(ComponentMapper);
-        expect(mapper.id).toBe(0);
+    it('should return component mappers', () => {
+        expect(manager.mapper(FooBar).id).toBe(0);
     });
 
-    it('should add component types to an entity', () => {
-        const entity = createEntity();
+    it('should add components to an entity', () => {
+        const success = manager
+            .add(entity, FooBar)
+            .has(entity, FooBar);
 
-        componentMgr.addComponentType(entity, TestComp1);
-
-        expect(componentMgr.hasComponent(entity, TestComp1)).toBeTruthy();
+        expect(success).toBeTruthy();
     });
 
-    it('should add components with a constructor type', () => {
-        class NameComponent {
-            constructor(
-                public firstName: string,
-                public lastName: string
-            ) {}
-        }
+    it('should add many components to an entity', () => {
+        const composition = manager
+            .addMany(entity, [ TestComp2, TestComp4 ])
+            .getCompositionId(entity);
 
-        const entity = createEntity();
-
-        const component = componentMgr.addComponentType(entity, NameComponent, [
-            'foo',
-            'bar'
-        ]);
-
-        expect(component.firstName).toBe('foo');
-        expect(component.lastName).toBe('bar');
+        expect(composition.get(manager.mapper(TestComp2).id)).toBeTruthy();
+        expect(composition.get(manager.mapper(TestComp4).id)).toBeTruthy();
     });
 
     it('should remove components from an entity', () => {
-        const entity = createEntity();
+        const success = manager
+            .add(entity, FooBar)
+            .remove(entity, FooBar)
+            .has(entity, FooBar);
 
-        // add component and remove it again
-        componentMgr.addComponentType(entity, TestComp2);
-        componentMgr.removeComponent(entity, TestComp2);
-
-        const check = componentMgr.hasComponent(entity, TestComp2);
-
-        expect(check).toBeFalsy();
+        expect(success).toBeFalsy();
     });
 
     it('should update the composition of an entity', () => {
-        const entity = createEntity();
+        const composition = manager
+            .add(entity, TestComp1)
+            .add(entity, TestComp2)
+            .add(entity, TestComp3)
+            .remove(entity, TestComp3)
+            .getCompositionId(entity);
 
-        componentMgr.addComponentType(entity, TestComp1);
-        componentMgr.addComponentType(entity, TestComp2);
-        componentMgr.addComponentType(entity, TestComp3);
-
-        componentMgr.removeComponent(entity, TestComp3);
-
-        const composition = componentMgr.getComposition(entity);
-
-        expect(composition.get(componentMgr.mapper(TestComp1).id)).toBeTruthy();
-        expect(composition.get(componentMgr.mapper(TestComp2).id)).toBeTruthy();
-        expect(composition.get(componentMgr.mapper(TestComp3).id)).toBeFalsy();
+        expect(composition.get(manager.mapper(TestComp1).id)).toBeTruthy();
+        expect(composition.get(manager.mapper(TestComp2).id)).toBeTruthy();
+        expect(composition.get(manager.mapper(TestComp3).id)).toBeFalsy();
     });
 
     it('should compare composition masks with entity compositions', () => {
-        const entity = createEntity();
-
-        componentMgr.addComponentType(entity, TestComp2);
-        componentMgr.addComponentType(entity, TestComp3);
-        componentMgr.addComponentType(entity, TestComp4);
+        manager.addMany(entity, [ TestComp2, TestComp3, TestComp4 ]);
 
         // build masks with which we can compare the entities composition
-        const testMask1 = createEntity();
-        const testMask2 = createEntity();
+        const maskEntity1 = Symbol();
+        const maskEntity2 = Symbol();
 
-        componentMgr.addComponentType(testMask1, TestComp2);
-        componentMgr.addComponentType(testMask1, TestComp4);
+        manager
+            .addMany(maskEntity1, [ TestComp2, TestComp4 ])
+            .addMany(maskEntity2, [ TestComp1, TestComp3 ]);
 
-        componentMgr.addComponentType(testMask2, TestComp1);
-        componentMgr.addComponentType(testMask2, TestComp3);
+        const composition1 = manager.getCompositionId(maskEntity1);
+        const composition2 = manager.getCompositionId(maskEntity2);
 
-        const composition1 = componentMgr.getComposition(testMask1);
-        const composition2 = componentMgr.getComposition(testMask2);
-
-        expect(componentMgr.matchesEntityComposition(entity, composition1)).toBeTruthy();
-        expect(componentMgr.matchesEntityComposition(entity, composition2)).toBeFalsy();
+        expect(manager.matchesEntityComposition(entity, composition1)).toBeTruthy();
+        expect(manager.matchesEntityComposition(entity, composition2)).toBeFalsy();
     });
 });

@@ -19,6 +19,7 @@ class TestSystem extends ComponentSystem {
 describe('ComponentSystem', () => {
     const world = new World();
 
+    /*
     it('should iterate over component instances', () => {
         const system = new TestSystem();
 
@@ -31,5 +32,5 @@ describe('ComponentSystem', () => {
         world.update(0);
 
         expect(system.component).toBe(component);
-    });
+    });*/
 });
