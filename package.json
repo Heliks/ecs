@@ -7,10 +7,11 @@
   "author": "Felix Wolf",
   "license": "ISC",
   "scripts": {
+    "build": "npm run lint & tsc",
+    "lint": "eslint 'src/**' --config .eslintrc.json",
+    "postinstall": "npm run build",
     "test": "jest --config jest.config.json",
-    "build": "tsc",
-    "watch": "tsc -w",
-    "postinstall": "npm run build"
+    "watch": "tsc -w"
   },
   "dependencies": {
     "bitset": "^5.0.5",
@@ -19,6 +20,9 @@
   "devDependencies": {
     "@types/jest": "^24.0.6",
     "@types/node": "^11.9.5",
+    "@typescript-eslint/eslint-plugin": "^1.9.0",
+    "@typescript-eslint/parser": "^1.9.0",
+    "eslint": "^5.16.0",
     "jest": "^24.1.0",
     "ts-jest": "^24.0.0",
     "typescript": "^3.3.4000"

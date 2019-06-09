@@ -2,12 +2,11 @@ import ComponentManager from "./component-manager";
 import EntityPool from "./entity-pool";
 import Filter from "./filter";
 import { ComponentType, Entity, EntityQuery } from "./types";
-import { EventEmitter } from 'event-emitter3';
 
 export default class EntityManager {
 
     /** {@link ComponentManager} */
-    public readonly componentManager = new ComponentManager()
+    readonly componentManager = new ComponentManager();
 
     /** Contains all entities created by the entity manager */
     protected readonly entities: Entity[] = [];

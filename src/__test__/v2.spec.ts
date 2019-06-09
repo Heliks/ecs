@@ -1,5 +1,4 @@
-import EntitySystem from '../entity-system';
-import { ClassType, ComponentArray, Entity, EntityQuery, HasEntityQuery } from '../types';
+import { ClassType, Entity, EntityQuery, HasEntityQuery } from '../types';
 import World from '../world';
 import { FooBar } from './shared';
 import SpyInstance = jest.SpyInstance;

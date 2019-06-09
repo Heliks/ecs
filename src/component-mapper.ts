@@ -6,7 +6,7 @@ export default class ComponentMapper<T> {
      * Contains all instances of the mapped component, mapped to the entity to
      * which the component belongs
      */
-    public readonly components = new Map<Entity, T>();
+    readonly components = new Map<Entity, T>();
 
     /**
      * @param component The type of component that for which this mapper is responsible

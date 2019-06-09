@@ -1,11 +1,10 @@
-export type ClassType<T = unknown> = new (...params: any[]) => T;
+export type ClassType<T = unknown> = new (...params: unknown[]) => T;
 export type ComponentType<T = unknown> = ClassType<T>;
-export type ComponentArray<T = any> = ComponentType<T>[];
 export type Entity = symbol;
 
 export interface EntityQuery {
-    contains?: ComponentType<any>[];
-    excludes?: ComponentType<any>[];
+    contains?: ComponentType[];
+    excludes?: ComponentType[];
 }
 
 /**
@@ -14,12 +13,4 @@ export interface EntityQuery {
  */
 export interface HasEntityQuery {
     ecsEntityQuery: EntityQuery;
-}
-
-/** Lifecycle event for {@see Bootable} systems */
-export interface OnBoot {
-
-    /** Called after the event was booted. */
-    onBoot(): void;
-
 }

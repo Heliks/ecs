@@ -8,12 +8,13 @@ export default class ComponentManager {
      * An array that contains all entities that were recently updated. Is cleared every
      * time {@link ComponentManager.clear()} is called.
      */
-    public readonly updated: Entity[] = [];
+    readonly updated: Entity[] = [];
 
     /** Composition Ids for every entity known to the manager */
     protected compositionIds = new Map<Entity, Bitset>();
 
     /** Contains mappers registered to their type. */
+    /* eslint-disable-next-line @typescript-eslint/no-explicit-any */
     protected mappers = new Map<ComponentType, ComponentMapper<any>>();
 
     /** Contains the Id that will be used for the next mapper that is added to the manager */
@@ -165,7 +166,7 @@ export default class ComponentManager {
      * @param type A component type.
      * @returns True if the entity has an instance of the given component type-
      */
-    has(entity: Entity, type: ComponentType<any>): boolean {
+    has(entity: Entity, type: ComponentType): boolean {
         return this.mapper(type).has(entity);
     }
 
@@ -187,7 +188,7 @@ export default class ComponentManager {
      * @param type The type of component to remove from the entity.
      * @returns this
      */
-    remove(entity: Entity, type: ComponentType<any>): this {
+    remove(entity: Entity, type: ComponentType): this {
         const mapper = this.mapper(type);
 
         mapper.remove(entity);
