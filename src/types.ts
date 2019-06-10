@@ -19,29 +19,3 @@ export interface EntityQuery {
 export interface HasEntityQuery {
     ecsEntityQuery: EntityQuery;
 }
-
-/** A system that iterates over entities. */
-export interface ProcessingSystem {
-
-    /**
-     * Called once for each entity that is pooled by this system during the ``update`` phase.
-     *
-     * @param entity The currently processed entity.
-     * @param deltaTime Delta time.
-     */
-    processEntity(entity: Entity, deltaTime: number): void;
-
-}
-
-/** A system that iterates over a specified component type. */
-export interface ComponentSystem {
-
-    /**
-     * Called for each registered instance of the component type over which this
-     * system iterates.
-     *
-     * @param component The currently processed component instance.
-     * @param deltaTime Delta time.
-     */
-    processComponent(component: object, deltaTime: number): void;
-}

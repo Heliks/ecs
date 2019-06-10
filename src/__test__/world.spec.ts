@@ -1,28 +1,32 @@
+import BaseSystem from '../systems/base-system';
 import World from '../world';
-import { TestComp1, TestComp2, TestSystem } from './shared';
 
+class FooSystem extends BaseSystem {
+
+    // Mock boot
+    boot = jest.fn();
+
+    // Mock run
+    run = jest.fn();
+
+}
 
 describe('World', () => {
+    let system: FooSystem;
     let world: World;
 
     beforeEach(() => {
-        world = new World();
+        system = new FooSystem();
+        world = new World().addSystem(system);
     });
 
-    /*
-    it('should boot bootable systems', () => {
-        const system = new TestSystem();
-
-        world.addSystem(system);
-
-        expect(system.booted).toBeTruthy();
+    it('should boot systems', () => {
+        expect(system.boot).toHaveBeenCalledTimes(1);
     });
 
-    it('should add game system', () => {
-        world.addSystem(new TestSystem());
+    it('should update systems', () => {
+        world.update(0);
 
-        const prop = world.getSystem(TestSystem).prop;
-
-        expect(prop).toBe('test');
-    });*/
+        expect(system.run).toHaveBeenCalledWith(0);
+    });
 });

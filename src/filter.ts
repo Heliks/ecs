@@ -1,6 +1,4 @@
 import { _BITSET, Bitset } from './bitset';
-import ComponentManager from './component-manager';
-import { EntityQuery } from './types';
 
 export default class Filter {
 
@@ -31,13 +29,6 @@ export default class Filter {
     equals(filter: Filter): boolean {
         return this.inclusions.equals(filter.inclusions)
             && this.exclusions.equals(filter.exclusions);
-    }
-
-    static create(componentManager: ComponentManager, query: EntityQuery = {}): Filter {
-        return new Filter(
-            componentManager.createCompositionId(query.contains || []),
-            componentManager.createCompositionId(query.excludes || []),
-        );
     }
 
 }

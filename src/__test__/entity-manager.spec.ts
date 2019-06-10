@@ -42,8 +42,8 @@ describe('EntityManager', () => {
         manager.synchronize();
 
         // validate size
-        expect(pool1.length).toBe(1);
-        expect(pool2.length).toBe(1);
+        expect(pool1.size).toBe(1);
+        expect(pool2.size).toBe(1);
 
         // validate membership
         expect(pool1.has(entity1)).toBeTruthy();

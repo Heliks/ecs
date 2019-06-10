@@ -9,7 +9,7 @@ export default class EntityPool extends EventEmitter {
     readonly entities: Entity[] = [];
 
     /** Total amount of entities */
-    get length(): number {
+    get size(): number {
         return this.entities.length;
     }
 

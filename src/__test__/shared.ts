@@ -1,5 +1,3 @@
-import BaseSystem from '../base-system';
-import Bootable from '../bootable';
 import EntityManager from "../entity-manager";
 import { Entity } from '../types';
 
@@ -19,21 +17,13 @@ export function createEntity(): Entity {
     return em.create();
 }
 
-export class TestSystem extends BaseSystem implements Bootable {
+export function createEntityManager(): EntityManager {
+    const entityManager = new EntityManager();
 
-    public booted: boolean = false;
-    public prop = 'test';
-
-    constructor() {
-        super();
+    for (let i = 0; i < 10; i++) {
+        entityManager.create([ TestComp1 ]);
+        entityManager.create([ TestComp2 ]);
     }
 
-    boot() {
-        this.booted = true;
-    }
-
-    run() {
-        //#
-    }
-
+    return entityManager;
 }

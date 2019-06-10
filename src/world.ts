@@ -1,7 +1,8 @@
 import ComponentManager from './component-manager';
 import ComponentMapper from './component-mapper';
 import EntityManager from './entity-manager';
-import { ComponentType, Entity } from './types';
+import BaseSystem from './systems/base-system';
+import { ClassType, ComponentType, Entity } from './types';
 
 export default class World {
 
@@ -11,8 +12,55 @@ export default class World {
     /** {@see ComponentManager} */
     readonly componentManager: ComponentManager;
 
+    /** Contains all systems that belong to this world. */
+    protected systems: BaseSystem[] = [];
+
     constructor() {
         this.componentManager = this.entityManager.componentManager;
+    }
+
+    /**
+     * Adds a system to the world. Systems are executed during the update phase.
+     *
+     * @param system A system.
+     * @returns this
+     */
+    addSystem(system: BaseSystem): this {
+        system.boot(this.entityManager);
+
+        this.systems.push(system);
+
+        return this;
+    }
+
+    /**
+     * Returns a system that was added to the world that matches the given
+     * constructor type.
+     *
+     * @param type A system constructor type.
+     * @returns A system
+     */
+    getSystemFromType<T extends BaseSystem>(type: ClassType<T>): T {
+        const instance = this.systems.find(item => item.constructor === type);
+
+        if (! instance) {
+            throw new Error(`Cannot find system "${type.constructor.name}"`);
+        }
+        
+        return instance as T;
+    }
+
+    /**
+     * Handles all relevant updates on sub-systems. Should be called on every frame.
+     *
+     * @param deltaTime Delta time.
+     */
+    update(deltaTime: number = 0): void {
+        this.entityManager.synchronize();
+
+        for (const system of this.systems) {
+            system.update(deltaTime);
+        }
     }
 
     /** {@link EntityManager.create()} */
@@ -28,17 +76,6 @@ export default class World {
     /** Clears all data */
     clear(): void {
         this.entityManager.clear();
-    }
-
-    /**
-     * Handles all relevant updates on sub-systems. Should be called on every frame.
-     *
-     * @param delta Delta time since the last frame
-     */
-    update(delta: number = 0): void {
-        this.entityManager.synchronize();
-
-        console.log(delta);
     }
 
 }
