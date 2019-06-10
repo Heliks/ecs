@@ -6,7 +6,7 @@ import BaseSystem from './base-system';
 export default abstract class ProcessingSystem extends BaseSystem {
 
     /** Pooled entities narrowed by {@link ProcessingSystem.getQuery()} */
-    protected _entityPool!: EntityPool;
+    protected entityPool!: EntityPool;
 
     /**
      * Called once for each entity that is pooled by this system during the ``update`` phase.
@@ -24,13 +24,13 @@ export default abstract class ProcessingSystem extends BaseSystem {
     protected abstract getQuery(): EntityQuery;
 
     /** {@inheritDoc BaseSystem.boot()} */
-    boot(entityManager: EntityManager) {
-        this._entityPool = entityManager.registerPool(this.getQuery());
+    boot(entityManager: EntityManager): void {
+        this.entityPool = entityManager.registerPool(this.getQuery());
     }
 
     /** {@inheritDoc BaseSystem.run()} */
     protected run(deltaTime: number): void {
-        for (const entity of this._entityPool.entities) {
+        for (const entity of this.entityPool.entities) {
             this.process(entity, deltaTime);
         }
     }

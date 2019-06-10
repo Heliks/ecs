@@ -2,7 +2,6 @@ import { createEntityManager, TestComp1 } from '../../__test__/shared';
 import EntityManager from '../../entity-manager';
 import EntityPool from '../../entity-pool';
 import { Entity, EntityQuery } from '../../types';
-import { contains } from '../../utils';
 import { ProcessingSystem } from '../index';
 
 class TestSystem extends ProcessingSystem {
@@ -10,11 +9,15 @@ class TestSystem extends ProcessingSystem {
     public readonly processSpy = jest.fn();
 
     getPool(): EntityPool {
-        return this._entityPool;
+        return this.entityPool;
     }
 
     protected getQuery(): EntityQuery {
-        return contains(TestComp1);
+        return {
+            contains: [
+                TestComp1
+            ]
+        };
     }
 
     protected process(entity: Entity, deltaTime: number): void {

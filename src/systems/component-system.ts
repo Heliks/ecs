@@ -3,7 +3,7 @@ import EntityManager from '../entity-manager';
 import { ComponentType } from '../types';
 import BaseSystem from './base-system';
 
-export default abstract class ComponentSystem<T> extends BaseSystem {
+export default abstract class ComponentSystem<T extends object> extends BaseSystem {
 
     /**
      * The component mapper for this systems component type. Is set after the
@@ -38,7 +38,7 @@ export default abstract class ComponentSystem<T> extends BaseSystem {
     run(deltaTime: number): void {
         if (this.componentMapper) {
             for (const instance of this.componentMapper.components.values()) {
-                this.process(instance, deltaTime)
+                this.process(instance, deltaTime);
             }
         }
     }

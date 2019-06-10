@@ -1,12 +1,8 @@
-import { TestComp1, TestComp2 } from '../__test__/shared';
 import EntityManager from '../entity-manager';
-import EntityPool from '../entity-pool';
-import { Entity, EntityQuery } from '../types';
-import { hasEntityQuery } from '../utils';
 
 export default abstract class BaseSystem {
 
-    /** if set to ``false`` the system won't execute ``run()`` during the update phase. */
+    /** If set to ``false`` the system won't execute ``run()`` during the update phase. */
     protected _enabled = true;
 
     get enabled(): boolean {
@@ -61,6 +57,3 @@ export default abstract class BaseSystem {
     }
 
 }
-
-
-

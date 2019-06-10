@@ -46,7 +46,7 @@ export default class World {
         if (! instance) {
             throw new Error(`Cannot find system "${type.constructor.name}"`);
         }
-        
+
         return instance as T;
     }
 
@@ -68,8 +68,22 @@ export default class World {
         return this.entityManager.create(components);
     }
 
+    /** {@link ComponentManager.addComponent()} */
+    addComponent<T extends object>(entity: Entity, type: ComponentType<T>, data: Partial<T> = {}): this {
+        this.componentManager.add(entity, type, data);
+
+        return this;
+    }
+
+    /** {@link ComponentManager.addMany()} */
+    addComponents(entity: Entity, types: ComponentType[]): this {
+        this.componentManager.addMany(entity, types);
+
+        return this;
+    }
+
     /** {@link ComponentManager.mapper()} */
-    getMapper<T>(type: ComponentType<T>): ComponentMapper<T> {
+    getMapper<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
         return this.componentManager.mapper(type);
     }
 

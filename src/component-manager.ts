@@ -26,7 +26,7 @@ export default class ComponentManager {
      * @param type The type of component to register.
      * @returns The component mapper that was created for the component type.
      */
-    register<T>(type: ComponentType<T>): ComponentMapper<T> {
+    register<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
         const mapper = new ComponentMapper(type, this.nextMapperId++);
 
         this.mappers.set(type, mapper);
@@ -41,7 +41,7 @@ export default class ComponentManager {
      * @param type A component type.
      * @return Mapper for the given component type.
      */
-    mapper<T>(type: ComponentType<T>): ComponentMapper<T> {
+    mapper<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
         let mapper = this.mappers.get(type);
 
         return mapper ? mapper : this.register(type);
@@ -117,7 +117,7 @@ export default class ComponentManager {
      * @param data (optional) Data to assign to the component.
      * @returns this
      */
-    add<T>(entity: Entity, type: ComponentType<T>, data: Partial<T> = {}): this {
+    add<T extends object>(entity: Entity, type: ComponentType<T>, data: Partial<T> = {}): this {
         return this.addComposition(entity, this.mapper(type).add(entity, data).id);
     }
 
@@ -177,7 +177,7 @@ export default class ComponentManager {
      * @param type A component type.
      * @returns The component instance that belongs to the entity.
      */
-    get<T>(entity: Entity, type: ComponentType<T>): T {
+    get<T extends object>(entity: Entity, type: ComponentType<T>): T {
         return this.mapper(type).get(entity);
     }
 
