@@ -1,7 +1,7 @@
 import ComponentManager from './component-manager';
-import ComponentMapper from "./component-mapper";
-import EntityManager from "./entity-manager";
-import { ComponentType, Entity } from "./types";
+import ComponentMapper from './component-mapper';
+import EntityManager from './entity-manager';
+import { ComponentType, Entity } from './types';
 
 export default class World {
 
@@ -11,7 +11,6 @@ export default class World {
     /** {@see ComponentManager} */
     readonly componentManager: ComponentManager;
 
-    /***/
     constructor() {
         this.componentManager = this.entityManager.componentManager;
     }
@@ -39,7 +38,7 @@ export default class World {
     update(delta: number = 0): void {
         this.entityManager.synchronize();
 
-        console.log(delta)
+        console.log(delta);
     }
 
 }

@@ -1,4 +1,4 @@
-import { _BITSET, Bitset } from "./bitset";
+import { _BITSET, Bitset } from './bitset';
 import ComponentManager from './component-manager';
 import { EntityQuery } from './types';
 

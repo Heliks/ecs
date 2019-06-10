@@ -1,7 +1,7 @@
 import { EventEmitter } from 'event-emitter3';
 import { Bitset } from './bitset';
-import Filter from "./filter";
-import { Entity } from "./types";
+import Filter from './filter';
+import { Entity } from './types';
 
 export default class EntityPool extends EventEmitter {
 

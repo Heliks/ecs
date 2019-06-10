@@ -146,17 +146,7 @@ export function assignEntityQueryDecorator(contains: ComponentArray = [], exclud
 
  */
 
-interface ProcessingSystem {
 
-    /**
-     * Called once for each entity that is pooled by this system during the ``update`` phase.
-     *
-     * @param entity The currently processed entity.
-     * @param deltaTime Delta time.
-     */
-    process(entity: Entity, deltaTime: number): void;
-
-}
 
 function processingSystemDecorator(query: EntityQuery = {}) {
     return <T extends ProcessingSystem>(target: ClassType<T>) => {
@@ -174,11 +164,9 @@ class TestSystem {
     process(entity: Entity, deltaTime: number): void {}
 }
 
-function isProcessingSystem(target: any): target is ClassType<ProcessingSystem> {
-
+function isProcessingSystem(target: any): target is HasEntityQuery {
+    return !! target.ecsEntityQuery;
 }
-
-
 
 describe('ProcessingSystem', () => {
     let process: SpyInstance;

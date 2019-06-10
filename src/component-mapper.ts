@@ -1,4 +1,4 @@
-import { ComponentType, Entity } from "./types";
+import { ComponentType, Entity } from './types';
 
 export default class ComponentMapper<T> {
 
@@ -25,13 +25,14 @@ export default class ComponentMapper<T> {
      * @returns Instance of the component that we just created
      */
     create(entity: Entity, data: Partial<T> = {}): T {
+        // eslint-disable-next-line new-cap
         const component = new this.component();
 
         Object.assign(component, data);
 
         this.components.set(entity, component);
 
-        return component
+        return component;
     }
 
     /**
@@ -58,7 +59,10 @@ export default class ComponentMapper<T> {
         const instance = this.components.get(entity);
 
         if (! instance) {
-            throw new Error(`Entity ${entity.toString()} does not have a ${this.component.toString()} component`);
+            throw new Error(
+                `Entity ${entity.toString()} does not have a 
+                ${this.component.toString()} component`
+            );
         }
 
         return instance;
@@ -73,7 +77,7 @@ export default class ComponentMapper<T> {
     remove(entity: Entity): this {
         this.components.delete(entity);
 
-        return this
+        return this;
     }
 
     /**

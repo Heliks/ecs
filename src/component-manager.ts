@@ -136,11 +136,11 @@ export default class ComponentManager {
         const composition = this.getCompositionId(entity);
 
         for (const type of types) {
-            // add to composition
+            // Add to composition
             composition.set(this.mapper(type).add(entity).id);
         }
 
-        // notify about component additions
+        // Notify about component additions
         if (this.updated.indexOf(entity) === -1) {
             this.updated.push(entity);
         }

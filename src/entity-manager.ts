@@ -1,7 +1,7 @@
-import ComponentManager from "./component-manager";
-import EntityPool from "./entity-pool";
-import Filter from "./filter";
-import { ComponentType, Entity, EntityQuery } from "./types";
+import ComponentManager from './component-manager';
+import EntityPool from './entity-pool';
+import Filter from './filter';
+import { ComponentType, Entity, EntityQuery } from './types';
 
 export default class EntityManager {
 
@@ -43,7 +43,7 @@ export default class EntityManager {
      * @param entity Entity to destroy
      */
     destroyUnsafe(entity: Entity): void {
-        // remove all components
+        // Remove all components
         this.componentManager.removeAll(entity);
 
         this.entities.splice(this.getIndex(entity), 1);
@@ -60,7 +60,7 @@ export default class EntityManager {
             return this;
         }
 
-        // get pools that this entity is a member of
+        // Get pools that this entity is a member of
         const pools = this.pools.filter(pool => pool.has(entity));
 
         for (const pool of pools) {
@@ -74,13 +74,13 @@ export default class EntityManager {
 
     /** Destroys all existing entities */
     clear(): void {
-        // empty entity pools
+        // Empty entity pools
         for (const pool of this.pools) {
             pool.clear();
         }
 
         for (const entity of this.entities) {
-            // we can use destroyUnsafe here because we already cleaned sub systems of
+            // We can use destroyUnsafe here because we already cleaned sub systems of
             // all entity traces with their respective clear() implementations
             this.destroyUnsafe(entity);
         }
@@ -126,7 +126,7 @@ export default class EntityManager {
     registerPool(query: EntityQuery): EntityPool {
         const filter = this.createFilter(query);
 
-        // if a pool with the same filter already exist we use that one
+        // If a pool with the same filter already exist we use that one
         let pool = this.pools.find(pool => pool.filter.equals(filter));
 
         if (pool) {
@@ -135,7 +135,7 @@ export default class EntityManager {
 
         pool = new EntityPool(filter);
 
-        // populate pool with eligible entities
+        // Populate pool with eligible entities
         for (const entity of this.entities) {
             const compositionId = this.componentManager.getCompositionId(entity);
 
@@ -167,10 +167,8 @@ export default class EntityManager {
                         pool.add(entity);
                     }
                 }
-                else {
-                    if (! pool.check(this.componentManager.getCompositionId(entity))) {
-                        pool.remove(entity);
-                    }
+                else if (! pool.check(this.componentManager.getCompositionId(entity))) {
+                    pool.remove(entity);
                 }
             }
         }
