@@ -1,7 +1,13 @@
+import ComponentMapper from '../component-mapper';
+import { injectComponentMapperDecorator } from '../decorators';
 import BaseSystem from '../systems/base-system';
 import World from '../world';
+import { FooBar } from './shared';
 
 class FooSystem extends BaseSystem {
+
+    @injectComponentMapperDecorator(FooBar)
+    public fooMapper!: ComponentMapper<FooBar>;
 
     // Mock boot
     boot = jest.fn();
@@ -28,5 +34,12 @@ describe('World', () => {
         world.update(0);
 
         expect(system.run).toHaveBeenCalledWith(0);
+    });
+
+    it('should inject component mappers when a system is added.', () => {
+        const entity = world.create();
+
+        expect(system.fooMapper).toBeInstanceOf(ComponentMapper);
+        expect(system.fooMapper.create(entity)).toBeInstanceOf(FooBar);
     });
 });

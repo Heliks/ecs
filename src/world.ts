@@ -1,8 +1,8 @@
 import ComponentManager from './component-manager';
-import ComponentMapper from './component-mapper';
+import { COMPONENT_MAPPER_INJECTION_METADATA } from './const';
 import EntityManager from './entity-manager';
 import BaseSystem from './systems/base-system';
-import { ClassType, ComponentType, Entity } from './types';
+import { ClassType, ComponentMapper, ComponentMapperInjections, ComponentType, Entity } from './types';
 
 export default class World {
 
@@ -25,7 +25,23 @@ export default class World {
      * @param system A system.
      * @returns this
      */
-    addSystem(system: BaseSystem): this {
+    addSystem<T extends BaseSystem>(system: T): this {
+        // Handle injections of component mappers.
+        const injections: ComponentMapperInjections[] = Reflect.getMetadata(
+            COMPONENT_MAPPER_INJECTION_METADATA,
+            system
+        );
+
+        if (injections) {
+            // Todo: should avoid the "any" hack if possible.
+            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+            const target = system as any;
+
+            for (const injection of injections) {
+                target[ injection.key ] = this.getMapper(injection.type);
+            }
+        }
+
         system.boot(this.entityManager);
 
         this.systems.push(system);
@@ -69,7 +85,11 @@ export default class World {
     }
 
     /** {@link ComponentManager.addComponent()} */
-    addComponent<T extends object>(entity: Entity, type: ComponentType<T>, data: Partial<T> = {}): this {
+    addComponent<T extends object>(
+        entity: Entity,
+        type: ComponentType<T>,
+        data: Partial<T> = {}
+    ): this {
         this.componentManager.add(entity, type, data);
 
         return this;
