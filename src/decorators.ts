@@ -3,12 +3,13 @@ import BaseSystem from './systems/base-system';
 import { ComponentType } from './types';
 
 /**
- * Adds injection meta data for a component mapper to the member of a system.
+ * Injects a component mapper for the given component type on a {@link BaseSystem}
+ * when the system is booted.
  *
  * @param type A component type.
  * @returns A property decorator.
  */
-export function injectComponentMapperDecorator(type: ComponentType): Function {
+export function injectMapper(type: ComponentType): Function {
     return function _injectComponentMapper<T extends BaseSystem>(target: T, key: string | symbol): void {
         const injections = Reflect.getMetadata(COMPONENT_MAPPER_INJECTION_METADATA, target) || [];
 

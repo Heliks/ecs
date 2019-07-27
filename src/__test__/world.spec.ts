@@ -1,12 +1,12 @@
 import ComponentMapper from '../component-mapper';
-import { injectComponentMapperDecorator } from '../decorators';
+import { injectMapper } from '../decorators';
 import BaseSystem from '../systems/base-system';
 import World from '../world';
 import { FooBar } from './shared';
 
 class FooSystem extends BaseSystem {
 
-    @injectComponentMapperDecorator(FooBar)
+    @injectMapper(FooBar)
     public fooMapper!: ComponentMapper<FooBar>;
 
     // Mock boot
