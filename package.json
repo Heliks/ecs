@@ -9,7 +9,7 @@
   "scripts": {
     "build": "npm run lint & tsc",
     "lint": "eslint 'src/**' --config .eslintrc.json",
-    "prepare": "npm run build",
+    "postinstall": "npm run build",
     "test": "jest --config jest.config.json",
     "watch": "tsc -w"
   },
