@@ -155,8 +155,9 @@ export default class ComponentManager {
      * @param instance A component instance.
      * @returns this
      */
-    addInstance<T = unknown>(entity: Entity, instance: T): this {
-        return this.add(entity, instance.constructor as ComponentType);
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    addInstance(entity: Entity, instance: InstanceType<any>): this {
+        return this.add(entity, instance.constructor);
     }
 
     /**
