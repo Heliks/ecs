@@ -6,7 +6,7 @@ import { Filter } from './filter';
 export class EntityManager {
 
     /** {@link ComponentManager} */
-    readonly componentManager = new ComponentManager();
+    public readonly componentManager = new ComponentManager();
 
     /** Contains all entities created by the entity manager */
     protected readonly entities: Entity[] = [];
@@ -15,7 +15,7 @@ export class EntityManager {
     protected readonly pools: EntityPool[] = [];
 
     /** Total amount of entities */
-    get size(): number {
+    public get size(): number {
         return this.entities.length;
     }
 
@@ -25,7 +25,7 @@ export class EntityManager {
      * @param components (optional) The entities initial component types.
      * @returns A new entity.
      */
-    create(components: ComponentType[] = []): Entity {
+    public create(components: ComponentType[] = []): Entity {
         const entity = Symbol();
 
         this.entities.push(entity);
@@ -42,7 +42,7 @@ export class EntityManager {
      *
      * @param entity Entity to destroy
      */
-    destroyUnsafe(entity: Entity): void {
+    public destroyUnsafe(entity: Entity): void {
         // Remove all components
         this.componentManager.removeAll(entity);
 
@@ -55,7 +55,7 @@ export class EntityManager {
      * @param entity The entity to destroy
      * @returns this
      */
-    destroy(entity: Entity): this {
+    public destroy(entity: Entity): this {
         if (! this.exists(entity)) {
             return this;
         }
@@ -73,7 +73,7 @@ export class EntityManager {
     }
 
     /** Destroys all existing entities */
-    clear(): void {
+    public clear(): void {
         // Empty entity pools
         for (const pool of this.pools) {
             pool.clear();
@@ -92,7 +92,7 @@ export class EntityManager {
      * @param entity An entity
      * @returns The entities index
      */
-    getIndex(entity: Entity): number {
+    public getIndex(entity: Entity): number {
         return this.entities.indexOf(entity);
     }
 
@@ -102,7 +102,7 @@ export class EntityManager {
      * @param entity An entity
      * @returns Boolean indicating if an entity exists or not
      */
-    exists(entity: Entity): boolean {
+    public exists(entity: Entity): boolean {
         return this.getIndex(entity) > -1;
     }
 
@@ -111,7 +111,7 @@ export class EntityManager {
      *
      * @param query
      */
-    createFilter(query: EntityQuery = {}): Filter {
+    public createFilter(query: EntityQuery = {}): Filter {
         return new Filter(
             this.componentManager.createCompositionId(query.contains || []),
             this.componentManager.createCompositionId(query.excludes || []),
@@ -123,7 +123,7 @@ export class EntityManager {
      *
      * @param query
      */
-    registerPool(query: EntityQuery): EntityPool {
+    public registerPool(query: EntityQuery): EntityPool {
         const filter = this.createFilter(query);
 
         // If a pool with the same filter already exist we use that one
@@ -153,7 +153,7 @@ export class EntityManager {
      * Synchronizes entity pools with composition updates. Should be called once on
      * each frame.
      */
-    synchronize(): void {
+    public synchronize(): void {
         const entities = this.componentManager.updated;
 
         if (! entities.length) {

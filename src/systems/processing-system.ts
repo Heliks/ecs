@@ -18,7 +18,7 @@ export abstract class ProcessingSystem extends BaseSystem {
     protected abstract process(entity: Entity, deltaTime: number): void;
 
     /** {@inheritDoc BaseSystem.boot()} */
-    boot(entityMgr: EntityManager): void {
+    public boot(entityMgr: EntityManager): void {
         // Register pool with the entity query that was applied to this system type
         // via the @query decorator (or one of its variants)
         this.entityPool = entityMgr.registerPool(

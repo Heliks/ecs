@@ -16,7 +16,7 @@ export class Filter {
      *
      * @param compositionId
      */
-    check(compositionId: Bitset): boolean {
+    public check(compositionId: Bitset): boolean {
         return this.inclusions.and(compositionId).equals(this.inclusions)
             && this.exclusions.and(compositionId).isEmpty();
     }
@@ -26,7 +26,7 @@ export class Filter {
      *
      * @param filter
      */
-    equals(filter: Filter): boolean {
+    public equals(filter: Filter): boolean {
         return this.inclusions.equals(filter.inclusions)
             && this.exclusions.equals(filter.exclusions);
     }

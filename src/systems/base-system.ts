@@ -5,7 +5,7 @@ export abstract class BaseSystem {
     /** If set to ``false`` the system won't execute ``run()`` during the update phase. */
     protected _enabled = true;
 
-    get enabled(): boolean {
+    public get enabled(): boolean {
         return this._enabled;
     }
 
@@ -14,7 +14,7 @@ export abstract class BaseSystem {
      *
      * @param entityManager The entity manager.
      */
-    abstract boot(entityManager: EntityManager): void;
+    public abstract boot(entityManager: EntityManager): void;
 
     /**
      * Executes the systems logic.
@@ -28,7 +28,7 @@ export abstract class BaseSystem {
      *
      * @returns this
      */
-    enable(): this {
+    public enable(): this {
         this._enabled = true;
 
         return this;
@@ -39,7 +39,7 @@ export abstract class BaseSystem {
      *
      * @returns this
      */
-    disable(): this {
+    public disable(): this {
         this._enabled = false;
 
         return this;
@@ -50,7 +50,7 @@ export abstract class BaseSystem {
      *
      * @param deltaTime Delta time.
      */
-    update(deltaTime: number): void {
+    public update(deltaTime: number): void {
         if (this._enabled) {
             this.run(deltaTime);
         }

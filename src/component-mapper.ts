@@ -6,7 +6,7 @@ export class ComponentMapper<T> {
      * Contains all instances of the mapped component, mapped to the entity to
      * which the component belongs
      */
-    readonly components = new Map<Entity, T>();
+    public readonly components = new Map<Entity, T>();
 
     /**
      * @param component The type of component that for which this mapper is responsible
@@ -24,7 +24,7 @@ export class ComponentMapper<T> {
      * @param data (optional) Data that should be set on the newly created instance.
      * @returns Instance of the component that we just created
      */
-    create(entity: Entity, data: Partial<T> = {}): T {
+    public create(entity: Entity, data: Partial<T> = {}): T {
         // eslint-disable-next-line new-cap
         const component = new this.component();
 
@@ -43,7 +43,7 @@ export class ComponentMapper<T> {
      * @param data (optional) Data that should be set on the newly created instance.
      * @returns this
      */
-    add(entity: Entity, data: Partial<T> = {}): this {
+    public add(entity: Entity, data: Partial<T> = {}): this {
         this.create(entity, data);
 
         return this;
@@ -55,7 +55,7 @@ export class ComponentMapper<T> {
      * @param entity Entity to which the component belongs
      * @returns Instance of the component that belongs to the given entity
      */
-    get(entity: Entity): T {
+    public get(entity: Entity): T {
         const instance = this.components.get(entity);
 
         if (! instance) {
@@ -73,7 +73,7 @@ export class ComponentMapper<T> {
      * @param entity An Entity
      * @returns this
      */
-    remove(entity: Entity): this {
+    public remove(entity: Entity): this {
         this.components.delete(entity);
 
         return this;
@@ -85,7 +85,7 @@ export class ComponentMapper<T> {
      * @param entity An Entity
      * @returns Boolean indicating if the entity has a component or not
      */
-    has(entity: Entity): boolean {
+    public has(entity: Entity): boolean {
         return this.components.has(entity);
     }
 

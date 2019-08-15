@@ -8,7 +8,7 @@ export class ComponentManager {
      * An array that contains all entities that were recently updated. Is cleared every
      * time {@link ComponentManager.clear()} is called.
      */
-    readonly updated: Entity[] = [];
+    public readonly updated: Entity[] = [];
 
     /** Composition Ids for every entity known to the manager */
     protected compositionIds = new Map<Entity, Bitset>();
@@ -26,7 +26,7 @@ export class ComponentManager {
      * @param type The type of component to register.
      * @returns The component mapper that was created for the component type.
      */
-    register<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
+    public register<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
         const mapper = new ComponentMapper(type, this.nextMapperId++);
 
         this.mappers.set(type, mapper);
@@ -41,7 +41,7 @@ export class ComponentManager {
      * @param type A component type.
      * @return Mapper for the given component type.
      */
-    mapper<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
+    public mapper<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
         let mapper = this.mappers.get(type);
 
         return mapper ? mapper : this.register(type);
@@ -52,7 +52,7 @@ export class ComponentManager {
      *
      * @param types
      */
-    createCompositionId(types: ComponentType[]): Bitset {
+    public createCompositionId(types: ComponentType[]): Bitset {
         const compositionId = new _BITSET();
 
         for (const type of types) {
@@ -68,7 +68,7 @@ export class ComponentManager {
      * @param entity The entity of which we want to know the composition
      * @returns A bitset representing the component composition of the given entity
      */
-    getCompositionId(entity: Entity): Bitset {
+    public getCompositionId(entity: Entity): Bitset {
         let bitset = this.compositionIds.get(entity);
 
         if (bitset) {
@@ -105,7 +105,7 @@ export class ComponentManager {
      * @param entity
      * @param compositionId
      */
-    matchesEntityComposition(entity: Entity, compositionId: Bitset): boolean {
+    public matchesEntityComposition(entity: Entity, compositionId: Bitset): boolean {
         return this.getCompositionId(entity).and(compositionId).equals(compositionId);
     }
 
@@ -117,7 +117,7 @@ export class ComponentManager {
      * @param data (optional) Data to assign to the component.
      * @returns this
      */
-    add<T extends object>(entity: Entity, type: ComponentType<T>, data: Partial<T> = {}): this {
+    public add<T extends object>(entity: Entity, type: ComponentType<T>, data: Partial<T> = {}): this {
         return this.addComposition(entity, this.mapper(type).add(entity, data).id);
     }
 
@@ -128,7 +128,7 @@ export class ComponentManager {
      * @param types An array of component types.
      * @returns this.
      */
-    addMany(entity: Entity, types: ComponentType[]): this {
+    public addMany(entity: Entity, types: ComponentType[]): this {
         if (! types.length) {
             return this;
         }
@@ -156,7 +156,7 @@ export class ComponentManager {
      * @returns this
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    addInstance(entity: Entity, instance: InstanceType<any>): this {
+    public addInstance(entity: Entity, instance: InstanceType<any>): this {
         return this.add(entity, instance.constructor);
     }
 
@@ -167,7 +167,7 @@ export class ComponentManager {
      * @param type A component type.
      * @returns True if the entity has an instance of the given component type-
      */
-    has(entity: Entity, type: ComponentType): boolean {
+    public has(entity: Entity, type: ComponentType): boolean {
         return this.mapper(type).has(entity);
     }
 
@@ -178,7 +178,7 @@ export class ComponentManager {
      * @param type A component type.
      * @returns The component instance that belongs to the entity.
      */
-    get<T extends object>(entity: Entity, type: ComponentType<T>): T {
+    public get<T extends object>(entity: Entity, type: ComponentType<T>): T {
         return this.mapper(type).get(entity);
     }
 
@@ -189,7 +189,7 @@ export class ComponentManager {
      * @param type The type of component to remove from the entity.
      * @returns this
      */
-    remove(entity: Entity, type: ComponentType): this {
+    public remove(entity: Entity, type: ComponentType): this {
         const mapper = this.mapper(type);
 
         mapper.remove(entity);
@@ -209,7 +209,7 @@ export class ComponentManager {
      * @param entity The entity from which all components will be removed.
      * @returns this
      */
-    removeAll(entity: Entity): this {
+    public removeAll(entity: Entity): this {
         this.getCompositionId(entity).clear();
 
         for (const mapper of this.mappers.values()) {
@@ -222,7 +222,7 @@ export class ComponentManager {
     }
 
     /** Clears the manager. */
-    clear(): void {
+    public clear(): void {
         this.updated.length = 0;
     }
 

@@ -16,7 +16,7 @@ export abstract class ComponentSystem<T extends object> extends BaseSystem {
      *
      * @returns A component type.
      */
-    abstract getComponentType(): ComponentType<T>;
+    public abstract getComponentType(): ComponentType<T>;
 
     /**
      * Called for each registered instance of the component type over which this
@@ -28,14 +28,14 @@ export abstract class ComponentSystem<T extends object> extends BaseSystem {
     protected abstract process(component: T, deltaTime: number): void;
 
     /** {@inheritDoc BaseSystem.boot()} */
-    boot(entityManager: EntityManager): void {
+    public boot(entityManager: EntityManager): void {
         this.componentMapper = entityManager
             .componentManager
             .mapper(this.getComponentType());
     }
 
     /** {@inheritDoc BaseSystem.run()} */
-    run(deltaTime: number): void {
+    public run(deltaTime: number): void {
         if (this.componentMapper) {
             for (const instance of this.componentMapper.components.values()) {
                 this.process(instance, deltaTime);

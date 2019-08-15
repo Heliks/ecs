@@ -8,10 +8,10 @@ import { ComponentMapper } from './component-mapper';
 export class World {
 
     /** {@see EntityManager} */
-    readonly entityManager = new EntityManager();
+    public readonly entityManager = new EntityManager();
 
     /** {@see ComponentManager} */
-    readonly componentManager: ComponentManager;
+    public readonly componentManager: ComponentManager;
 
     /** Contains all systems that belong to this world. */
     protected systems: BaseSystem[] = [];
@@ -27,7 +27,7 @@ export class World {
      * @param system A system.
      * @returns this
      */
-    addSystem<T extends BaseSystem>(system: T): this {
+    public addSystem<T extends BaseSystem>(system: T): this {
         // Handle injections of component mappers.
         const injections = getComponentMapperMetadata(system);
 
@@ -54,7 +54,7 @@ export class World {
      * @param type A system constructor type.
      * @returns A system
      */
-    getSystemFromType<T extends BaseSystem>(type: ClassType<T>): T {
+    public getSystemFromType<T extends BaseSystem>(type: ClassType<T>): T {
         const instance = this.systems.find(item => item.constructor === type);
 
         if (! instance) {
@@ -69,7 +69,7 @@ export class World {
      *
      * @param deltaTime Delta time.
      */
-    update(deltaTime = 0): void {
+    public update(deltaTime = 0): void {
         this.entityManager.synchronize();
 
         for (const system of this.systems) {
@@ -78,12 +78,12 @@ export class World {
     }
 
     /** {@link EntityManager.create()} */
-    create(components: ComponentType[] = []): Entity {
+    public create(components: ComponentType[] = []): Entity {
         return this.entityManager.create(components);
     }
 
     /** {@link ComponentManager.addComponent()} */
-    addComponent<T extends object>(
+    public addComponent<T extends object>(
         entity: Entity,
         type: ComponentType<T>,
         data: Partial<T> = {}
@@ -94,19 +94,19 @@ export class World {
     }
 
     /** {@link ComponentManager.addMany()} */
-    addComponents(entity: Entity, types: ComponentType[]): this {
+    public addComponents(entity: Entity, types: ComponentType[]): this {
         this.componentManager.addMany(entity, types);
 
         return this;
     }
 
     /** {@link ComponentManager.mapper()} */
-    getMapper<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
+    public getMapper<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
         return this.componentManager.mapper(type);
     }
 
     /** Clears all data */
-    clear(): void {
+    public clear(): void {
         this.entityManager.clear();
     }
 

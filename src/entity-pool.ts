@@ -6,10 +6,10 @@ import { Filter } from './filter';
 export class EntityPool extends EventEmitter {
 
     /** Contains references of entity symbols that satisfy this pools requirements */
-    readonly entities: Entity[] = [];
+    public readonly entities: Entity[] = [];
 
     /** Total amount of entities */
-    get size(): number {
+    public get size(): number {
         return this.entities.length;
     }
 
@@ -25,7 +25,7 @@ export class EntityPool extends EventEmitter {
      *
      * @param compositionId
      */
-    check(compositionId: Bitset): boolean {
+    public check(compositionId: Bitset): boolean {
         return this.filter.check(compositionId);
     }
 
@@ -35,7 +35,7 @@ export class EntityPool extends EventEmitter {
      * @param entity Entity that will be added
      * @returns this
      */
-    add(entity: Entity): this {
+    public add(entity: Entity): this {
         this.entities.push(entity);
 
         this.emit('add', entity);
@@ -49,7 +49,7 @@ export class EntityPool extends EventEmitter {
      * @param entity Entity that must be contained
      * @returns True if the entity exists. False otherwise.
      */
-    has(entity: Entity): boolean {
+    public has(entity: Entity): boolean {
         return this.index(entity) > -1;
     }
 
@@ -59,7 +59,7 @@ export class EntityPool extends EventEmitter {
      * @param entity Entity that should be removed
      * @returns this
      */
-    remove(entity: Entity): this {
+    public remove(entity: Entity): this {
         this.entities.splice(this.index(entity), 1);
 
         this.emit('remove', entity);
@@ -68,7 +68,7 @@ export class EntityPool extends EventEmitter {
     }
 
     /** Removes all entities from this pool */
-    clear(): this {
+    public clear(): this {
         this.entities.length = 0;
 
         this.emit('clear');
@@ -82,7 +82,7 @@ export class EntityPool extends EventEmitter {
      *
      * @param entity
      */
-    index(entity: Entity): number {
+    public index(entity: Entity): number {
         return this.entities.indexOf(entity);
     }
 
