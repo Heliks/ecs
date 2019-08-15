@@ -63,7 +63,7 @@ export interface ComponentMapper<T> {
  * An object that contains component mapper injection information. This is
  * consumed when a system is added to the world.
  */
-export interface ComponentMapperInjections<T = object> {
-    key: keyof ComponentType<T>;
-    type: ComponentType<T>;
+export interface ComponentMapperInjections {
+    key: string | symbol;
+    type: ComponentType;
 }

@@ -1,8 +1,8 @@
 import ComponentManager from './component-manager';
-import { COMPONENT_MAPPER_INJECTION_METADATA } from './const';
 import EntityManager from './entity-manager';
-import BaseSystem from './systems/base-system';
-import { ClassType, ComponentMapper, ComponentMapperInjections, ComponentType, Entity } from './types';
+import BaseSystem from './base-system';
+import { ClassType, ComponentMapper, ComponentType, Entity } from './types';
+import { getComponentMapperMetadata } from "./utils";
 
 export default class World {
 
@@ -27,10 +27,7 @@ export default class World {
      */
     addSystem<T extends BaseSystem>(system: T): this {
         // Handle injections of component mappers.
-        const injections: ComponentMapperInjections[] = Reflect.getMetadata(
-            COMPONENT_MAPPER_INJECTION_METADATA,
-            system
-        );
+        const injections = getComponentMapperMetadata(system);
 
         if (injections) {
             // Todo: should avoid the "any" hack if possible.
@@ -50,8 +47,7 @@ export default class World {
     }
 
     /**
-     * Returns a system that was added to the world that matches the given
-     * constructor type.
+     * Returns a system that matches the given class type.
      *
      * @param type A system constructor type.
      * @returns A system
@@ -71,7 +67,7 @@ export default class World {
      *
      * @param deltaTime Delta time.
      */
-    update(deltaTime: number = 0): void {
+    update(deltaTime = 0): void {
         this.entityManager.synchronize();
 
         for (const system of this.systems) {

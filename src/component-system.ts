@@ -1,6 +1,6 @@
-import ComponentMapper from '../component-mapper';
-import EntityManager from '../entity-manager';
-import { ComponentType } from '../types';
+import ComponentMapper from './component-mapper';
+import EntityManager from './entity-manager';
+import { ComponentType } from './types';
 import BaseSystem from './base-system';
 
 export default abstract class ComponentSystem<T extends object> extends BaseSystem {

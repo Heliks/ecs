@@ -1,6 +1,6 @@
-import { createEntityManager, TestComp1 } from '../../__test__/shared';
-import ComponentMapper from '../../component-mapper';
-import EntityManager from '../../entity-manager';
+import { createEntityManager, TestComp1 } from './shared';
+import ComponentMapper from '../component-mapper';
+import EntityManager from '../entity-manager';
 import ComponentSystem from '../component-system';
 
 class TestSystem extends ComponentSystem<TestComp1> {

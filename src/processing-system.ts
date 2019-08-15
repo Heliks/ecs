@@ -1,11 +1,12 @@
-import EntityManager from '../entity-manager';
-import EntityPool from '../entity-pool';
-import { Entity, EntityQuery } from '../types';
+import EntityManager from './entity-manager';
+import EntityPool from './entity-pool';
+import { Entity } from './types';
 import BaseSystem from './base-system';
+import { getEntityQueryMetadata } from "./utils";
 
 export default abstract class ProcessingSystem extends BaseSystem {
 
-    /** Pooled entities narrowed by {@link ProcessingSystem.getQuery()} */
+    /** The pool of entities over which this system iterates. */
     protected entityPool!: EntityPool;
 
     /**
@@ -16,16 +17,13 @@ export default abstract class ProcessingSystem extends BaseSystem {
      */
     protected abstract process(entity: Entity, deltaTime: number): void;
 
-    /**
-     * Returns the entity query that is used to pool entities.
-     *
-     * @returns An entity query.
-     */
-    protected abstract getQuery(): EntityQuery;
-
     /** {@inheritDoc BaseSystem.boot()} */
-    boot(entityManager: EntityManager): void {
-        this.entityPool = entityManager.registerPool(this.getQuery());
+    boot(entityMgr: EntityManager): void {
+        // Register pool with the entity query that was applied to this system type
+        // via the @query decorator (or one of its variants)
+        this.entityPool = entityMgr.registerPool(
+            getEntityQueryMetadata(this.constructor)
+        );
     }
 
     /** {@inheritDoc BaseSystem.run()} */

@@ -1,12 +1,12 @@
 import ComponentMapper from '../component-mapper';
-import { injectMapper } from '../decorators';
-import BaseSystem from '../systems/base-system';
+import { mapper } from '../decorators';
+import BaseSystem from '../base-system';
 import World from '../world';
 import { FooBar } from './shared';
 
 class FooSystem extends BaseSystem {
 
-    @injectMapper(FooBar)
+    @mapper(FooBar)
     public fooMapper!: ComponentMapper<FooBar>;
 
     // Mock boot
@@ -39,7 +39,9 @@ describe('World', () => {
     it('should inject component mappers when a system is added.', () => {
         const entity = world.create();
 
+        // Verify existence.
         expect(system.fooMapper).toBeInstanceOf(ComponentMapper);
+        // Verify component type.
         expect(system.fooMapper.create(entity)).toBeInstanceOf(FooBar);
     });
 });

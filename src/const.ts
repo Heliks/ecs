@@ -1,1 +1,0 @@
-export const COMPONENT_MAPPER_INJECTION_METADATA = Symbol();
