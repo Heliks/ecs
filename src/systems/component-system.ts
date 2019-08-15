@@ -1,9 +1,9 @@
-import ComponentMapper from './component-mapper';
-import EntityManager from './entity-manager';
-import { ComponentType } from './types';
-import BaseSystem from './base-system';
+import { BaseSystem } from './base-system';
+import { ComponentType } from '../types';
+import { EntityManager } from '../entity-manager';
+import { ComponentMapper } from '../component-mapper';
 
-export default abstract class ComponentSystem<T extends object> extends BaseSystem {
+export abstract class ComponentSystem<T extends object> extends BaseSystem {
 
     /**
      * The component mapper for this systems component type. Is set after the

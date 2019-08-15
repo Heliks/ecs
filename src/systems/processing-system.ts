@@ -1,10 +1,10 @@
-import EntityManager from './entity-manager';
-import EntityPool from './entity-pool';
-import { Entity } from './types';
-import BaseSystem from './base-system';
-import { getEntityQueryMetadata } from "./utils";
+import { Entity } from '../types';
+import { getEntityQueryMetadata } from '../utils';
+import { BaseSystem } from './base-system';
+import { EntityPool } from '../entity-pool';
+import { EntityManager } from '../entity-manager';
 
-export default abstract class ProcessingSystem extends BaseSystem {
+export abstract class ProcessingSystem extends BaseSystem {
 
     /** The pool of entities over which this system iterates. */
     protected entityPool!: EntityPool;

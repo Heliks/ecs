@@ -1,6 +1,6 @@
-import { ComponentMapper as ComponentMapperInterface, ComponentType, Entity } from './types';
+import { ComponentType, Entity } from './types';
 
-export default class ComponentMapper<T> implements ComponentMapperInterface<T> {
+export class ComponentMapper<T> {
 
     /**
      * Contains all instances of the mapped component, mapped to the entity to
@@ -17,7 +17,13 @@ export default class ComponentMapper<T> implements ComponentMapperInterface<T> {
         public readonly id = -1
     ) {}
 
-    /** {@inheritDoc ComponentMapperInterface.create()} */
+    /**
+     * Creates a new instance of the mapped component type and assigns it to an entity.
+     *
+     * @param entity An Entity
+     * @param data (optional) Data that should be set on the newly created instance.
+     * @returns Instance of the component that we just created
+     */
     create(entity: Entity, data: Partial<T> = {}): T {
         // eslint-disable-next-line new-cap
         const component = new this.component();
@@ -29,14 +35,26 @@ export default class ComponentMapper<T> implements ComponentMapperInterface<T> {
         return component;
     }
 
-    /** {@inheritDoc ComponentMapperInterface.add()} */
+    /**
+     * Calls {@link create()} internally, but returns the class context instead
+     * of the created component.
+     *
+     * @param entity An entity
+     * @param data (optional) Data that should be set on the newly created instance.
+     * @returns this
+     */
     add(entity: Entity, data: Partial<T> = {}): this {
         this.create(entity, data);
 
         return this;
     }
 
-    /** {@inheritDoc ComponentMapperInterface.get()} */
+    /**
+     * Returns the instance of the mapped component for an entity.
+     *
+     * @param entity Entity to which the component belongs
+     * @returns Instance of the component that belongs to the given entity
+     */
     get(entity: Entity): T {
         const instance = this.components.get(entity);
 
@@ -49,14 +67,24 @@ export default class ComponentMapper<T> implements ComponentMapperInterface<T> {
         return instance;
     }
 
-    /** {@inheritDoc ComponentMapperInterface.remove()} */
+    /**
+     * Removes the component instance of an entity.
+     *
+     * @param entity An Entity
+     * @returns this
+     */
     remove(entity: Entity): this {
         this.components.delete(entity);
 
         return this;
     }
 
-    /** {@inheritDoc ComponentMapperInterface.has()} */
+    /**
+     * Returns ``true`` if a component instance exists for an entity.
+     *
+     * @param entity An Entity
+     * @returns Boolean indicating if the entity has a component or not
+     */
     has(entity: Entity): boolean {
         return this.components.has(entity);
     }

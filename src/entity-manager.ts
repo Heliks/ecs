@@ -1,9 +1,9 @@
-import ComponentManager from './component-manager';
-import EntityPool from './entity-pool';
-import Filter from './filter';
 import { ComponentType, Entity, EntityQuery } from './types';
+import { ComponentManager } from './component-manager';
+import { EntityPool } from './entity-pool';
+import { Filter } from './filter';
 
-export default class EntityManager {
+export class EntityManager {
 
     /** {@link ComponentManager} */
     readonly componentManager = new ComponentManager();

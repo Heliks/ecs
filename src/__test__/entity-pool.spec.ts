@@ -1,5 +1,5 @@
-import EntityPool from "../entity-pool";
-import { em, TestComp1, TestComp2, TestComp3 } from "./shared";
+import { em, TestComp1, TestComp2, TestComp3 } from './shared';
+import { EntityPool } from '../entity-pool';
 
 describe('EntityPool', () => {
     it('should validate if an entity is eligible to join', () => {

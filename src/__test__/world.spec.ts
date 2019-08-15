@@ -1,8 +1,8 @@
-import ComponentMapper from '../component-mapper';
 import { mapper } from '../decorators';
-import BaseSystem from '../base-system';
-import World from '../world';
 import { FooBar } from './shared';
+import { BaseSystem } from '../systems';
+import { ComponentMapper } from '../component-mapper';
+import { World } from '../world';
 
 class FooSystem extends BaseSystem {
 

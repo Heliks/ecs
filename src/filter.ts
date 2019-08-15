@@ -1,6 +1,6 @@
 import { _BITSET, Bitset } from './bitset';
 
-export default class Filter {
+export class Filter {
 
     /**
      * @param inclusions bits that must be included

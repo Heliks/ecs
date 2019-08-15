@@ -1,7 +1,6 @@
-import ComponentManager from "../component-manager";
-import ComponentMapper from "../component-mapper";
 import { Entity } from '../types';
-import { createEntity, FooBar, TestComp1, TestComp2, TestComp3, TestComp4 } from './shared';
+import { FooBar, TestComp1, TestComp2, TestComp3, TestComp4 } from './shared';
+import { ComponentManager } from '../component-manager';
 
 describe('ComponentManager', () => {
     let entity: Entity;

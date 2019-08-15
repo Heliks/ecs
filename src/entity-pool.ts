@@ -1,9 +1,9 @@
 import { EventEmitter } from 'event-emitter3';
 import { Bitset } from './bitset';
-import Filter from './filter';
 import { Entity } from './types';
+import { Filter } from './filter';
 
-export default class EntityPool extends EventEmitter {
+export class EntityPool extends EventEmitter {
 
     /** Contains references of entity symbols that satisfy this pools requirements */
     readonly entities: Entity[] = [];
@@ -78,7 +78,7 @@ export default class EntityPool extends EventEmitter {
 
     /**
      * Returns the index of an entity. For entities that are not part of this
-     * pool "-1" will be returned instead
+     * pool '-1' will be returned instead
      *
      * @param entity
      */

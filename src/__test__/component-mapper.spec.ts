@@ -1,6 +1,6 @@
-import ComponentMapper from "../component-mapper";
 import { Entity } from '../types';
 import { FooBar } from './shared';
+import { ComponentMapper } from '../component-mapper';
 
 describe('ComponentMapper', () => {
     let entity: Entity;

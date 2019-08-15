@@ -1,10 +1,11 @@
-import ComponentManager from './component-manager';
-import EntityManager from './entity-manager';
-import BaseSystem from './base-system';
-import { ClassType, ComponentMapper, ComponentType, Entity } from './types';
-import { getComponentMapperMetadata } from "./utils";
+import { EntityManager } from './entity-manager';
+import { ComponentManager } from './component-manager';
+import { BaseSystem } from './systems';
+import { getComponentMapperMetadata } from './utils';
+import { ClassType, ComponentType, Entity } from './types';
+import { ComponentMapper } from './component-mapper';
 
-export default class World {
+export class World {
 
     /** {@see EntityManager} */
     readonly entityManager = new EntityManager();
@@ -15,6 +16,7 @@ export default class World {
     /** Contains all systems that belong to this world. */
     protected systems: BaseSystem[] = [];
 
+    /** */
     constructor() {
         this.componentManager = this.entityManager.componentManager;
     }
@@ -30,7 +32,7 @@ export default class World {
         const injections = getComponentMapperMetadata(system);
 
         if (injections) {
-            // Todo: should avoid the "any" hack if possible.
+            // Todo: should avoid the 'any' hack if possible.
             // eslint-disable-next-line @typescript-eslint/no-explicit-any
             const target = system as any;
 
@@ -56,7 +58,7 @@ export default class World {
         const instance = this.systems.find(item => item.constructor === type);
 
         if (! instance) {
-            throw new Error(`Cannot find system "${type.constructor.name}"`);
+            throw new Error(`Cannot find system '${type.constructor.name}'`);
         }
 
         return instance as T;

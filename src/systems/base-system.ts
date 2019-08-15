@@ -1,6 +1,6 @@
-import EntityManager from './entity-manager';
+import { EntityManager } from '../entity-manager';
 
-export default abstract class BaseSystem {
+export abstract class BaseSystem {
 
     /** If set to ``false`` the system won't execute ``run()`` during the update phase. */
     protected _enabled = true;

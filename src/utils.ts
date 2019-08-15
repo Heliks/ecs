@@ -1,7 +1,12 @@
-import { ComponentMapperInjections, EntityQuery } from "./types";
+import { ComponentType, EntityQuery } from './types';
 
 export const COMPONENT_MAPPER_METADATA_KEY = Symbol();
 export const ENTITY_QUERY_METADATA_KEY = Symbol();
+
+export interface ComponentMapperInjections {
+    key: string | symbol;
+    type: ComponentType;
+}
 
 export function getEntityQueryMetadata(target: object): EntityQuery {
     return Reflect.getMetadata(ENTITY_QUERY_METADATA_KEY, target) || {};

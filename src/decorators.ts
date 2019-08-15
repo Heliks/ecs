@@ -4,7 +4,7 @@ import {
     getEntityQueryMetadata,
     setComponentMapperMetadata,
     setEntityQueryMetadata
-} from "./utils";
+} from './utils';
 
 /**
  * Decorator to inject a component mapper into a class property.
@@ -79,6 +79,3 @@ export function excludes(...components: ComponentType[]): ClassDecorator {
         setEntityQueryMetadata(target, meta);
     };
 }
-
-
-

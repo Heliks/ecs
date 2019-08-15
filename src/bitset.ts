@@ -22,6 +22,6 @@ export interface Bitset {
     set(index: number): Bitset;
 }
 
-// We prefix this so it's obvious in the code that this is not the "right" way forward
+// We prefix this so it's obvious in the code that this is not the 'right' way forward
 // eslint-disable-next-line no-underscore-dangle
 export const _BITSET = bitsetConstructor as unknown as Bitset;

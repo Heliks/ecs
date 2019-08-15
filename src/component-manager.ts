@@ -1,8 +1,8 @@
 import { _BITSET, Bitset } from './bitset';
-import ComponentMapper from './component-mapper';
 import { ComponentType, Entity } from './types';
+import { ComponentMapper } from './component-mapper';
 
-export default class ComponentManager {
+export class ComponentManager {
 
     /**
      * An array that contains all entities that were recently updated. Is cleared every

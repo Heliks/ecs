@@ -1,9 +1,9 @@
-import { createEntityManager, TestComp1 } from './shared';
-import EntityManager from '../entity-manager';
-import EntityPool from '../entity-pool';
-import { Entity, EntityQuery } from '../types';
-import { contains } from "../decorators";
-import ProcessingSystem from "../processing-system";
+import { contains } from '../../decorators';
+import { createEntityManager, TestComp1 } from '../../__test__/shared';
+import { ProcessingSystem } from '../processing-system';
+import { EntityPool } from '../../entity-pool';
+import { Entity } from '../../types';
+import { EntityManager } from '../../entity-manager';
 
 @contains(TestComp1)
 class TestSystem extends ProcessingSystem {

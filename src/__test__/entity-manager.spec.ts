@@ -1,5 +1,5 @@
-import EntityManager from '../entity-manager';
-import { TestComp1, TestComp2 } from "./shared";
+import { TestComp1, TestComp2 } from './shared';
+import { EntityManager } from '../entity-manager';
 
 describe('EntityManager', () => {
     let manager: EntityManager;

@@ -1,7 +1,5 @@
 import 'reflect-metadata';
-
-import EntityManager from "../entity-manager";
-import { Entity } from '../types';
+import { EntityManager } from '../entity-manager';
 
 export class TestComp1 { a?: number; }
 export class TestComp2 { b?: number; }
@@ -14,10 +12,6 @@ export class FooBar {
 }
 
 export const em = new EntityManager();
-
-export function createEntity(): Entity {
-    return em.create();
-}
 
 export function createEntityManager(): EntityManager {
     const entityManager = new EntityManager();

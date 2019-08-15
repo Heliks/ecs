@@ -1,6 +1,6 @@
-import ComponentManager from "../component-manager";
-import Filter from "../filter";
-import { TestComp1, TestComp2, TestComp3 } from "./shared";
+import { TestComp1, TestComp2, TestComp3 } from './shared';
+import { ComponentManager } from '../component-manager';
+import { Filter } from '../filter';
 
 describe('Filter', () => {
     const cm = new ComponentManager();
