@@ -7,7 +7,7 @@
   "author": "Felix Wolf",
   "license": "ISC",
   "scripts": {
-    "build": "npm run lint & tsc",
+    "build": "tsc",
     "lint": "eslint 'src/**' --config .eslintrc.json",
     "postinstall": "npm run build",
     "test": "jest --config jest.config.json",
