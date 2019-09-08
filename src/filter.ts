@@ -3,8 +3,8 @@ import { _BITSET, Bitset } from './bitset';
 export class Filter {
 
     /**
-     * @param inclusions bits that must be included
-     * @param exclusions not allowed bits
+     * @param inclusions Bits that must be included to satisfy this filter.
+     * @param exclusions If any of these bits is present the filter will not be satisfied.
      */
     constructor(
         readonly inclusions = new _BITSET(),
@@ -12,19 +12,21 @@ export class Filter {
     ) {}
 
     /**
-     * Returns ``true`` if the getCompositionId satisfies this filter
+     * Returns true if the given composition id satisfies this filter.
      *
-     * @param compositionId
+     * @param compositionId The composition id that should be checked.
+     * @returns True if the given composition id satisfies this filter.
      */
-    public check(compositionId: Bitset): boolean {
+    public test(compositionId: Bitset): boolean {
         return this.inclusions.and(compositionId).equals(this.inclusions)
             && this.exclusions.and(compositionId).isEmpty();
     }
 
     /**
-     * Returns ``true`` if a filter is equal to this one
+     * Returns true if the given filter is equal to this one.
      *
-     * @param filter
+     * @param filter A filter
+     * @returns True if the given filter is equal to this one.
      */
     public equals(filter: Filter): boolean {
         return this.inclusions.equals(filter.inclusions)

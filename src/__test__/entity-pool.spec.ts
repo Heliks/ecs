@@ -1,46 +1,63 @@
-import { em, TestComp1, TestComp2, TestComp3 } from './shared';
+import { BarCmp, FooCmp } from './shared';
 import { EntityPool } from '../entity-pool';
+import { World } from '../world';
 
 describe('EntityPool', () => {
-    it('should validate if an entity is eligible to join', () => {
-        const pool = new EntityPool(em.createFilter({
-            contains: [ TestComp3 ],
-            excludes: [ TestComp2 ]
-        }));
+    class WorldMock extends World {
 
-        const entity1 = em.create();
-        const entity2 = em.create();
+        /**
+         * Returns true if the given entity is allowed to join the given pool
+         *
+         * @param pool An entity pool.
+         * @param entity An entity.
+         * @returns True if entity can join pool.
+         */
+        public testPool(pool: EntityPool, entity: symbol): boolean {
+            return pool.test(this.compositionId(entity));
+        }
 
-        em.componentManager.add(entity1, TestComp1);
-        em.componentManager.add(entity1, TestComp3);
+    }
 
-        em.componentManager.add(entity2, TestComp2);
-        em.componentManager.add(entity2, TestComp3);
+    let world: WorldMock;
 
-        expect(pool.check(em.componentManager.getCompositionId(entity1))).toBeTruthy();
-        expect(pool.check(em.componentManager.getCompositionId(entity2))).toBeFalsy();
+    beforeEach(() => {
+        world = new WorldMock();
     });
 
-    describe('events', () => {
+    it('should validate if an entity is eligible to join', () => {
+        const pool = world.pool({
+            contains: [FooCmp],
+            excludes: [BarCmp]
+        });
+
+        const entity1 = world.spawn();
+        const entity2 = world.spawn();
+
+        world.add(entity1, FooCmp);
+        world.add(entity2, FooCmp).add(entity2, BarCmp);
+
+        expect(world.testPool(pool, entity1)).toBeTruthy();
+        expect(world.testPool(pool, entity2)).toBeFalsy();
+    });
+
+    describe('event', () => {
         let emit: jest.SpyInstance;
+        let entity: symbol;
         let pool: EntityPool;
 
         beforeEach(() => {
-            pool = new EntityPool(em.createFilter());
+            pool = world.pool();
+            entity = world.spawn();
             emit = jest.spyOn(pool, 'emit');
         });
 
         it('should emit "add" when an entity is added', () => {
-            const entity = em.create();
-
             pool.add(entity);
 
             expect(emit).toHaveBeenCalledWith('add', entity);
         });
 
         it('should emit "remove" when an entity is removed', () => {
-            const entity = em.create();
-
             pool.add(entity).remove(entity);
 
             expect(emit).toHaveBeenCalledWith('remove', entity);

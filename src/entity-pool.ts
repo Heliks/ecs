@@ -25,8 +25,8 @@ export class EntityPool extends EventEmitter {
      *
      * @param compositionId
      */
-    public check(compositionId: Bitset): boolean {
-        return this.filter.check(compositionId);
+    public test(compositionId: Bitset): boolean {
+        return this.filter.test(compositionId);
     }
 
     /**

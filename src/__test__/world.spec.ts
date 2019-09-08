@@ -1,47 +1,130 @@
-import { mapper } from '../decorators';
-import { FooBar } from './shared';
-import { BaseSystem } from '../systems';
-import { ComponentMapper } from '../component-mapper';
+import { EntityPool } from '../entity-pool';
 import { World } from '../world';
-
-class FooSystem extends BaseSystem {
-
-    @mapper(FooBar)
-    public fooMapper!: ComponentMapper<FooBar>;
-
-    // Mock boot
-    boot = jest.fn();
-
-    // Mock run
-    run = jest.fn();
-
-}
+import { BarCmp, FooCmp } from './shared';
 
 describe('World', () => {
-    let system: FooSystem;
-    let world: World;
+    class WorldMock extends World {
+
+        /** Returns true if the composition Id of the given entity is empty. */
+        public isCompositionEmpty(entity: symbol): boolean {
+            return this.compositionId(entity).isEmpty();
+        }
+
+    }
+
+    let world: WorldMock;
 
     beforeEach(() => {
-        system = new FooSystem();
-        world = new World().addSystem(system);
+        world = new WorldMock();
     });
 
-    it('should boot systems', () => {
-        expect(system.boot).toHaveBeenCalledTimes(1);
+    it('should spawn an entity', () => {
+        world.spawn();
+
+        expect(world.getEntities()).toHaveLength(1);
     });
 
-    it('should update systems', () => {
-        world.update(0);
+    describe('despawn()', () => {
+        let entity1: symbol;
+        let entity2: symbol;
 
-        expect(system.run).toHaveBeenCalledWith(0);
+        beforeEach(() => {
+            entity1 = world.spawn();
+            entity2 = world.spawn();
+        });
+
+        it('should de-spawn an entity', () => {
+            const entities = world
+                .despawn(entity2)
+                .getEntities();
+
+            expect(entities).toContain(entity1);
+            expect(entities).not.toContain(entity2);
+        });
+
+        it('should reset composition ids', () => {
+            // Add a component and de-spawn the entity
+            world.add(entity1, FooCmp).despawn(entity1);
+
+            expect(world.isCompositionEmpty(entity1)).toBeTruthy();
+        });
+
+        it('should remove de-spawned entities from pools', () => {
+            const pool = world.pool({
+                contains: [FooCmp]
+            });
+
+            // Compose & add entities
+            world
+                .add(entity1, FooCmp)
+                .add(entity2, FooCmp)
+                .synchronize();
+
+            // Des-pawn entity2 again.
+            world.despawn(entity2).synchronize();
+
+            // Tests against false-positives where synchronization failed and the entities
+            // where never added to the pools in the first place.
+            expect(pool.has(entity1)).toBeTruthy();
+            // Entity should be removed.
+            expect(pool.has(entity2)).toBeFalsy();
+        });
     });
 
-    it('should inject component mappers when a system is added.', () => {
-        const entity = world.create();
+    it('should add a component to an entity', () => {
+        const entity = world.spawn();
 
-        // Verify existence.
-        expect(system.fooMapper).toBeInstanceOf(ComponentMapper);
-        // Verify component type.
-        expect(system.fooMapper.create(entity)).toBeInstanceOf(FooBar);
+        const success = world
+            .add(entity, FooCmp)
+            .has(entity, FooCmp);
+
+        expect(success).toBeTruthy();
+    });
+
+    it('should remove a component from an entity', () => {
+        const entity = world.spawn();
+
+        world
+            .add(entity, FooCmp)
+            .add(entity, BarCmp)
+            .remove(entity, FooCmp);
+
+        expect(world.has(entity, FooCmp)).toBeFalsy();
+        expect(world.has(entity, BarCmp)).toBeTruthy();
+    });
+
+    describe('synchronize()', () => {
+        let entity: symbol;
+        let pool: EntityPool;
+
+        beforeEach(() => {
+            entity = world.spawn();
+
+            pool = world.pool({
+                contains: [ FooCmp, BarCmp ]
+            });
+        });
+
+        it('should add entities to eligible pools', () => {
+            world
+                .add(entity, FooCmp)
+                .add(entity, BarCmp)
+                .synchronize();
+
+            expect(pool.has(entity)).toBeTruthy();
+        });
+
+        it('should remove entities from non-eligible pools', () => {
+            // Entity should be part of the pool after first synchronize
+            world
+                .add(entity, FooCmp)
+                .add(entity, BarCmp)
+                .synchronize();
+
+            // Next synchronize should remove the entity again.
+            world.remove(entity, FooCmp).synchronize();
+
+            expect(pool.has(entity)).toBeFalsy();
+        });
     });
 });

@@ -1,6 +1,6 @@
-import { ComponentType, Entity } from './types';
+import { ClassType, Entity, ReadonlyComponentMapper } from './types';
 
-export class ComponentMapper<T> {
+export class ComponentMapper<T = unknown> implements ReadonlyComponentMapper<T> {
 
     /**
      * Contains all instances of the mapped component, mapped to the entity to
@@ -13,7 +13,7 @@ export class ComponentMapper<T> {
      * @param id The mappers Id. Will be set by the component manager to create entity compositions.
      */
     constructor(
-        public readonly component: ComponentType<T>,
+        public readonly component: ClassType<T>,
         public readonly id = -1
     ) {}
 
@@ -49,19 +49,12 @@ export class ComponentMapper<T> {
         return this;
     }
 
-    /**
-     * Returns the instance of the mapped component for an entity.
-     *
-     * @param entity Entity to which the component belongs
-     * @returns Instance of the component that belongs to the given entity
-     */
+    /** {@inheritDoc ReadonlyComponentMapper.get()} */
     public get(entity: Entity): T {
         const instance = this.components.get(entity);
 
         if (! instance) {
-            throw new Error(
-                `Entity ${entity.toString()} does not have a ${this.component.toString()} component`
-            );
+            throw new Error(`Entity ${entity.toString()} does not have a ${this.component.toString()} component`);
         }
 
         return instance;
@@ -79,12 +72,7 @@ export class ComponentMapper<T> {
         return this;
     }
 
-    /**
-     * Returns ``true`` if a component instance exists for an entity.
-     *
-     * @param entity An Entity
-     * @returns Boolean indicating if the entity has a component or not
-     */
+    /** {@inheritDoc ReadonlyComponentMapper.has()} */
     public has(entity: Entity): boolean {
         return this.components.has(entity);
     }

@@ -278,28 +278,13 @@
         "code": 120
       }
     ],
-    "max-lines": [
-      "error",
-      300
-    ],
-    "max-lines-per-function": [
-      "error",
-      50
-    ],
-    "max-nested-callbacks": [
-      "error",
-      2
-    ],
-    "max-params": [
-      "error",
-      10
-    ],
-    "max-statements-per-line": [
-      "error",
-      {
-        "max": 1
-      }
-    ],
+    "max-lines": ["error", 500],
+    "max-lines-per-function": ["error", 50],
+    "max-nested-callbacks": ["error", 2],
+    "max-params": ["error", 10],
+    "max-statements-per-line": ["error", {
+      "max": 1
+    }],
     "multiline-comment-style": [
       "error",
       "separate-lines"

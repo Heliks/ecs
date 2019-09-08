@@ -1,23 +1,26 @@
 import { Entity } from '../types';
-import { FooBar } from './shared';
 import { ComponentMapper } from '../component-mapper';
+import { FooCmp } from './shared';
+import { World } from '../world';
 
 describe('ComponentMapper', () => {
     let entity: Entity;
-    let mapper: ComponentMapper<FooBar>;
+    let mapper: ComponentMapper<FooCmp>;
 
     beforeEach(() => {
-        entity = Symbol();
-        mapper = new ComponentMapper(FooBar);
+        entity = new World().spawn();
+        mapper = new ComponentMapper(FooCmp);
     });
 
     it('should add components', () => {
+        expect(mapper.create(entity)).toBeInstanceOf(FooCmp);
+    });
+
+    it('should assign data to new components', () => {
         const component = mapper.create(entity, {
-            bar: 'foo',
             foo: 'bar'
         });
 
-        expect(component.bar).toBe('foo');
         expect(component.foo).toBe('bar');
     });
 });
