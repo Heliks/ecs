@@ -6,7 +6,7 @@ export class ComponentMapper<T = unknown> implements ReadonlyComponentMapper<T> 
      * Contains all instances of the mapped component, mapped to the entity to
      * which the component belongs
      */
-    public readonly components = new Map<Entity, T>();
+    protected readonly components = new Map<Entity, T>();
 
     /**
      * @param component The type of component that for which this mapper is responsible
@@ -33,6 +33,19 @@ export class ComponentMapper<T = unknown> implements ReadonlyComponentMapper<T> 
         this.components.set(entity, component);
 
         return component;
+    }
+
+    /**
+     * Directly adds a component instance to an entity.
+     *
+     * @param entity An entity.
+     * @param instance Component instance.
+     * @returns this.
+     */
+    public set(entity: Entity, instance: T): this {
+        this.components.set(entity, instance);
+
+        return this;
     }
 
     /**

@@ -10,6 +10,10 @@ describe('World', () => {
             return this.compositionId(entity).isEmpty();
         }
 
+        public isDirty(entity: symbol): boolean {
+            return this.dirty.indexOf(entity) > -1;
+        }
+
     }
 
     let world: WorldMock;
@@ -125,6 +129,53 @@ describe('World', () => {
             world.remove(entity, FooCmp).synchronize();
 
             expect(pool.has(entity)).toBeFalsy();
+        });
+    });
+
+    function testAddComponent(entity: symbol) {
+        it('should add a component to an entity', () => {
+            expect(world.mapper(FooCmp).has(entity)).toBeTruthy();
+        });
+
+        it('should flag the entity as dirty', () => {
+            expect(world.isDirty(entity)).toBeTruthy();
+        });
+    }
+    describe('add()', () => {
+        // Todo: Test for compositionId update.
+        let entity: symbol;
+
+        beforeEach(() => {
+            entity = world.spawn();
+            // Add component via type.
+            world.add(entity, FooCmp);
+        });
+
+        it('should add a component to an entity', () => {
+            expect(world.mapper(FooCmp).has(entity)).toBeTruthy();
+        });
+
+        it('should flag the entity as dirty', () => {
+            expect(world.isDirty(entity)).toBeTruthy();
+        });
+    });
+
+    describe('addInstance()', () => {
+        // Todo: Test for compositionId update.
+        let entity: symbol;
+
+        beforeEach(() => {
+            entity = world.spawn();
+            // Add component via type.
+            world.addInstance(entity, new FooCmp());
+        });
+
+        it('should add a component to an entity', () => {
+            expect(world.mapper(FooCmp).has(entity)).toBeTruthy();
+        });
+
+        it('should flag the entity as dirty', () => {
+            expect(world.isDirty(entity)).toBeTruthy();
         });
     });
 });

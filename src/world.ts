@@ -301,9 +301,30 @@ export class World {
      * @returns this
      */
     public add<T>(entity: symbol, component: ClassType<T>, data?: Partial<T>): this {
-        const mapper = this._mapper(component).add(entity, data);
+        const mapper = this._mapper(component)
+            .add(entity, data);
 
-        this.compositionId(entity).set(mapper.id);
+        this.compositionId(entity)
+            .set(mapper.id);
+        this.flagDirty(entity);
+
+        return this;
+    }
+
+    /**
+     * Adds a component instance to an entity.
+     *
+     * @param entity The entity to which the component should be added.
+     * @param instance A component instance
+     * @returns this
+     */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    public addInstance<T>(entity: symbol, instance: InstanceType<any>): this {
+        const mapper = this._mapper(instance.constructor)
+            .set(entity, instance);
+
+        this.compositionId(entity)
+            .set(mapper.id);
         this.flagDirty(entity);
 
         return this;
