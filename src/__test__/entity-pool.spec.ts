@@ -1,6 +1,7 @@
 import { BarCmp, FooCmp } from './shared';
 import { EntityPool } from '../entity-pool';
 import { World } from '../world';
+import { Entity } from '../types';
 
 describe('EntityPool', () => {
     class WorldMock extends World {
@@ -12,7 +13,7 @@ describe('EntityPool', () => {
          * @param entity An entity.
          * @returns True if entity can join pool.
          */
-        public testPool(pool: EntityPool, entity: symbol): boolean {
+        public testPool(pool: EntityPool, entity: Entity): boolean {
             return pool.test(this.compositionId(entity));
         }
 
@@ -42,7 +43,7 @@ describe('EntityPool', () => {
 
     describe('event', () => {
         let emit: jest.SpyInstance;
-        let entity: symbol;
+        let entity: Entity;
         let pool: EntityPool;
 
         beforeEach(() => {

@@ -1,5 +1,5 @@
 import { ComponentMapper } from './component-mapper';
-import { ClassType, EntityQuery, ReadonlyComponentMapper } from './types';
+import { ClassType, Entity, EntityQuery, ReadonlyComponentMapper } from './types';
 import { _BITSET, Bitset } from './bitset';
 import { EntityPool } from './entity-pool';
 import { Filter } from './filter';
@@ -198,7 +198,7 @@ export class World {
      *
      * @param entity The entity that should be flagged as dirty.
      */
-    protected flagDirty(entity: symbol): void {
+    protected flagDirty(entity: Entity): void {
         if (this.dirty.indexOf(entity) === -1) {
             this.dirty.push(entity);
         }
@@ -226,7 +226,7 @@ export class World {
      * @param entity An entity.
      * @returns The entities composition id.
      */
-    protected compositionId(entity: symbol): Bitset {
+    protected compositionId(entity: Entity): Bitset {
         let id = this.compositionIds.get(entity);
 
         if (id) {
@@ -259,7 +259,7 @@ export class World {
      * @param entity The entity that should be de-spawned.
      * @returns this
      */
-    public despawn(entity: symbol): this {
+    public despawn(entity: Entity): this {
         const index = this.entities.indexOf(entity);
 
         if (~index) {
@@ -300,7 +300,7 @@ export class World {
      *  it was created
      * @returns this
      */
-    public add<T>(entity: symbol, component: ClassType<T>, data?: Partial<T>): this {
+    public add<T>(entity: Entity, component: ClassType<T>, data?: Partial<T>): this {
         const mapper = this._mapper(component)
             .add(entity, data);
 
@@ -319,7 +319,7 @@ export class World {
      * @returns this
      */
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public addInstance<T>(entity: symbol, instance: InstanceType<any>): this {
+    public addInstance<T>(entity: Entity, instance: InstanceType<any>): this {
         const mapper = this._mapper(instance.constructor)
             .set(entity, instance);
 
@@ -338,7 +338,7 @@ export class World {
      * @param component The type of component
      * @returns A component instance.
      */
-    public get<T>(entity: symbol, component: ClassType<T>): T {
+    public get<T>(entity: Entity, component: ClassType<T>): T {
         return this._mapper(component).get(entity);
     }
 
@@ -349,7 +349,7 @@ export class World {
      * @param component The component that is tested.
      * @returns True if the entity has the given component.
      */
-    public has(entity: symbol, component: ClassType): boolean {
+    public has(entity: Entity, component: ClassType): boolean {
         return this._mapper(component).has(entity);
     }
 
@@ -360,7 +360,7 @@ export class World {
      * @param component The component that should be removed from the entity.
      * @returns this
      */
-    public remove(entity: symbol, component: ClassType): this {
+    public remove(entity: Entity, component: ClassType): this {
         const mapper = this._mapper(component);
 
         if (mapper.has(entity)) {

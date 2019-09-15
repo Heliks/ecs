@@ -1,16 +1,17 @@
 import { EntityPool } from '../entity-pool';
 import { World } from '../world';
 import { BarCmp, FooCmp } from './shared';
+import { Entity } from '../types';
 
 describe('World', () => {
     class WorldMock extends World {
 
         /** Returns true if the composition Id of the given entity is empty. */
-        public isCompositionEmpty(entity: symbol): boolean {
+        public isCompositionEmpty(entity: Entity): boolean {
             return this.compositionId(entity).isEmpty();
         }
 
-        public isDirty(entity: symbol): boolean {
+        public isDirty(entity: Entity): boolean {
             return this.dirty.indexOf(entity) > -1;
         }
 
@@ -98,7 +99,7 @@ describe('World', () => {
     });
 
     describe('synchronize()', () => {
-        let entity: symbol;
+        let entity: Entity;
         let pool: EntityPool;
 
         beforeEach(() => {
@@ -132,7 +133,7 @@ describe('World', () => {
         });
     });
 
-    function testAddComponent(entity: symbol) {
+    function testAddComponent(entity: Entity) {
         it('should add a component to an entity', () => {
             expect(world.mapper(FooCmp).has(entity)).toBeTruthy();
         });
@@ -143,7 +144,7 @@ describe('World', () => {
     }
     describe('add()', () => {
         // Todo: Test for compositionId update.
-        let entity: symbol;
+        let entity: Entity;
 
         beforeEach(() => {
             entity = world.spawn();
@@ -162,7 +163,7 @@ describe('World', () => {
 
     describe('addInstance()', () => {
         // Todo: Test for compositionId update.
-        let entity: symbol;
+        let entity: Entity;
 
         beforeEach(() => {
             entity = world.spawn();
