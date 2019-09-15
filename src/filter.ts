@@ -7,8 +7,8 @@ export class Filter {
      * @param exclusions If any of these bits is present the filter will not be satisfied.
      */
     constructor(
-        readonly inclusions = new _BITSET(),
-        readonly exclusions = new _BITSET()
+        public readonly inclusions = new _BITSET(),
+        public readonly exclusions = new _BITSET()
     ) {}
 
     /**

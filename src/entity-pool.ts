@@ -14,9 +14,9 @@ export class EntityPool extends EventEmitter {
     }
 
     /**
-     * @param filter
+     * @param filter {@see Filter}
      */
-    constructor(readonly filter: Filter) {
+    constructor(public readonly filter: Filter) {
         super();
     }
 
