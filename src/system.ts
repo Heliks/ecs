@@ -2,11 +2,11 @@ import { World } from './world';
 
 export interface System {
 
-    /**
-     * Called once by the system manager during {@link SystemManager.update()}.
-     *
-     * @param world The entity world.
-     */
-    update(world: World): void;
+    /** Called when the system is added to the world. */
+    boot?(world: World): void;
+
+    /** Called once by the system manager during {@link SystemManager.update()}. */
+    update(world: World): unknown;
 
 }
+

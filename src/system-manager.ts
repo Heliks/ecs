@@ -7,6 +7,11 @@ export class SystemManager {
     protected systems: System[] = [];
 
     /**
+     * @param world An entity world.
+     */
+    constructor(protected world: World) {}
+
+    /**
      * Adds a system.
      *
      * @param system The system to add.
@@ -15,35 +20,31 @@ export class SystemManager {
     public add(system: System): this {
         this.systems.push(system);
 
+        // system.boot(this.world);
+
         return this;
     }
 
     /**
-     * Updates all registered systems. Should be called once on each frame.
-     *
-     * Systems should be updated after the world so that entities and delta
-     * times are synchronized correctly.
+     * Updates all systems. Should be called once on each frame.
      *
      * ```typescript
-     * const manager = new SystemManager();
-     * const world = new World();
+     * const wld = new World();
+     * const sys = new SystemManager(wld);
      *
      * function tick(deltaTime: number): void {
-     *     // Update before the system manager.
-     *     world.update(deltaTime);
-     *     systems.update(world);
+     *      wld.update(deltaTime);
+     *      sys.update();
      *
-     *     window.requestAnimationFrame(tick);
+     *      window.requestAnimationFrame(tick);
      * }
      *
      * tick();
      * ```
-     *
-     * @param world The entity world.
      */
-    public update(world: World): void {
+    public update(): void {
         for (const system of this.systems) {
-            system.update(world);
+            system.update(this.world);
         }
     }
 

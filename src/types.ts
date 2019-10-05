@@ -11,23 +11,3 @@ export interface EntityQuery {
     excludes?: ClassType[];
 }
 
-export interface ReadonlyComponentMapper<T = unknown> {
-
-    /**
-     * Returns the instance of the mapped component that belongs to
-     * the given entity.
-     *
-     * @param entity Entity that owns the component.
-     * @returns Instance of the component that belongs to the given entity
-     */
-    get(entity: Entity): T;
-
-    /**
-     * Returns true if the given entity owns the mapped component.
-     *
-     * @param entity An Entity.
-     * @returns True if entity owns component.
-     */
-    has(entity: Entity): boolean;
-
-}

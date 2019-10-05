@@ -1,387 +1,64 @@
-import { ComponentMapper } from './component-mapper';
-import { ClassType, Entity, EntityQuery, ReadonlyComponentMapper } from './types';
-import { _BITSET, Bitset } from './bitset';
-import { EntityPool } from './entity-pool';
+import { BitSet } from './bit-set';
+import { EntityManager } from './entity-manager';
 import { Filter } from './filter';
+import { Storage } from './storage';
+import { ClassType, Entity, EntityQuery } from './types';
 
 export class World {
 
-    /** Component mappers mapped to the class type of the component for which they are responsible. */
-    protected componentMappers = new Map<ClassType, ComponentMapper>();
+    public readonly entities = new EntityManager();
 
-    /** Composition ids mapped to the entity to which they belong. */
-    protected compositionIds = new Map<symbol, Bitset>();
+    protected storages = new Map<ClassType, Storage>();
 
-    /** Time value from last world update to this. */
-    protected deltaTime = 0;
+    public register<T>(component: ClassType<T>): Storage<T> {
+        const storage = new Storage<T>(this.storages.size + 1, component, this.entities);
 
-    /** Entities that are currently spawned inside the world. */
-    protected entities: symbol[] = [];
+        this.storages.set(component, storage);
 
-    /** Entities that had their composition updated and should be synchronized. */
-    protected dirty: symbol[] = [];
-
-    /** The id that is assigned to the next component mapper that is created. */
-    protected nextComponentMapperId = 1;
-
-    /** Entity pools. */
-    protected pools: EntityPool[] = [];
-
-    /**
-     * Returns all entities.
-     *
-     * @returns All entities.
-     */
-    public getEntities(): readonly symbol[] {
-        return this.entities;
+        return storage;
     }
 
-    /**
-     * Returns an entity pool that contains all entities that satisfy the given
-     * query. Pools are updated automatically and can be used to quickly iterate
-     * over a set of entities.
-     *
-     * ```typescript
-     * class Foo {}
-     * class Bar {}
-     *
-     * const pool = world.pool({
-     *     contains: [
-     *         Foo,
-     *         Bar
-     *     ]
-     * });
-     *
-     * // Iterate over all entities that have a "Foo" and "Bar" component.
-     * for (const entity of pool.entities) {
-     *     // Do something with entity.
-     * }
-     * ```
-     *
-     * @param query A entity query.
-     * @returns An entity pool.
-     */
-    public pool(query: EntityQuery = {}): EntityPool {
-        const filter = this.createFilter(query);
+    public storage<T>(component: ClassType<T>): Storage<T> {
+        const storage = this.storages.get(component) as Storage<T>;
 
-        // If a pool with the same filter already exist we use that one
-        let pool = this.pools.find(pool => pool.filter.equals(filter));
-
-        if (pool) {
-            return pool;
-        }
-
-        pool = new EntityPool(filter);
-
-        // Populate pool with eligible entities
-        for (const entity of this.entities) {
-            const compositionId = this.compositionId(entity);
-
-            if (pool.test(compositionId)) {
-                pool.add(entity);
-            }
-        }
-
-        this.pools.push(pool);
-
-        return pool;
+        return storage
+            ? storage
+            : this.register(component);
     }
 
-    /** Synchronizes registered pools with composition updates. */
-    public synchronize(): void {
-        const dirty = this.dirty;
+    public createComposition(components: ClassType[]): BitSet {
+        const bits = new BitSet();
 
-        // Nothing to update.
-        if (! dirty.length) {
-            return;
+        for (const component of components) {
+            bits.add(this.storage(component).id);
         }
 
-        for (const pool of this.pools) {
-            for (const entity of dirty) {
-                // Entity is contained in pool. Check if it is no longer eligible
-                // and should be removed.
-                if (pool.has(entity)) {
-                    if (! pool.test(this.compositionId(entity))) {
-                        pool.remove(entity);
-                    }
-                }
-
-                // Entity is not contained. Check if it can be added to the pool.
-                else if (pool.test(this.compositionId(entity))) {
-                    pool.add(entity);
-                }
-            }
-        }
-
-        // Synchronized entities are no longer dirty.
-        this.dirty.length = 0;
+        return bits;
     }
 
-    /**
-     * Returns a mapper for the given component. The mapper will be created
-     * automatically if none exists.
-     *
-     * @param component Mapper for this component
-     * @returns A component mapper.
-     */
-    protected _mapper<T>(component: ClassType<T>): ComponentMapper<T> {
-        let mapper = this.componentMappers.get(component);
-
-        if (mapper) {
-            return mapper as ComponentMapper<T>;
-        }
-
-        mapper = new ComponentMapper(
-            component,
-            this.nextComponentMapperId++
+    public createFilter(query: EntityQuery): Filter {
+        return new Filter(
+            this.createComposition(query.contains || []),
+            this.createComposition(query.excludes || [])
         );
-
-        this.componentMappers.set(component, mapper);
-
-        return mapper as ComponentMapper<T>;
     }
 
-    /**
-     * Returns a mapper for the given component that can be used to access
-     * component instances. In high-performance scenarios it can be faster
-     * to keep the mapper in memory and then use it directly.
-     *
-     * ```typescript
-     * class Position {
-     *      x = 0;
-     *      y = 0;
-     * }
-     *
-     * class Movement {
-     *     moving = false;
-     *     speed = 1;
-     * }
-     *
-     * const world = new World();
-     *
-     * const entity = world.spawn();
-     * const mapper = world.mapper(Position);
-     *
-     * world
-     *      .add(entity, Position)
-     *      .add(entity, Movement, {
-     *          moving: true
-     *      });
-     *
-     * function tick(deltaTime) {
-     *      world.update();
-     *
-     *      const position = mapper.get(Position);
-     *      const movement = mapper.get(Movement);
-     *
-     *      if (movement.moving) {
-     *          position.x += movement.speed * deltaTime;
-     *          position.y += movement.speed * deltaTime;
-     *      }
-     *
-     *      window.requestAnimationFrame(tick);
-     * }
-     *
-     * // Start the game loop.
-     * tick();
-     * ```
-     *
-     * @param component Mapper for this component.
-     * @returns A component mapper.
-     */
-    public mapper<T>(component: ClassType<T>): ReadonlyComponentMapper<T> {
-        return this._mapper(component);
-    }
-
-    /**
-     * Flags an entity as dirty.
-     *
-     * @param entity The entity that should be flagged as dirty.
-     */
-    protected flagDirty(entity: Entity): void {
-        if (this.dirty.indexOf(entity) === -1) {
-            this.dirty.push(entity);
-        }
-    }
-
-    /**
-     * Creates a composition id from the given components.
-     *
-     * @param components Components from which the composition id should be created.
-     * @returns A composition id.
-     */
-    public createCompositionId(components: ClassType[]): Bitset {
-        const id = new _BITSET();
-
-        for (const type of components) {
-            id.set(this._mapper(type).id);
-        }
-
-        return id;
-    }
-
-    /**
-     * Returns the composition id of the given entity.
-     *
-     * @param entity An entity.
-     * @returns The entities composition id.
-     */
-    protected compositionId(entity: Entity): Bitset {
-        let id = this.compositionIds.get(entity);
-
-        if (id) {
-            return id;
-        }
-
-        id = new _BITSET();
-
-        this.compositionIds.set(entity, id);
-
-        return id;
-    }
-
-    /**
-     * Spawns an entity.
-     *
-     * @returns An entity symbol.
-     */
-    public spawn(): symbol {
+    public create(components?: ClassType[]): Entity {
         const entity = Symbol();
 
-        this.entities.push(entity);
+        if (components) {
+            for (const component of components) {
+                this.storage(component).add(entity);
+            }
+        }
+
+        this.entities.insert(entity);
 
         return entity;
     }
 
-    /**
-     * De-spawns an entity.
-     *
-     * @param entity The entity that should be de-spawned.
-     * @returns this
-     */
-    public despawn(entity: Entity): this {
-        const index = this.entities.indexOf(entity);
-
-        if (~index) {
-            this.compositionId(entity).clear();
-
-            // Remove entity from pool.
-            for (const pool of this.pools) {
-                if (pool.has(entity)) {
-                    pool.remove(entity);
-                }
-            }
-
-            this.entities.splice(index, 1);
-        }
-
-        return this;
-    }
-
-    /**
-     * Returns a new filter from the given query.
-     *
-     * @param query The query from which the filter is created.
-     * @returns A filter.
-     */
-    public createFilter(query: EntityQuery = {}): Filter {
-        return new Filter(
-            this.createCompositionId(query.contains || []),
-            this.createCompositionId(query.excludes || [])
-        );
-    }
-
-    /**
-     * Adds a component to an entity.
-     *
-     * @param entity The entity to which the component should be added.
-     * @param component A component.
-     * @param data (optional) Data that is assigned to the component after
-     *  it was created
-     * @returns this
-     */
-    public add<T>(entity: Entity, component: ClassType<T>, data?: Partial<T>): this {
-        const mapper = this._mapper(component)
-            .add(entity, data);
-
-        this.compositionId(entity)
-            .set(mapper.id);
-        this.flagDirty(entity);
-
-        return this;
-    }
-
-    /**
-     * Adds a component instance to an entity.
-     *
-     * @param entity The entity to which the component should be added.
-     * @param instance A component instance
-     * @returns this
-     */
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    public addInstance<T>(entity: Entity, instance: InstanceType<any>): this {
-        const mapper = this._mapper(instance.constructor)
-            .set(entity, instance);
-
-        this.compositionId(entity)
-            .set(mapper.id);
-        this.flagDirty(entity);
-
-        return this;
-    }
-
-    /**
-     * Returns the instance of the given component that belongs to
-     * the given entity.
-     *
-     * @param entity The entity to which the component belongs.
-     * @param component The type of component
-     * @returns A component instance.
-     */
-    public get<T>(entity: Entity, component: ClassType<T>): T {
-        return this._mapper(component).get(entity);
-    }
-
-    /**
-     * Checks if an entity has a component.
-     *
-     * @param entity An entity.
-     * @param component The component that is tested.
-     * @returns True if the entity has the given component.
-     */
-    public has(entity: Entity, component: ClassType): boolean {
-        return this._mapper(component).has(entity);
-    }
-
-    /**
-     * Removes a component from an entity.
-     *
-     * @param entity The entity from which the component should be removed.
-     * @param component The component that should be removed from the entity.
-     * @returns this
-     */
-    public remove(entity: Entity, component: ClassType): this {
-        const mapper = this._mapper(component);
-
-        if (mapper.has(entity)) {
-            mapper.remove(entity);
-
-            this.compositionId(entity).clear(mapper.id);
-            this.flagDirty(entity);
-        }
-
-        return this;
-    }
-
-    /**
-     * Updates the world. Should be called once on every frame.
-     *
-     * @param deltaTime Time value between last frame and this one.
-     */
-    public update(deltaTime: number): void {
-        this.deltaTime = deltaTime;
-        this.synchronize();
+    public update(): void {
+        this.entities.sync();
     }
 
 }
-

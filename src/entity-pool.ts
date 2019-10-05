@@ -1,9 +1,8 @@
-import { EventEmitter } from 'event-emitter3';
-import { Bitset } from './bitset';
-import { Entity } from './types';
+import { BitSet } from './bit-set';
 import { Filter } from './filter';
+import { Entity } from './types';
 
-export class EntityPool extends EventEmitter {
+export class EntityPool {
 
     /** Contains references of entity symbols that satisfy this pools requirements */
     public readonly entities: Entity[] = [];
@@ -16,53 +15,28 @@ export class EntityPool extends EventEmitter {
     /**
      * @param filter {@see Filter}
      */
-    constructor(public readonly filter: Filter) {
-        super();
+    constructor(public readonly filter: Filter) {}
+
+    /** Returns true if the entity satisfies the pools requirements */
+    public test(composition: BitSet): boolean {
+        return this.filter.test(composition);
     }
 
-    /**
-     * Returns ``true`` if the entity satisfies the pools requirements
-     *
-     * @param compositionId
-     */
-    public test(compositionId: Bitset): boolean {
-        return this.filter.test(compositionId);
-    }
-
-    /**
-     * Add an entity
-     *
-     * @param entity Entity that will be added
-     * @returns this
-     */
+    /** Add an entity to the pool. */
     public add(entity: Entity): this {
         this.entities.push(entity);
-
-        this.emit('add', entity);
 
         return this;
     }
 
-    /**
-     * Returns ``true`` if have an entity
-     *
-     * @param entity Entity that must be contained
-     * @returns True if the entity exists. False otherwise.
-     */
+    /** Returns true if an entity is contained in the pool. */
     public has(entity: Entity): boolean {
         return this.index(entity) > -1;
     }
 
-    /**
-     * Removes an entity
-     *
-     * @param entity Entity that should be removed
-     * @returns this
-     */
+    /** Removes an entity from the pool. */
     public remove(entity: Entity): this {
         this.entities.splice(this.index(entity), 1);
-
-        this.emit('remove', entity);
 
         return this;
     }
@@ -71,16 +45,12 @@ export class EntityPool extends EventEmitter {
     public clear(): this {
         this.entities.length = 0;
 
-        this.emit('clear');
-
         return this;
     }
 
     /**
      * Returns the index of an entity. For entities that are not part of this
-     * pool '-1' will be returned instead
-     *
-     * @param entity
+     * pool '-1' will be returned instead.
      */
     public index(entity: Entity): number {
         return this.entities.indexOf(entity);

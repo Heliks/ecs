@@ -14,10 +14,6 @@
     "test": "jest --config jest.config.json",
     "watch": "tsc -w"
   },
-  "dependencies": {
-    "bitset": "^5.0.5",
-    "event-emitter3": "^1.0.4"
-  },
   "devDependencies": {
     "@types/jest": "^24.0.6",
     "@types/node": "^11.9.5",
