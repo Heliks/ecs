@@ -1,12 +1,10 @@
-import { BitSet } from '../bit-set';
 import { EntityManager } from '../entity-manager';
-import { EntityPool } from '../entity-pool';
-import { Filter } from '../filter';
 import { World } from '../world';
+import { ClassType, EntityQuery } from '../types';
+import { BitSet } from '../bit-set';
 
 describe('EntityManager', () => {
-   let entities: EntityManager;
-   let filter: Filter;
+   let entityMgr: EntityManager;
    let world: World;
 
    class A {}
@@ -14,63 +12,67 @@ describe('EntityManager', () => {
    class C {}
    class D {}
 
+   /**  Helper method to create a "dirty" entity with components. */
+   function createEntity(components?: ClassType[]) {
+      const entity = world.create(components);
+
+      world.entities.setDirty(entity);
+
+      return entity;
+   }
+
+   /** Helper method to create an entity pool. */
+   function createPool(query: EntityQuery) {
+      return world.entities.registerPool(world.createFilter(query));
+   }
+
    beforeEach(() => {
       world = new World();
-      entities = world.entities;
+      entityMgr = world.entities;
    });
 
    it('should create a composition bit set', () => {
-      expect(entities.composition(entities.add())).toBeInstanceOf(BitSet);
+      expect(entityMgr.composition(createEntity())).toBeInstanceOf(BitSet);
    });
 
-   it('should register entity pools', () => {
-      const pool = entities.registerPool(filter);
+   it('should add eligible entities to pools', () => {
+      const pool = createPool({
+         contains: [A, B],
+         excludes: [C]
+      });
+
+      const entity1 = createEntity([A, B]);
+      const entity2 = createEntity([A, B, D]);
+
+      // Non-eligible entities to make sure that no entities are
+      // added to the pool that shouldn't be there.
+      const entity3 = createEntity([A]);
+      const entity4 = createEntity([A, B, C]);
+
+      entityMgr.sync();
+
+      expect(pool.has(entity1)).toBeTruthy();
+      expect(pool.has(entity2)).toBeTruthy();
+
+      expect(pool.has(entity3)).toBeFalsy();
+      expect(pool.has(entity4)).toBeFalsy();
    });
 
-   describe('sync()', () => {
-      let pool: EntityPool;
-
-      const filter = world.createFilter({
-         contains: [A, C],
-         excludes: [B]
-      });
-      
-      beforeEach(() => {
-         pool = entities.registerPool(filter);
+   it('should remove entities from pools that are no longer eligible.', () => {
+      const pool = createPool({
+         contains: [A, B],
+         excludes: [C]
       });
 
-      it('should add entities to pools', () => {
-         // Eligible
-         const e1 = world.create([A, C]);
-         const e2 = world.create([A, C, D]);
+      const entity1 = createEntity([A]);
+      const entity2 = createEntity([A, B, C]);
 
-         // Not eligible
-         const e3 = world.create([A, B, C]);
-         const e4 = world.create([A, B]);
+      pool.add(entity1);
+      pool.add(entity2);
 
-         world.entities.sync();
+      entityMgr.sync();
 
-         expect(pool.has(e1)).toBeTruthy();
-         expect(pool.has(e2)).toBeTruthy();
-         expect(pool.has(e3)).toBeFalsy();
-         expect(pool.has(e4)).toBeFalsy();
-      });
-
-      it('should remove entities from pools', () => {
-         const e1 = world.create([A, C]);
-
-         world.entities
-
-
-      });
+      expect(pool.has(entity1)).toBeFalsy();
+      expect(pool.has(entity2)).toBeFalsy();
    });
-
-   it('should synchronize entity pools', () => {
-
-
-      const pool = entities.registerPool(filter);
-
-
-   });
-
 });
