@@ -1,15 +1,17 @@
 import { BitSet } from './bit-set';
+import { Archetype } from './archetype';
 import { EntityManager } from './entity-manager';
 import { Filter } from './filter';
 import { Storage } from './storage';
-import { ClassType, Entity, EntityQuery } from './types';
+import { ClassType, Entity, EntityQuery, World as Base } from './types';
 
-export class World {
+export class World implements Base {
 
     public readonly entities = new EntityManager();
 
     protected storages = new Map<ClassType, Storage>();
 
+    /** {@inheritDoc Base.register()} */
     public register<T>(component: ClassType<T>): Storage<T> {
         const storage = new Storage<T>(this.storages.size + 1, component, this.entities);
 
@@ -18,6 +20,7 @@ export class World {
         return storage;
     }
 
+    /** {@inheritDoc Base.storage()} */
     public storage<T>(component: ClassType<T>): Storage<T> {
         const storage = this.storages.get(component) as Storage<T>;
 
@@ -43,6 +46,7 @@ export class World {
         );
     }
 
+    /** {@inheritDoc Base.create()} */
     public create(components?: ClassType[]): Entity {
         const entity = Symbol();
 
@@ -55,6 +59,20 @@ export class World {
         this.entities.insert(entity);
 
         return entity;
+    }
+
+    /** {@inheritDoc Base.archetype()} */
+    public archetype(): Archetype {
+        return new Archetype(this);
+    }
+
+    /** {@inheritDoc Base.insertEntity()} */
+    public insert(entity: Entity, dirty = true): void {
+        this.entities.insert(entity);
+
+        if (dirty) {
+            this.entities.setDirty(entity);
+        }
     }
 
     public update(): void {
