@@ -10,8 +10,10 @@ export class World {
 
     protected storages = new Map<ClassType, Storage>();
 
+    protected storageIndex = 0;
+
     public register<T>(component: ClassType<T>): Storage<T> {
-        const storage = new Storage<T>(this.storages.size + 1, component, this.entities);
+        const storage = new Storage<T>(1 << this.storageIndex++, component, this.entities);
 
         this.storages.set(component, storage);
 

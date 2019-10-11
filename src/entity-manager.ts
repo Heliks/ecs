@@ -1,7 +1,7 @@
 import { BitSet } from './bit-set';
 import { EntityPool } from './entity-pool';
 import { Filter } from './filter';
-import { ClassType, Entity } from './types';
+import { Entity } from './types';
 
 export class EntityManager {
 
@@ -80,7 +80,8 @@ export class EntityManager {
                     if (! pool.test(this.composition(entity))) {
                         pool.remove(entity);
                     }
-                } else if (pool.test(this.composition(entity))) {
+                }
+                else if (pool.test(this.composition(entity))) {
                     pool.add(entity);
                 }
             }
