@@ -29,7 +29,7 @@ describe('World', () => {
     });
 
     it('should create entities with components', () => {
-        const entity = world.create([ B ]);
+        const entity = world.create([ A ]);
 
         const storageA = world.storage(A);
         const storageB = world.storage(B);

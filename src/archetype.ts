@@ -31,7 +31,7 @@ export class Archetype implements Builder {
 
     /** Builds and returns the final entity. */
     public build(): Entity {
-        const entity = Symbol();
+        const entity = Symbol(Math.random());
         const world = this.world;
 
         for (const item of this.components) {

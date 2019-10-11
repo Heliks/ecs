@@ -1,4 +1,3 @@
-import { Builder, ClassType, ComponentBlueprint, Entity, Struct } from '../types';
 import { World } from '../world';
 
 describe('Archetype', () => {
@@ -38,7 +37,7 @@ describe('Archetype', () => {
         // Make sure each entity is unique.
         expect(entity1).not.toBe(entity2);
 
-        expect(world.storage(B).get(entity1).test).toBe('foobar');
-        expect(world.storage(B).get(entity2).test).toBe('foobar');
+        expect(world.storage(A).get(entity1).test).toBe('foobar');
+        expect(world.storage(A).get(entity2).test).toBe('foobar');
     });
 });
