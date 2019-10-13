@@ -1,9 +1,3 @@
-export function assertInt32(id: number): void {
-    if (id < 1 || id > 2147483651) {
-        throw new Error(`${id} is out of bounds. Min 1 << 0; Max 1 << 30`);
-    }
-}
-
 export class BitSet {
 
     /**

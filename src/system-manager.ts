@@ -20,7 +20,9 @@ export class SystemManager {
     public add(system: System): this {
         this.systems.push(system);
 
-        // system.boot(this.world);
+        if (system.boot) {
+            system.boot(this.world);
+        }
 
         return this;
     }
@@ -28,23 +30,11 @@ export class SystemManager {
     /**
      * Updates all systems. Should be called once on each frame.
      *
-     * ```typescript
-     * const wld = new World();
-     * const sys = new SystemManager(wld);
-     *
-     * function tick(deltaTime: number): void {
-     *      wld.update(deltaTime);
-     *      sys.update();
-     *
-     *      window.requestAnimationFrame(tick);
-     * }
-     *
-     * tick();
-     * ```
+     * @param dt Time passed since the last frame.
      */
-    public update(): void {
+    public update(dt: number): void {
         for (const system of this.systems) {
-            system.update(this.world);
+            system.update(this.world, dt);
         }
     }
 
