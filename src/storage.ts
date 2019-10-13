@@ -34,6 +34,14 @@ export class Storage<T = unknown> implements Base<T> {
         return component;
     }
 
+    /** {@inheritDoc Base.set()} */
+    public set(entity: Entity, instance: T): void {
+        this.components.set(entity, instance);
+
+        this.entityMgr.composition(entity).add(this.id);
+        this.entityMgr.setDirty(entity);
+    }
+
     /** {@inheritDoc Base.get()} */
     public get(entity: Entity): T {
         const component = this.components.get(entity) as T;

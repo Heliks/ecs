@@ -22,11 +22,19 @@ export interface Storage<T> {
     /**
      * Adds a component for the given entity.
      *
-     * @param entity The entity that for which the component should be added.
+     * @param entity An entity.
      * @param data (optional) Initial data that should be set on the component.
      * @returns The newly created component.
      */
     add(entity: Entity, data?: Partial<T>): T;
+
+    /**
+     * Directly assigns an instance of the stored component to the given entity.
+     *
+     * @param entity An entity.
+     * @param instance Component instance.
+     */
+    set(entity: Entity, instance: T): void;
 
     /** Returns true if a component is stored for the given entity. */
     get(entity: Entity): T;
