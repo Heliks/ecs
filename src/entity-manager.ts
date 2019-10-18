@@ -56,12 +56,8 @@ export class EntityManager {
         return pool;
     }
 
-    public findPoolFromFilter(filter: Filter): EntityPool | undefined {
+    public findPool(filter: Filter): EntityPool | undefined {
         return this.pools.find(pool => pool.filter.equals(filter));
-    }
-
-    public pool(filter: Filter): EntityPool {
-        return this.findPoolFromFilter(filter) || this.registerPool(filter);
     }
 
     public sync(): void {

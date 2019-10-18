@@ -79,7 +79,7 @@ export interface World {
     archetype(): Builder;
 
     /**
-     * Instantly creates an entity.
+     * Creates an entity.
      *
      * @param components (optional) An array of components that are added to
      *  the entity automatically.
@@ -88,7 +88,7 @@ export interface World {
     create(components?: ClassType[]): Entity;
 
     /**
-     * Directly inserts an entity.
+     * Inserts an entity into the world.
      *
      * @param entity The entity that should be inserted.
      * @param dirty (optional) If true the entity will also be marked as "dirty".

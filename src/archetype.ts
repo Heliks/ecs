@@ -1,3 +1,4 @@
+import { EntityBuilder } from './entity-builder';
 import { Builder, ClassType, ComponentBlueprint, Entity, World } from './types';
 
 /**
@@ -41,6 +42,27 @@ export class Archetype implements Builder {
         world.insert(entity);
 
         return entity;
+    }
+
+    /**
+     * Returns an entity builder based on this archetype.
+     *
+     * ```typescript
+     * const archetype = world.archetype().add(Health, { max: 100, val: 100 });
+     *
+     * // Will be created with "Health" and "Transform".
+     * const entity1 = archetype.toBuilder().add(Transform, { x: 10, y: 10 }).build();
+     * const entity2 = archetype.toBuilder().add(Transform, { x: 20, y: 20 }).build();
+     * ```
+     */
+    public toBuilder(): EntityBuilder {
+        const builder = new EntityBuilder(this.world);
+
+        for (const item of this.components) {
+            builder.add(item.component, item.data);
+        }
+
+        return builder;
     }
 
 }

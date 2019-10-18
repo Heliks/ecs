@@ -1,15 +1,10 @@
 import { World } from '../world';
 
 describe('Archetype', () => {
-    class A {
-        test?: string;
-    }
-
-    class B {
-        test?: string;
-    }
-
     let world: World;
+
+    class A { test?: string; }
+    class B { test?: string; }
 
     beforeEach(() => {
         world = new World();
@@ -39,5 +34,15 @@ describe('Archetype', () => {
 
         expect(world.storage(A).get(entity1).test).toBe('foobar');
         expect(world.storage(A).get(entity2).test).toBe('foobar');
+    });
+
+    it('should be converted to an entity builder', () => {
+        const builder = world.archetype().add(A, { test: 'foo' }).toBuilder();
+        const entity = builder.add(B, { test: 'bar' }).build();
+
+        // Entity should have both the component added via archetype and the one
+        // added by the builder.
+        expect(world.storage(A).get(entity).test).toBe('foo');
+        expect(world.storage(B).get(entity).test).toBe('bar');
     });
 });

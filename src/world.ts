@@ -1,5 +1,5 @@
-import { BitSet } from './bit-set';
 import { Archetype } from './archetype';
+import { BitSet } from './bit-set';
 import { EntityManager } from './entity-manager';
 import { Filter } from './filter';
 import { Storage } from './storage';
@@ -57,8 +57,6 @@ export class World implements Base {
                 this.storage(component).add(entity);
             }
         }
-
-        this.entities.insert(entity);
 
         return entity;
     }
