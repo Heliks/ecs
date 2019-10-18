@@ -8,8 +8,8 @@
   "license": "ISC",
   "scripts": {
     "build": "tsc",
-    "build:prod": "npm run lint && npm run test &&  npm run build",
-    "lint": "eslint 'src/**' --config .eslintrc.json",
+    "build:prod": "npm run build",
+    "lint": "eslint src/** --config .eslintrc.json",
     "postinstall": "npm run build",
     "test": "jest --config jest.config.json",
     "watch": "tsc -w"
@@ -17,9 +17,7 @@
   "devDependencies": {
     "@types/jest": "^24.0.6",
     "@types/node": "^11.9.5",
-    "@typescript-eslint/eslint-plugin": "^2.2.0",
-    "@typescript-eslint/parser": "^2.2.0",
-    "eslint": "^6.4.0",
+    "eslint-config-heliks": "git+ssh://git@github.com/Heliks/eslint-config.git",
     "jest": "^24.1.0",
     "reflect-metadata": "^0.1.13",
     "ts-jest": "^24.0.0",
