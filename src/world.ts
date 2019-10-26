@@ -1,6 +1,7 @@
 import { Archetype } from './archetype';
 import { BitSet } from './bit-set';
 import { EntityManager } from './entity-manager';
+import { EntityPool } from './entity-pool';
 import { Filter } from './filter';
 import { Storage } from './storage';
 import { ClassType, Entity, EntityQuery, World as Base } from './types';
@@ -79,4 +80,15 @@ export class World implements Base {
         this.entities.sync();
     }
 
+    public pool(query: EntityQuery) {
+        return this.entities.registerPool(this.createFilter(query));
+    }
+
+    public findPools(query: EntityQuery | Filter): EntityPool[] {
+        return this.entities.findPools(
+            query instanceof Filter ? query : this.createFilter(query)
+        );
+    }
+
 }
+

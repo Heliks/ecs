@@ -1,7 +1,7 @@
 import { BitSet } from './bit-set';
 import { EntityPool } from './entity-pool';
 import { Filter } from './filter';
-import { Entity } from './types';
+import { Entity, EntityQuery } from './types';
 
 export class EntityManager {
 
@@ -56,8 +56,8 @@ export class EntityManager {
         return pool;
     }
 
-    public findPool(filter: Filter): EntityPool | undefined {
-        return this.pools.find(pool => pool.filter.equals(filter));
+    public findPools(filter: Filter): EntityPool[] {
+        return this.pools.filter(pool => pool.filter.equals(filter));
     }
 
     public sync(): void {
