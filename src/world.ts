@@ -1,7 +1,7 @@
 import { Archetype } from './archetype';
 import { BitSet } from './bit-set';
 import { EntityManager } from './entity-manager';
-import { EntityPool } from './entity-pool';
+import { EntityGroup } from './entity-group';
 import { Filter } from './filter';
 import { Storage } from './storage';
 import { ClassType, Entity, Query, World as Base } from './types';
@@ -76,18 +76,22 @@ export class World implements Base {
         }
     }
 
+    /** Updates the world. Should be called once on each frame. */
     public update(): void {
         this.entities.sync();
     }
 
-    public pool(query: Query): EntityPool {
-        return this.entities.registerPool(this.createFilter(query));
-    }
+    /**
+     * Returns a group that contains entities that match the given query.
+     *
+     * @param query The query that entities must match.
+     * @returns An entity group containing entities matching the given query.
+     */
+    public group(query: Query): EntityGroup {
+        const filter = this.createFilter(query);
+        const group = this.entities.getGroups().find(item => item.filter.equals(filter));
 
-    public findPools(query: Query | Filter): EntityPool[] {
-        return this.entities.findPools(
-            query instanceof Filter ? query : this.createFilter(query)
-        );
+        return group ? group : this.entities.addGroup(filter);
     }
 
 }

@@ -1,4 +1,4 @@
-export * from './entity-pool';
+export * from './entity-group';
 export * from './filter';
 export * from './system';
 export * from './world';

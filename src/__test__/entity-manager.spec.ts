@@ -30,8 +30,8 @@ describe('EntityManager', () => {
       expect(entityMgr.composition(createEntity())).toBeInstanceOf(BitSet);
    });
 
-   it('should add eligible entities to pools', () => {
-      const pool = world.pool({
+   it('should add eligible entities to groups', () => {
+      const group = world.group({
          contains: [A, B],
          excludes: [C]
       });
@@ -40,21 +40,21 @@ describe('EntityManager', () => {
       const entity2 = createEntity([A, B, D]);
 
       // Non-eligible entities to make sure that no entities are
-      // added to the pool that shouldn't be there.
+      // added to the group that shouldn't be there.
       const entity3 = createEntity([A]);
       const entity4 = createEntity([A, B, C]);
 
       entityMgr.sync();
 
-      expect(pool.has(entity1)).toBeTruthy();
-      expect(pool.has(entity2)).toBeTruthy();
+      expect(group.has(entity1)).toBeTruthy();
+      expect(group.has(entity2)).toBeTruthy();
 
-      expect(pool.has(entity3)).toBeFalsy();
-      expect(pool.has(entity4)).toBeFalsy();
+      expect(group.has(entity3)).toBeFalsy();
+      expect(group.has(entity4)).toBeFalsy();
    });
 
-   it('should remove entities from pools that are no longer eligible.', () => {
-      const pool = world.pool({
+   it('should remove non-eligible entities from groups', () => {
+      const group = world.group({
          contains: [A, B],
          excludes: [C]
       });
@@ -62,12 +62,12 @@ describe('EntityManager', () => {
       const entity1 = createEntity([A]);
       const entity2 = createEntity([A, B, C]);
 
-      pool.add(entity1);
-      pool.add(entity2);
+      group.add(entity1);
+      group.add(entity2);
 
       entityMgr.sync();
 
-      expect(pool.has(entity1)).toBeFalsy();
-      expect(pool.has(entity2)).toBeFalsy();
+      expect(group.has(entity1)).toBeFalsy();
+      expect(group.has(entity2)).toBeFalsy();
    });
 });

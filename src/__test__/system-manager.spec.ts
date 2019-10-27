@@ -15,8 +15,8 @@ class SystemManagerMock extends SystemManager {
         return wrapper;
     }
 
-    /** Returns the entity pool assigned to the given system. */
-    public getPool(system: System) {
+    /** Returns the entity group assigned to the given system. */
+    public getGroup(system: System) {
         return this.getWrapper(system).entities;
     }
 
@@ -75,21 +75,21 @@ describe('SystemManager', () => {
         expect(() => manager.add(new Bar())).not.toThrow();
     });
 
-    it('should assign entity pools to systems', () => {
+    it('should assign an entity group to an added system', () => {
         @SystemData({
             query
         })
         class Sys extends SystemMock {}
 
         const system = new Sys();
-        const pool = manager.add(system)
-            .getPool(system);
+        const group = manager.add(system)
+            .getGroup(system);
 
-        // The pool that was assigned to the system should be created
+        // The group that was assigned to the system should be created
         // from the same query.
         const filter = world.createFilter(query);
 
-        expect(pool.filter.equals(filter)).toBeTruthy();
+        expect(group.filter.equals(filter)).toBeTruthy();
     });
 
     it('should automatically map system storages if no mapping was provided', () => {

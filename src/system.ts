@@ -1,4 +1,4 @@
-import { EntityPool } from './entity-pool';
+import { EntityGroup } from './entity-group';
 import { Storage } from './storage';
 import { ClassType, Query } from './types';
 import { World } from './world';
@@ -19,11 +19,11 @@ export interface System {
      * Runs the systems logic. Called once on each frame.
      *
      * @param world The world from which the system was executed.
-     * @param pool A pool that contains all entities that match the systems query.
+     * @param group The group of entities over which this system iterates.
      * @param storages
      * @returns Can return anything, but nothing happens with it.
      */
-    update(world: World, pool: EntityPool, ...storages: Storage[]): unknown;
+    update(world: World, group: EntityGroup, ...storages: Storage[]): unknown;
 
 }
 
@@ -60,13 +60,16 @@ export function SystemData(data: SystemMetaData = {}): ClassDecorator {
 
 export interface SystemWrapper {
 
-    /** Entity pool.*/
-    entities: EntityPool;
+    /** The group of entities that this system is processing. */
+    entities: EntityGroup;
 
-    /** Component storages. */
+    /**
+     * Component storages. In most cases this will contain the `contains` part
+     * of the `Query` that is passed to the `@SystemData`.
+     */
     storages: Storage[];
 
-    /** The system that is executed on each frame. */
+    /** The system. */
     system: System;
 
 }
@@ -111,7 +114,7 @@ export class SystemManager {
         }
 
         this.systems.push({
-            entities: this.world.pool(meta.query || {}),
+            entities: this.world.group(meta.query || {}),
             storages: this.parseStorageMetaData(meta),
             system
         });

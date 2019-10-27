@@ -5,7 +5,7 @@ export type ComponentType<T = unknown> = ClassType<T>;
 /** An entity is a unique symbol to which components can be attached to. */
 export type Entity = symbol;
 
-/** Contains information on how entities should be pooled. */
+/** */
 export interface Query {
     contains?: ClassType[];
     excludes?: ClassType[];

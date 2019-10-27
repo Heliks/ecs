@@ -1,5 +1,5 @@
 import { BitSet } from './bit-set';
-import { EntityPool } from './entity-pool';
+import { EntityGroup } from './entity-group';
 import { Filter } from './filter';
 import { Entity } from './types';
 
@@ -14,8 +14,8 @@ export class EntityManager {
     /** Composition bitsets mapped to the entity to which they belong. */
     protected readonly compositions = new Map<Entity, BitSet>();
 
-    /** Contains all registered entity pools. */
-    protected readonly pools: EntityPool[] = [];
+    /** Contains all registered entity groups. */
+    protected readonly groups: EntityGroup[] = [];
 
     /** Returns the composition of an entity. */
     public composition(entity: Entity): BitSet {
@@ -53,27 +53,27 @@ export class EntityManager {
         }
     }
 
-    public registerPool(filter: Filter): EntityPool {
-        const pool = new EntityPool(filter);
+    public addGroup(filter: Filter): EntityGroup {
+        const group = new EntityGroup(filter);
 
         // Populate with entities that are eligible.
         for (const entity of this.alive) {
-            if (pool.test(this.composition(entity))) {
-                pool.add(entity);
+            if (group.test(this.composition(entity))) {
+                group.add(entity);
             }
         }
 
-        this.pools.push(pool);
+        this.groups.push(group);
 
-        return pool;
+        return group;
     }
 
-    public findPools(filter: Filter): EntityPool[] {
-        return this.pools.filter(pool => pool.filter.equals(filter));
+    public getGroups(): readonly EntityGroup[] {
+        return this.groups;
     }
 
     /**
-     * Synchronizes `dirty` ({@link dirty}) entities and updates entity pools. Should
+     * Synchronizes `dirty` ({@link dirty}) entities and updates entity groups. Should
      * be called once each frame.
      */
     public sync(): void {
@@ -83,18 +83,18 @@ export class EntityManager {
             return;
         }
 
-        for (const pool of this.pools) {
+        for (const group of this.groups) {
             for (const entity of dirty) {
-                // If the entity is contained in the pool and no longer eligible it will be
+                // If the entity is contained in the group and no longer eligible it will be
                 // removed. If the entity is not contained but eligible it will be added to
-                // the pool.
-                if (pool.has(entity)) {
-                    if (! pool.test(this.composition(entity))) {
-                        pool.remove(entity);
+                // the group.
+                if (group.has(entity)) {
+                    if (! group.test(this.composition(entity))) {
+                        group.remove(entity);
                     }
                 }
-                else if (pool.test(this.composition(entity))) {
-                    pool.add(entity);
+                else if (group.test(this.composition(entity))) {
+                    group.add(entity);
                 }
             }
         }
