@@ -1,7 +1,10 @@
 import { EntityPool } from './entity-pool';
 import { Storage } from './storage';
-import { ClassType, EntityQuery } from './types';
+import { ClassType, Query } from './types';
 import { World } from './world';
+
+// Key used to store system metadata.
+export const METADATA_KEY = Symbol('sys-meta-data');
 
 /**
  * A system handles game logic by iterating over a set of entities. Each
@@ -28,25 +31,11 @@ export interface System {
 export interface SystemMetaData {
 
     /** */
-    query?: EntityQuery;
+    query?: Query;
 
     /** */
     storages?: ClassType[];
 
-}
-
-// Key used to store system metadata.
-export const SYS_META_KEY = Symbol('sys-meta-data');
-
-/** Returns system meta data from the given target. */
-export function getSystemMeta(target: object): SystemMetaData {
-    const meta = Reflect.getMetadata(SYS_META_KEY, target);
-
-    if (! meta) {
-        throw new Error('System is not decorated with @SystemData');
-    }
-
-    return meta;
 }
 
 /**
@@ -65,8 +54,8 @@ export function getSystemMeta(target: object): SystemMetaData {
  * @param data The meta-data that should be added to the system.
  * @returns A class decorator.
  */
-export function SystemDesc(data: SystemMetaData = {}): ClassDecorator {
-    return (target: Function) => Reflect.defineMetadata(SYS_META_KEY, data, target);
+export function SystemData(data: SystemMetaData = {}): ClassDecorator {
+    return (target: Function) => Reflect.defineMetadata(METADATA_KEY, data, target);
 }
 
 export interface SystemWrapper {
@@ -108,13 +97,6 @@ export class SystemManager {
         return components.map(component => this.world.storage(component));
     }
 
-    /** @hidden */
-    private parseQueryMetaData(meta: SystemMetaData): EntityPool {
-        return this.world.entities.registerPool(this.world.createFilter(
-            meta.query || {}
-        ));
-    }
-
     /**
      * Adds a system.
      *
@@ -122,10 +104,14 @@ export class SystemManager {
      * @returns this.
      */
     public add(system: System): this {
-        const meta = getSystemMeta(system);
+        const meta = Reflect.getMetadata(METADATA_KEY, system.constructor);
+
+        if (! meta) {
+            throw new Error('System is not decorated with @SystemData');
+        }
 
         this.systems.push({
-            entities: this.parseQueryMetaData(meta),
+            entities: this.world.pool(meta.query || {}),
             storages: this.parseStorageMetaData(meta),
             system
         });
@@ -140,7 +126,11 @@ export class SystemManager {
     /** Updates all systems. Should be called once on each frame. */
     public update(): void {
         for (const item of this.systems) {
-            item.system.update(this.world, item.entities, ...item.storages);
+            item.system.update(
+                this.world,
+                item.entities,
+                ...item.storages
+            );
         }
     }
 

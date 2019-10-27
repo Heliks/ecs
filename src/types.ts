@@ -6,7 +6,7 @@ export type ComponentType<T = unknown> = ClassType<T>;
 export type Entity = symbol;
 
 /** Contains information on how entities should be pooled. */
-export interface EntityQuery {
+export interface Query {
     contains?: ClassType[];
     excludes?: ClassType[];
 }

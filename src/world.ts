@@ -4,7 +4,7 @@ import { EntityManager } from './entity-manager';
 import { EntityPool } from './entity-pool';
 import { Filter } from './filter';
 import { Storage } from './storage';
-import { ClassType, Entity, EntityQuery, World as Base } from './types';
+import { ClassType, Entity, Query, World as Base } from './types';
 
 export class World implements Base {
 
@@ -42,7 +42,7 @@ export class World implements Base {
         return bits;
     }
 
-    public createFilter(query: EntityQuery): Filter {
+    public createFilter(query: Query): Filter {
         return new Filter(
             this.createComposition(query.contains || []),
             this.createComposition(query.excludes || [])
@@ -80,11 +80,11 @@ export class World implements Base {
         this.entities.sync();
     }
 
-    public pool(query: EntityQuery) {
+    public pool(query: Query) {
         return this.entities.registerPool(this.createFilter(query));
     }
 
-    public findPools(query: EntityQuery | Filter): EntityPool[] {
+    public findPools(query: Query | Filter): EntityPool[] {
         return this.entities.findPools(
             query instanceof Filter ? query : this.createFilter(query)
         );

@@ -1,10 +1,10 @@
-import { ClassType } from '../types';
 import { World } from '../world';
-import { SystemDesc, SystemManager, SystemWrapper } from '../system-manager';
-import { System } from '../system';
+import { System, SystemData, SystemManager, SystemWrapper } from '../system';
 
+// Test manager.
 class SystemManagerMock extends SystemManager {
 
+    /** @hidden */
     public getWrapper(system: System): SystemWrapper {
         const wrapper = this.systems.find(item => item.system === system);
 
@@ -15,111 +15,109 @@ class SystemManagerMock extends SystemManager {
         return wrapper;
     }
 
-    addAndReturn(system: System): SystemWrapper {
-        return this.add(system).getWrapper(system);
+    /** Returns the entity pool assigned to the given system. */
+    public getPool(system: System) {
+        return this.getWrapper(system).entities;
+    }
 
+    /** Returns the storages that are assigned to the given system. */
+    public getStorages(system: System) {
+        return this.getWrapper(system).storages;
     }
 
 }
 
-describe('SystemManager', () => {
-    let world: World;
-    let systems: SystemManagerMock;
+// Test system.
+@SystemData()
+class SystemMock implements System {
+    boot   = jest.fn();
+    update = jest.fn();
+}
 
-    class SysMock implements System {
-        boot   = jest.fn();
-        update = jest.fn();
-    }
+// Test components.
+class A {}
+class B {}
+class C {}
+
+describe('SystemManager', () => {
+
+    const query = {
+        contains: [A, B]
+    };
+
+    let world: World;
+    let manager: SystemManagerMock;
 
     beforeEach(() => {
-        world   = new World();
-        systems = new SystemManagerMock(world);
+        world = new World();
+        manager = new SystemManagerMock(world);
     });
 
     it('should call boot() when a system is added', () => {
-        const system = new SysMock();
+        const system = new SystemMock();
 
-        systems.add(system);
+        manager.add(system);
 
         expect(system.boot).toHaveBeenCalledWith(world);
     });
 
-    it('should throw when adding a class that is not a system.', () => {
-        expect(() => systems.add(new (class Foo {}) as System)).toThrow();
+    it('should ensure that systems are decorated with @SystemData', () => {
+        class Foo implements System {
+            update = jest.fn();
+        }
+
+        // Also test false positives by making sure that systems
+        // that do have the decorator are not failing.
+        @SystemData()
+        class Bar extends Foo {}
+
+        expect(() => manager.add(new Foo())).toThrow();
+        expect(() => manager.add(new Bar())).not.toThrow();
     });
 
-    describe('add()', () => {
-        class A {}
-        class B {}
-        class C {}
+    it('should assign entity pools to systems', () => {
+        @SystemData({
+            query
+        })
+        class Sys extends SystemMock {}
 
-        const query = {
-            contains: [A, B]
-        };
+        const system = new Sys();
+        const pool = manager.add(system)
+            .getPool(system);
 
-        it('should pool entities', () => {
-            @SystemDesc({ query })
-            class Sys extends SysMock {}
+        // The pool that was assigned to the system should be created
+        // from the same query.
+        const filter = world.createFilter(query);
 
-            const equals = systems
-                .addAndReturn(new Sys())
-                .entities
-                .filter
-                .equals(world.createFilter(query));
-
-            expect(equals).toBeTruthy();
-        });
-
-        it('should automatically map storages if no mapping was provided', () => {
-            @SystemDesc({ query })
-            class Sys extends SysMock {}
-
-            const storages = systems.addAndReturn(new Sys()).storages;
-
-            expect(storages[0].type).toBe(A);
-            expect(storages[1].type).toBe(B);
-        });
-
-        it('should map storages', () => {
-            @SystemDesc({
-                query,
-                storages: [C, B],
-            });
-            class Sys extends SysMock {}
-
-            const storages = systems.addAndReturn(new Sys()).storages;
-
-            expect(storages[0].type).toBe(C);
-            expect(storages[1].type).toBe(B);
-        });
+        expect(pool.filter.equals(filter)).toBeTruthy();
     });
 
-    it('should call update() on all systems', () => {
+    it('should automatically map system storages if no mapping was provided', () => {
+        @SystemData({
+            query
+        })
+        class Sys extends SystemMock {}
 
+        const system = new Sys();
+        const storages = manager.add(system)
+            .getStorages(system);
 
-        /*
-        expect(wrapper.entities.filter.equals(
-            world.createFilter(query))
-        ).toBeTruthy();
-`*/
+        expect(storages[0].type).toBe(A);
+        expect(storages[1].type).toBe(B);
+    });
 
+    it('should map system storages', () => {
+        @SystemData({
+            query,
+            storages: [C, B]
+        })
+        class Sys extends SystemMock {}
 
+        const system = new Sys();
+        const storages = manager.add(system)
+            .getStorages(system);
 
-
-
-
-        /*
-        const system1 = new TestSystem();
-        const system2 = new TestSystem();
-
-        systems.add(system1);
-        systems.add(system2);
-
-        systems.update(5);
-
-        expect(system1.update).toHaveBeenCalledWith(world, 5);
-        expect(system2.update).toHaveBeenCalledWith(world, 5);
-        */
-
+        expect(storages[0].type).toBe(C);
+        expect(storages[1].type).toBe(B);
     });
 });

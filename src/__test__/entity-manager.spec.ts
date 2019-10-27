@@ -1,29 +1,24 @@
 import { EntityManager } from '../entity-manager';
 import { World } from '../world';
-import { ClassType, EntityQuery } from '../types';
+import { ClassType, Query } from '../types';
 import { BitSet } from '../bit-set';
 
 describe('EntityManager', () => {
-   let entityMgr: EntityManager;
-   let world: World;
-
    class A {}
    class B {}
    class C {}
    class D {}
 
+   let entityMgr: EntityManager;
+   let world: World;
+
    /**  Helper method to create a "dirty" entity with components. */
    function createEntity(components?: ClassType[]) {
       const entity = world.create(components);
 
-      world.entities.setDirty(entity);
+      world.insert(entity, true);
 
       return entity;
-   }
-
-   /** Helper method to create an entity pool. */
-   function createPool(query: EntityQuery) {
-      return world.entities.registerPool(world.createFilter(query));
    }
 
    beforeEach(() => {
@@ -36,7 +31,7 @@ describe('EntityManager', () => {
    });
 
    it('should add eligible entities to pools', () => {
-      const pool = createPool({
+      const pool = world.pool({
          contains: [A, B],
          excludes: [C]
       });
@@ -59,7 +54,7 @@ describe('EntityManager', () => {
    });
 
    it('should remove entities from pools that are no longer eligible.', () => {
-      const pool = createPool({
+      const pool = world.pool({
          contains: [A, B],
          excludes: [C]
       });
