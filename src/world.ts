@@ -80,7 +80,7 @@ export class World implements Base {
         this.entities.sync();
     }
 
-    public pool(query: Query) {
+    public pool(query: Query): EntityPool {
         return this.entities.registerPool(this.createFilter(query));
     }
 
