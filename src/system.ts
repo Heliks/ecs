@@ -124,7 +124,7 @@ export function InjectStorage(component: ClassType): PropertyDecorator {
             property
         });
 
-        setMetaData(target, meta);
+        setMetaData(target.constructor, meta);
     };
 }
 
