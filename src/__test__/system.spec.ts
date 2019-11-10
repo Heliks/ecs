@@ -1,5 +1,6 @@
 import { World } from '../world';
-import { System, SystemData, SystemManager, SystemWrapper } from '../system';
+import { InjectStorage, System, SystemData, SystemManager, SystemWrapper } from '../system';
+import { Storage } from '../storage';
 
 // Test manager.
 class SystemManagerMock extends SystemManager {
@@ -18,11 +19,6 @@ class SystemManagerMock extends SystemManager {
     /** Returns the entity group assigned to the given system. */
     public getGroup(system: System) {
         return this.getWrapper(system).entities;
-    }
-
-    /** Returns the storages that are assigned to the given system. */
-    public getStorages(system: System) {
-        return this.getWrapper(system).storages;
     }
 
 }
@@ -92,32 +88,22 @@ describe('SystemManager', () => {
         expect(group.filter.equals(filter)).toBeTruthy();
     });
 
-    it('should automatically map system storages if no mapping was provided', () => {
+    it('should inject storages', () => {
         @SystemData({
             query
         })
-        class Sys extends SystemMock {}
+        class Foo extends SystemMock {
+            @InjectStorage(A) public a!: Storage<A>;
+            @InjectStorage(B) public b!: Storage<B>;
+        }
 
-        const system = new Sys();
-        const storages = manager.add(system)
-            .getStorages(system);
+        const system = new Foo();
 
-        expect(storages[0].type).toBe(A);
-        expect(storages[1].type).toBe(B);
+        // Storages are only injected after the system was added.
+        manager.add(system);
+
+        expect(system.a.type).toBe(A);
+        expect(system.b.type).toBe(B);
     });
 
-    it('should map system storages', () => {
-        @SystemData({
-            query,
-            storages: [C, B]
-        })
-        class Sys extends SystemMock {}
-
-        const system = new Sys();
-        const storages = manager.add(system)
-            .getStorages(system);
-
-        expect(storages[0].type).toBe(C);
-        expect(storages[1].type).toBe(B);
-    });
 });

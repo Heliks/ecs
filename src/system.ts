@@ -4,7 +4,17 @@ import { ClassType, Query } from './types';
 import { World } from './world';
 
 // Key used to store system metadata.
-export const METADATA_KEY = Symbol('sys-meta-data');
+const METADATA_KEY = Symbol('sys-meta-data');
+
+/** Returns the system meta data of the given target. */
+function getMetaData(target: object): SystemMetaData {
+    return Reflect.getMetadata(METADATA_KEY, target) || {};
+}
+
+/** Sets system meta data on the given target. */
+function setMetaData(target: object, data: SystemMetaData): void {
+    Reflect.defineMetadata(METADATA_KEY, data, target);
+}
 
 /**
  * A system handles game logic by iterating over a set of entities. Each
@@ -27,15 +37,17 @@ export interface System {
 
 }
 
+export interface InjectStorageDescriptor {
+    /** The storage of this component will be injected. */
+    component: ClassType;
+    /** The property to which the storage will be assigned. */
+    property: string | symbol;
+}
+
 /** Data that can be attached to a system via the `@SystemData` decorator. */
 export interface SystemMetaData {
-
-    /** */
     query?: Query;
-
-    /** */
-    storages?: ClassType[];
-
+    storages?: InjectStorageDescriptor[];
 }
 
 /**
@@ -55,23 +67,72 @@ export interface SystemMetaData {
  * @returns A class decorator.
  */
 export function SystemData(data: SystemMetaData = {}): ClassDecorator {
-    return (target: Function) => Reflect.defineMetadata(METADATA_KEY, data, target);
+    return (target: Function) => {
+        const meta = getMetaData(target);
+
+        meta.query = data.query;
+
+        setMetaData(target, meta);
+    };
+}
+
+/**
+ * Decorator to inject a storage into the property of a system.
+ *
+ * Note: Storages are only available after a system was added to the manager.
+ *
+ * ```typescript
+ *
+ * class Pos {
+ *     x = 0;
+ *     y = 0;
+ * }
+ *
+ * @SystemData()
+ * class Movement {
+ *
+ *     @InjectStorage(Pos) public position!: Storage<Pos>;
+ *     @InjectStorage(Vel) public velocity!: Storage<Vel>;
+ *
+ *     update(world, group) {
+ *          for (const entity of group.entities) {
+ *              const position = this.position.get(entity);
+ *              const velocity = this.velocity.get(entity);
+ *
+ *              position.x = velocity.x;
+ *              position.y = velocity.y;
+ *          }
+ *     }
+ *
+ * }
+ * ```
+ *
+ * @param component The storage for this component will be injected.
+ * @returns A property decorator.
+ * @decorator
+ */
+export function InjectStorage(component: ClassType): PropertyDecorator {
+    return (target, property) => {
+        const meta = getMetaData(target.constructor);
+
+        if (! meta.storages) {
+            meta.storages = [];
+        }
+
+        meta.storages.push({
+            component,
+            property
+        });
+
+        setMetaData(target, meta);
+    };
 }
 
 export interface SystemWrapper {
-
     /** The group of entities that this system is processing. */
     entities: EntityGroup;
-
-    /**
-     * Component storages. In most cases this will contain the `contains` part
-     * of the `Query` that is passed to the `@SystemData`.
-     */
-    storages: Storage[];
-
     /** The system. */
     system: System;
-
 }
 
 export class SystemManager {
@@ -83,22 +144,6 @@ export class SystemManager {
      * @param world An entity world.
      */
     constructor(protected world: World) {}
-
-    /** @hidden */
-    private parseStorageMetaData(meta: SystemMetaData): Storage[] {
-        const components = [];
-
-        // Use storage config from meta-data if set. Otherwise try to auto-resolve
-        // from the "contains" part in the entity query.
-        if (meta.storages) {
-            components.push(...meta.storages);
-        }
-        else if (meta.query && meta.query.contains) {
-            components.push(...meta.query.contains);
-        }
-
-        return components.map(component => this.world.storage(component));
-    }
 
     /**
      * Adds a system.
@@ -113,9 +158,16 @@ export class SystemManager {
             throw new Error('System is not decorated with @SystemData');
         }
 
+        // Inject storages.
+        if (meta.storages) {
+            for (const desc of meta.storages) {
+                // eslint-disable-next-line
+                (system as any)[desc.property] = this.world.storage(desc.component);
+            }
+        }
+
         this.systems.push({
             entities: this.world.group(meta.query || {}),
-            storages: this.parseStorageMetaData(meta),
             system
         });
 
@@ -129,11 +181,7 @@ export class SystemManager {
     /** Updates all systems. Should be called once on each frame. */
     public update(): void {
         for (const item of this.systems) {
-            item.system.update(
-                this.world,
-                item.entities,
-                ...item.storages
-            );
+            item.system.update(this.world, item.entities);
         }
     }
 
