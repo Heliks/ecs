@@ -10,17 +10,9 @@ jobs:
       - run:
           name: npm-update
           command: 'sudo npm install -g npm@latest'
-      # Restore cached dependencies.
-      - restore_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
       - run:
           name: npm-install
-          command: npm install
-      # Cache dependencies.
-      - save_cache:
-          key: dependency-cache-{{ checksum "package.json" }}
-          paths:
-            - ./node_modules
+          command: npm ci
       # Run tests
       - run:
           name: test
