@@ -1,9 +1,6 @@
-export * from './component-manager';
-export * from './entity-manager';
-export * from './entity-pool';
+export * from './entity-group';
 export * from './filter';
+export * from './system';
 export * from './world';
-export * from './decorators';
-export * from './systems';
-export { ComponentType, Entity, EntityQuery } from './types';
+export { ComponentType, Entity, Query } from './types';
 

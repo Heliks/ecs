@@ -10,7 +10,11 @@
     "sourceMap": true,
     "outDir": "lib/",
     "baseUrl": "./src",
-    "removeComments": false
+    "removeComments": false,
+    "types": [
+      "jest",
+      "reflect-metadata"
+    ]
   },
   "include": [
     "src/**/*"

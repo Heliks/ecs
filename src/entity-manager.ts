@@ -1,179 +1,105 @@
-import { ComponentType, Entity, EntityQuery } from './types';
-import { ComponentManager } from './component-manager';
-import { EntityPool } from './entity-pool';
+import { BitSet } from './bit-set';
+import { EntityGroup } from './entity-group';
 import { Filter } from './filter';
+import { Entity } from './types';
 
 export class EntityManager {
 
-    /** {@link ComponentManager} */
-    public readonly componentManager = new ComponentManager();
+    /** Contains all entities that are currently alive. */
+    public readonly alive: Entity[] = [];
 
-    /** Contains all entities created by the entity manager */
-    protected readonly entities: Entity[] = [];
+    /** Entities that had their composition updated and require synchronization. {@link sync()} */
+    public readonly dirty: Entity[] = [];
 
-    /** Contains all registered entity pools */
-    protected readonly pools: EntityPool[] = [];
+    /** Composition bitsets mapped to the entity to which they belong. */
+    protected readonly compositions = new Map<Entity, BitSet>();
 
-    /** Total amount of entities */
-    public get size(): number {
-        return this.entities.length;
+    /** Contains all registered entity groups. */
+    protected readonly groups: EntityGroup[] = [];
+
+    /** Returns the composition of an entity. */
+    public composition(entity: Entity): BitSet {
+        let composition = this.compositions.get(entity);
+
+        if (composition) {
+            return composition;
+        }
+
+        composition = new BitSet();
+
+        this.compositions.set(entity, composition);
+
+        return composition;
     }
 
     /**
-     * Creates an entity.
+     * Inserts an entity.
      *
-     * @param components (optional) The entities initial component types.
-     * @returns A new entity.
+     * @param entity The entity that should be inserted.
      */
-    public create(components: ComponentType[] = []): Entity {
-        const entity = Symbol();
-
-        this.entities.push(entity);
-
-        if (components.length) {
-            this.componentManager.addMany(entity, components);
-        }
-
-        return entity;
+    public insert(entity: Entity): void {
+        this.alive.push(entity);
     }
 
-    /**
-     * Unsafely destroys an enemy
-     *
-     * @param entity Entity to destroy
-     */
-    public destroyUnsafe(entity: Entity): void {
-        // Remove all components
-        this.componentManager.removeAll(entity);
-
-        this.entities.splice(this.getIndex(entity), 1);
+    /** Returns true if the given entity is alive. */
+    public isAlive(entity: Entity): boolean {
+        return this.alive.indexOf(entity) > -1;
     }
 
-    /**
-     * Destroys an entity and cleans up the junk that is produced in that process.
-     *
-     * @param entity The entity to destroy
-     * @returns this
-     */
-    public destroy(entity: Entity): this {
-        if (! this.exists(entity)) {
-            return this;
-        }
-
-        // Get pools that this entity is a member of
-        const pools = this.pools.filter(pool => pool.has(entity));
-
-        for (const pool of pools) {
-            pool.remove(entity);
-        }
-
-        this.destroyUnsafe(entity);
-
-        return this;
-    }
-
-    /** Destroys all existing entities */
-    public clear(): void {
-        // Empty entity pools
-        for (const pool of this.pools) {
-            pool.clear();
-        }
-
-        for (const entity of this.entities) {
-            // We can use destroyUnsafe here because we already cleaned sub systems of
-            // all entity traces with their respective clear() implementations
-            this.destroyUnsafe(entity);
+    /** Flags the given entity as dirty. */
+    public setDirty(entity: Entity): void {
+        if (this.dirty.indexOf(entity) === -1 && this.isAlive(entity)) {
+            this.dirty.push(entity);
         }
     }
 
-    /**
-     * Returns the index of an entity
-     *
-     * @param entity An entity
-     * @returns The entities index
-     */
-    public getIndex(entity: Entity): number {
-        return this.entities.indexOf(entity);
-    }
+    public addGroup(filter: Filter): EntityGroup {
+        const group = new EntityGroup(filter);
 
-    /**
-     * Returns true if an entity exists.
-     *
-     * @param entity An entity
-     * @returns Boolean indicating if an entity exists or not
-     */
-    public exists(entity: Entity): boolean {
-        return this.getIndex(entity) > -1;
-    }
-
-    /**
-     * Creates a component filter based on an EntityQuery
-     *
-     * @param query
-     */
-    public createFilter(query: EntityQuery = {}): Filter {
-        return new Filter(
-            this.componentManager.createCompositionId(query.contains || []),
-            this.componentManager.createCompositionId(query.excludes || []),
-        );
-    }
-
-    /**
-     * Registers an EntityPool that filters entities based on an EntityQuery
-     *
-     * @param query
-     */
-    public registerPool(query: EntityQuery): EntityPool {
-        const filter = this.createFilter(query);
-
-        // If a pool with the same filter already exist we use that one
-        let pool = this.pools.find(pool => pool.filter.equals(filter));
-
-        if (pool) {
-            return pool;
-        }
-
-        pool = new EntityPool(filter);
-
-        // Populate pool with eligible entities
-        for (const entity of this.entities) {
-            const compositionId = this.componentManager.getCompositionId(entity);
-
-            if (pool.check(compositionId)) {
-                pool.add(entity);
+        // Populate with entities that are eligible.
+        for (const entity of this.alive) {
+            if (group.test(this.composition(entity))) {
+                group.add(entity);
             }
         }
 
-        this.pools.push(pool);
+        this.groups.push(group);
 
-        return pool;
+        return group;
+    }
+
+    public getGroups(): readonly EntityGroup[] {
+        return this.groups;
     }
 
     /**
-     * Synchronizes entity pools with composition updates. Should be called once on
-     * each frame.
+     * Synchronizes `dirty` ({@link dirty}) entities and updates entity groups. Should
+     * be called once each frame.
      */
-    public synchronize(): void {
-        const entities = this.componentManager.updated;
+    public sync(): void {
+        const dirty = this.dirty;
 
-        if (! entities.length) {
+        if (! dirty.length) {
             return;
         }
 
-        for (const pool of this.pools) {
-            for (const entity of entities) {
-                if (! pool.has(entity)) {
-                    if (pool.check(this.componentManager.getCompositionId(entity))) {
-                        pool.add(entity);
+        for (const group of this.groups) {
+            for (const entity of dirty) {
+                // If the entity is contained in the group and no longer eligible it will be
+                // removed. If the entity is not contained but eligible it will be added to
+                // the group.
+                if (group.has(entity)) {
+                    if (! group.test(this.composition(entity))) {
+                        group.remove(entity);
                     }
                 }
-                else if (! pool.check(this.componentManager.getCompositionId(entity))) {
-                    pool.remove(entity);
+                else if (group.test(this.composition(entity))) {
+                    group.add(entity);
                 }
             }
         }
 
-        this.componentManager.clear();
+        this.dirty.length = 0;
     }
 
 }

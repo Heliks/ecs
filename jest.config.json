@@ -5,7 +5,12 @@
   "transform": {
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
-  "testMatch": [ "**/*.spec.ts" ],
+  "testMatch": [
+    "**/*.spec.ts"
+  ],
+  "setupFiles": [
+    "<rootDir>/src/__test__/setup.ts"
+  ],
   "moduleFileExtensions": [
     "ts",
     "tsx",

@@ -1,52 +1,73 @@
-import { TestComp1, TestComp2 } from './shared';
 import { EntityManager } from '../entity-manager';
+import { World } from '../world';
+import { ClassType, Query } from '../types';
+import { BitSet } from '../bit-set';
 
 describe('EntityManager', () => {
-    let manager: EntityManager;
+   class A {}
+   class B {}
+   class C {}
+   class D {}
 
-    beforeEach(() => {
-        manager = new EntityManager();
-    });
+   let entityMgr: EntityManager;
+   let world: World;
 
-    it('should create entities', () => {
-        expect(typeof manager.create()).toBe('symbol');
-    });
+   /**  Helper method to create a "dirty" entity with components. */
+   function createEntity(components?: ClassType[]) {
+      const entity = world.create(components);
 
-    it('should destroy an entity', () => {
-        const entity = manager.create();
+      world.insert(entity, true);
 
-        manager.destroy(entity);
+      return entity;
+   }
 
-        expect(manager.exists(entity)).toBeFalsy();
-    });
+   beforeEach(() => {
+      world = new World();
+      entityMgr = world.entities;
+   });
 
-    it('should reset the composition of destroyed entities', () => {
-        const entity = manager.create([
-            TestComp1,
-            TestComp2
-        ]);
+   it('should create a composition bit set', () => {
+      expect(entityMgr.composition(createEntity())).toBeInstanceOf(BitSet);
+   });
 
-        // destroy entity and get composition
-        manager.destroy(entity);
+   it('should add eligible entities to groups', () => {
+      const group = world.group({
+         contains: [A, B],
+         excludes: [C]
+      });
 
-        expect(manager.componentManager.getCompositionId(entity).isEmpty()).toBeTruthy();
-    });
+      const entity1 = createEntity([A, B]);
+      const entity2 = createEntity([A, B, D]);
 
-    it('should synchronize pools', () => {
-        const pool1 = manager.registerPool({ contains: [ TestComp1 ] });
-        const pool2 = manager.registerPool({ contains: [ TestComp2 ] });
+      // Non-eligible entities to make sure that no entities are
+      // added to the group that shouldn't be there.
+      const entity3 = createEntity([A]);
+      const entity4 = createEntity([A, B, C]);
 
-        const entity1 = manager.create([ TestComp1 ]);
-        const entity2 = manager.create([ TestComp2 ]);
+      entityMgr.sync();
 
-        manager.synchronize();
+      expect(group.has(entity1)).toBeTruthy();
+      expect(group.has(entity2)).toBeTruthy();
 
-        // validate size
-        expect(pool1.size).toBe(1);
-        expect(pool2.size).toBe(1);
+      expect(group.has(entity3)).toBeFalsy();
+      expect(group.has(entity4)).toBeFalsy();
+   });
 
-        // validate membership
-        expect(pool1.has(entity1)).toBeTruthy();
-        expect(pool2.has(entity2)).toBeTruthy();
-    });
+   it('should remove non-eligible entities from groups', () => {
+      const group = world.group({
+         contains: [A, B],
+         excludes: [C]
+      });
+
+      const entity1 = createEntity([A]);
+      const entity2 = createEntity([A, B, C]);
+
+      group.add(entity1);
+      group.add(entity2);
+
+      entityMgr.sync();
+
+      expect(group.has(entity1)).toBeFalsy();
+      expect(group.has(entity2)).toBeFalsy();
+   });
 });

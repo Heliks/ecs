@@ -1,113 +1,98 @@
+import { Archetype } from './archetype';
+import { BitSet } from './bit-set';
 import { EntityManager } from './entity-manager';
-import { ComponentManager } from './component-manager';
-import { BaseSystem } from './systems';
-import { getComponentMapperMetadata } from './utils';
-import { ClassType, ComponentType, Entity } from './types';
-import { ComponentMapper } from './component-mapper';
+import { EntityGroup } from './entity-group';
+import { Filter } from './filter';
+import { Storage } from './storage';
+import { ClassType, Entity, Query, World as Base } from './types';
 
-export class World {
+export class World implements Base {
 
-    /** {@see EntityManager} */
-    public readonly entityManager = new EntityManager();
+    public readonly entities = new EntityManager();
 
-    /** {@see ComponentManager} */
-    public readonly componentManager: ComponentManager;
+    protected storages = new Map<ClassType, Storage>();
 
-    /** Contains all systems that belong to this world. */
-    protected systems: BaseSystem[] = [];
+    protected storageIndex = 0;
 
-    /** */
-    constructor() {
-        this.componentManager = this.entityManager.componentManager;
+    /** {@inheritDoc Base.register()} */
+    public register<T>(component: ClassType<T>): Storage<T> {
+        const storage = new Storage<T>(1 << this.storageIndex++, component, this.entities);
+
+        this.storages.set(component, storage);
+
+        return storage;
     }
 
-    /**
-     * Adds a system to the world. Systems are executed during the update phase.
-     *
-     * @param system A system.
-     * @returns this
-     */
-    public addSystem<T extends BaseSystem>(system: T): this {
-        // Handle injections of component mappers.
-        const injections = getComponentMapperMetadata(system);
+    /** {@inheritDoc Base.storage()} */
+    public storage<T>(component: ClassType<T>): Storage<T> {
+        const storage = this.storages.get(component) as Storage<T>;
 
-        if (injections) {
-            // Todo: should avoid the 'any' hack if possible.
-            // eslint-disable-next-line @typescript-eslint/no-explicit-any
-            const target = system as any;
+        return storage
+            ? storage
+            : this.register(component);
+    }
 
-            for (const injection of injections) {
-                target[ injection.key ] = this.getMapper(injection.type);
+    public createComposition(components: ClassType[]): BitSet {
+        const bits = new BitSet();
+
+        for (const component of components) {
+            bits.add(this.storage(component).id);
+        }
+
+        return bits;
+    }
+
+    public createFilter(query: Query): Filter {
+        return new Filter(
+            this.createComposition(query.contains || []),
+            this.createComposition(query.excludes || [])
+        );
+    }
+
+    /** {@inheritDoc Base.create()} */
+    public create(components?: ClassType[]): Entity {
+        const entity = Symbol();
+
+        if (components) {
+            for (const component of components) {
+                this.storage(component).add(entity);
             }
         }
 
-        system.boot(this.entityManager);
-
-        this.systems.push(system);
-
-        return this;
+        return entity;
     }
 
-    /**
-     * Returns a system that matches the given class type.
-     *
-     * @param type A system constructor type.
-     * @returns A system
-     */
-    public getSystemFromType<T extends BaseSystem>(type: ClassType<T>): T {
-        const instance = this.systems.find(item => item.constructor === type);
-
-        if (! instance) {
-            throw new Error(`Cannot find system '${type.constructor.name}'`);
-        }
-
-        return instance as T;
+    /** {@inheritDoc Base.archetype()} */
+    public archetype(): Archetype {
+        return new Archetype(this);
     }
 
-    /**
-     * Handles all relevant updates on sub-systems. Should be called on every frame.
-     *
-     * @param deltaTime Delta time.
-     */
-    public update(deltaTime = 0): void {
-        this.entityManager.synchronize();
+    /** {@inheritDoc Base.insertEntity()} */
+    public insert(entity: Entity, dirty = true): void {
+        this.entities.insert(entity);
 
-        for (const system of this.systems) {
-            system.update(deltaTime);
+        if (dirty) {
+            this.entities.setDirty(entity);
         }
     }
 
-    /** {@link EntityManager.create()} */
-    public create(components: ComponentType[] = []): Entity {
-        return this.entityManager.create(components);
+    /** Updates the world. Should be called once on each frame. */
+    public update(): void {
+        this.entities.sync();
     }
 
-    /** {@link ComponentManager.addComponent()} */
-    public addComponent<T extends object>(
-        entity: Entity,
-        type: ComponentType<T>,
-        data: Partial<T> = {}
-    ): this {
-        this.componentManager.add(entity, type, data);
+    /**
+     * Returns a group that contains entities that match the given query.
+     *
+     * @param query The query that entities must match.
+     * @returns An entity group containing entities matching the given query.
+     */
+    public group(query: Query): EntityGroup {
+        const filter = this.createFilter(query);
+        const group = this.entities.getGroups().find(item => item.filter.equals(filter));
 
-        return this;
-    }
-
-    /** {@link ComponentManager.addMany()} */
-    public addComponents(entity: Entity, types: ComponentType[]): this {
-        this.componentManager.addMany(entity, types);
-
-        return this;
-    }
-
-    /** {@link ComponentManager.mapper()} */
-    public getMapper<T extends object>(type: ComponentType<T>): ComponentMapper<T> {
-        return this.componentManager.mapper(type);
-    }
-
-    /** Clears all data */
-    public clear(): void {
-        this.entityManager.clear();
+        return group ? group : this.entities.addGroup(filter);
     }
 
 }
+

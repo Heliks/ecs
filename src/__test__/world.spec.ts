@@ -1,47 +1,50 @@
-import { mapper } from '../decorators';
-import { FooBar } from './shared';
-import { BaseSystem } from '../systems';
-import { ComponentMapper } from '../component-mapper';
 import { World } from '../world';
 
-class FooSystem extends BaseSystem {
-
-    @mapper(FooBar)
-    public fooMapper!: ComponentMapper<FooBar>;
-
-    // Mock boot
-    boot = jest.fn();
-
-    // Mock run
-    run = jest.fn();
-
-}
-
 describe('World', () => {
-    let system: FooSystem;
     let world: World;
 
+    class A {}
+    class B {}
+
     beforeEach(() => {
-        system = new FooSystem();
-        world = new World().addSystem(system);
+        world = new World();
     });
 
-    it('should boot systems', () => {
-        expect(system.boot).toHaveBeenCalledTimes(1);
-    });
-
-    it('should update systems', () => {
-        world.update(0);
-
-        expect(system.run).toHaveBeenCalledWith(0);
-    });
-
-    it('should inject component mappers when a system is added.', () => {
+    it('should create entities', () => {
         const entity = world.create();
 
-        // Verify existence.
-        expect(system.fooMapper).toBeInstanceOf(ComponentMapper);
-        // Verify component type.
-        expect(system.fooMapper.create(entity)).toBeInstanceOf(FooBar);
+        // If entity was properly created it should be alive within
+        // the entity manager.
+        expect(world.entities.isAlive(entity));
+    });
+
+    it('should register component storages', () => {
+        const storage1 = world.register(A);
+        const storage2 = world.register(A);
+        const storage3 = world.register(A);
+
+        expect(storage1.id).toBe(1);
+        expect(storage2.id).toBe(2);
+        expect(storage3.id).toBe(4);
+    });
+
+    it('should create entities with components', () => {
+        const entity = world.create([ A ]);
+
+        const storageA = world.storage(A);
+        const storageB = world.storage(B);
+
+        expect(storageA.has(entity)).toBeTruthy();
+        expect(storageB.has(entity)).toBeFalsy();
+    });
+
+    it('should create compositions', () => {
+        const storageA = world.storage(A);
+        const storageB = world.storage(B);
+
+        const composition = world.createComposition([A, B]);
+
+        expect(composition.has(storageA.id)).toBeTruthy();
+        expect(composition.has(storageB.id)).toBeTruthy();
     });
 });
