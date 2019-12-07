@@ -1,5 +1,4 @@
 import { EntityGroup } from './entity-group';
-import { Storage } from './storage';
 import { ClassType, Query } from './types';
 import { World } from './world';
 
