@@ -1,5 +1,4 @@
 import { EntityGroup } from './entity-group';
-import { Storage } from './storage';
 import { ClassType, Query } from './types';
 import { World } from './world';
 
@@ -30,10 +29,9 @@ export interface System {
      *
      * @param world The world from which the system was executed.
      * @param group The group of entities over which this system iterates.
-     * @param storages
      * @returns Can return anything, but nothing happens with it.
      */
-    update(world: World, group: EntityGroup, ...storages: Storage[]): unknown;
+    update(world: World, group: EntityGroup): unknown;
 
 }
 
@@ -186,3 +184,4 @@ export class SystemManager {
     }
 
 }
+
