@@ -1,10 +1,13 @@
 {
   "author": "Felix Wolf",
-  "dependencies": {
-    "@heliks/event-queue": "^0.1.1"
+  "peerDependencies": {
+    "@heliks/event-queue": "^0.1.1",
+    "@heliks/ecs": "^0.0.0"
   },
-  "description": "Typescript entity component system (ECS)",
+  "description": "A scene graph like hierarchy structure",
   "devDependencies": {
+    "@heliks/event-queue": "^0.1.1",
+    "@heliks/ecs": "^0.0.0",
     "typescript": "^3.9.7"
   },
   "files": [
@@ -12,7 +15,7 @@
   ],
   "license": "MIT",
   "main": "lib/index.js",
-  "name": "@heliks/ecs",
+  "name": "@heliks/hierarchy",
   "repository": {
     "url": "https://github.com/Heliks/ecs"
   },
