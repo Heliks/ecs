@@ -14,7 +14,7 @@
     "lerna": "^3.20.2"
   },
   "scripts": {
-    "lint": "eslint \"packages/**/*.ts\" --config .eslintrc.json",
+    "lint": "eslint \"packages/**/src/**/*.ts\" --config .eslintrc.json",
     "link": "lerna link",
     "test": "jest --config jest.config.json",
     "build": "lerna run --stream --sort build",
