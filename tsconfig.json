@@ -1,28 +1,18 @@
 {
   "compilerOptions": {
+    "target": "ES2016",
     "module": "commonjs",
-    "target": "es2015",
-    "declaration": true,
-    "emitDecoratorMetadata": true,
-    "experimentalDecorators": true,
     "moduleResolution": "node",
     "strict": true,
     "sourceMap": true,
-    "outDir": "lib/",
-    "baseUrl": "./src",
+    "declaration": true,
     "removeComments": false,
-    "types": [
-      "jest",
-      "reflect-metadata"
-    ]
+    "outDir": "./dist"
   },
-  "include": [
-    "src/**/*"
-  ],
   "exclude": [
-    "node_modules",
-    "src/__test__/**/*",
-    "lib"
+    "**/__test__/**",
+    "**/node_modules/**",
+    "packages/*/lib/",
+    "packages/*/dist/"
   ]
 }
-

@@ -1,4 +1,12 @@
-lib/
-node_modules/
+# IDEs
 .idea/
-old
+
+# Dependencies
+node_modules/
+**/node_modules
+
+packages**/lib
+
+# Logfiles
+lerna-debug.log
+yarn-error.log

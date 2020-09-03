@@ -1,28 +1,17 @@
-version: 2
+version: 2.1
+orbs:
+  node: circleci/node@1.1.6
 jobs:
-  build:
-    working_directory: ~/tiles
-    docker:
-      - image: circleci/node:12.10.0
+  verify:
+    executor:
+      name: node/default
     steps:
-      # Checkout and update npm.
       - checkout
-      - run:
-          name: npm-update
-          command: 'sudo npm install -g npm@latest'
-      - run:
-          name: npm-install
-          command: npm ci
-      # Run tests
-      - run:
-          name: test
-          command: npm test
-      # Lint
-      - run:
-          name: lint
-          command: npm run lint
-      # Build
-      - run:
-          name: build-prod
-          command: npm run build
-
+      - run: yarn install --immutable
+      - run: yarn build
+      - run: yarn test
+      - run: yarn lint
+workflows:
+  integration:
+    jobs:
+      - verify

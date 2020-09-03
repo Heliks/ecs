@@ -1,6 +1,6 @@
 {
   "collectCoverageFrom": [
-    "./src/**/*.ts"
+    "packages/**/src**/*.ts"
   ],
   "transform": {
     "^.+\\.(t|j)sx?$": "ts-jest"
@@ -8,8 +8,8 @@
   "testMatch": [
     "**/*.spec.ts"
   ],
-  "setupFiles": [
-    "<rootDir>/src/__test__/setup.ts"
+  "modulePathIgnorePatterns": [
+    "node_modules"
   ],
   "moduleFileExtensions": [
     "ts",
