@@ -1,9 +1,13 @@
 {
-  "packages": [
-    "packages/*",
-    "testgame"
-  ],
-  "version": "independent",
+  "command": {
+    "version": {
+      "message": "chore(): publish"
+    }
+  },
   "npmClient": "yarn",
-  "useWorkspaces": true
+  "packages": [
+    "packages/*"
+  ],
+  "useWorkspaces": true,
+  "version": "independent"
 }
