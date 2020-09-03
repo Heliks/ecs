@@ -17,7 +17,7 @@
   ],
   "license": "MIT",
   "main": "lib/index.js",
-  "name": "@heliks/hierarchy",
+  "name": "@heliks/transform",
   "repository": {
     "url": "https://github.com/Heliks/ecs"
   },

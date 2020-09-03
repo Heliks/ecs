@@ -5,7 +5,7 @@ Heavily WIP
 # Install
 
 ```shell
-$ npm install --save @keliks/ecs
+$ npm install --save @heliks/ecs
 ```
 
 # Usage

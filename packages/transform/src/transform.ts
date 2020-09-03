@@ -1,13 +1,16 @@
-import { Subscriber, World } from '@heliks/tiles-entity-system';
-import { Entity, EntityGroup, Storage } from '@heliks/tiles-entity-system';
-import { Vec2 } from '../math';
-import { Hierarchy, Parent } from '@heliks/hierarchy';
+/** Simple 2D vector. */
+type Vec2 = [number, number];
 
+/** Component that can be attached to an entity to give it a position and rotation. */
 export class Transform {
 
+  /** Position relative to the parent of the entity to which this component belongs. */
   public readonly local: Vec2 = [0, 0];
+
+  /** Absolute position in the world. */
   public readonly world: Vec2 = [0, 0];
 
+  /** Contains `true` if the [[local]] coordinates of this component were updated. */
   public isLocalDirty = true;
 
   /** @deprecated */
@@ -21,10 +24,12 @@ export class Transform {
   }
 
   /**
-   * @param x Position on the x axis. This can be any unit depending on the renderer
-   *  or physics engine, but in most cases it will be meters.q
-   * @param y Position on the y axis. Like [[x]] this can be any unit.
-   * @param rotation The rotation of the entity in radians.
+   * @param x Position on the x axis relative to the parent of the entity that has this
+   *  component (if it exists). This can be any unit depending on the renderer or physics
+   *  engine, but in most cases it will be meters.
+   * @param y Position on the y axis relative to the parent of the entity that has this
+   *  component (if it exists). Like [[x]] this can be any unit.
+   * @param rotation Rotation in radians.
    */
   constructor(x = 0, y = 0, public rotation = 0) {
     this.local[0] = x;
@@ -64,88 +69,3 @@ export class Transform {
 
 }
 
-
-export class TransformSystem extends ProcessingSystem {
-
-  /** @internal */
-  private subscriber!: Subscriber;
-  private hierarchy!: Hierarchy;
-
-  private parentless!: EntityGroup;
-
-  public getQuery(): EntityQuery {
-    return {
-      contains: [ Transform ]
-    }
-  }
-
-  public boot(world: World): void {
-    super.boot(world);
-
-    this.hierarchy = new Hierarchy(world.storage(Parent));
-
-    // Query all entities
-    this.parentless = world.query({
-      contains: [ Transform ],
-      excludes: [ Parent ]
-    });
-
-    // this.subscriber = world
-    //  .storage(Transform)
-    //  .events()
-    //  .subscribe();
-  }
-
-  public tt(transforms: Storage<Transform>, parents: Storage<Parent>, entities: Entity[]): void {
-    const hierarchy = this.hierarchy;
-
-    for (const entity of entities) {
-      const children = this.hierarchy.getChildren(entity);
-
-      if (children) {
-        for (const child of children) {
-          const cTransform = transforms.get(child);
-          const pTransform = transforms.get(parents.get(child).entity);
-
-          cTransform.world[0] = cTransform.local[0] + pTransform.world[0];
-          cTransform.world[1] = cTransform.local[1] + pTransform.world[1];
-
-          cTransform.isLocalDirty = false;
-
-          // Get the children of the child and traverse them also.
-          const _children = this.hierarchy.getChildren(child);
-
-          if (_children) {
-            this.tt(transforms, parents, _children);
-          }
-        }
-      }
-    }
-  }
-
-  public update(world: World) {
-    const transforms = world.storage(Transform);
-    const parents = world.storage(Parent);
-
-    // Maintain the entity hierarchy.
-    this.hierarchy.update();
-
-    const foo = this.hierarchy.children;
-
-    for (const entity of this.parentless.entities) {
-      const transform = transforms.get(entity);
-
-      // Entities without a parent have the same local position as world. Synchronize them
-      // if their locals have changed.
-      if (transform.isLocalDirty) {
-        transform.world[0] = transform.local[0];
-        transform.world[1] = transform.local[1];
-
-        transform.isLocalDirty = false;
-      }
-    }
-
-    this.tt(transforms, parents, this.parentless.entities);
-  }
-
-}

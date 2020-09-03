@@ -1,25 +1,28 @@
 import { Subscriber } from '@heliks/event-queue';
 import { ComponentEventType, Entity, Storage } from '@heliks/ecs';
+import { Parent } from './parent';
 
-export class Parent {
-  constructor(public entity: Entity) {}
-}
-
-type Children = Entity[];
-
+/** Scene-graph like hierarchy for entities. */
 export class Hierarchy {
 
+  /**
+   * Contains children mapped to their parent. Do not modify this directly unless you
+   * know what you are doing, otherwise the hierarchy is not guaranteed.
+   */
+  public readonly children = new Map<Entity, Entity[]>();
+
+  /** @internal */
   private readonly subscriber: Subscriber;
-  public readonly children = new Map<Entity, Children>();
 
-  public sorted: Entity[] = [];
-
+  /**
+   * @param storage Storage for `Parent` components.
+   */
   constructor(private readonly storage: Storage<Parent>) {
     this.subscriber = storage.events().subscribe();
   }
 
   /** Adds a `child` entity to a `parent`. */
-  public addChild(parent: Entity, child: Entity) {
+  public addChild(parent: Entity, child: Entity): void {
     let children = this.children.get(parent);
 
     // Create new array if it didn't exist previously.
@@ -56,10 +59,6 @@ export class Hierarchy {
     return false;
   }
 
-  public getChildren(entity: Entity): Children | void {
-    return this.children.get(entity);
-  }
-
   public update(): void {
     const storage = this.storage;
 
@@ -75,10 +74,6 @@ export class Hierarchy {
         this.removeChild(parent.entity, event.entity);
       }
     }
-  }
-
-  public hasChildren(entity: Entity): boolean {
-    return this.children.has(entity)
   }
 
 }
