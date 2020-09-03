@@ -1,13 +1,13 @@
 {
   "author": "Felix Wolf",
   "peerDependencies": {
-    "@heliks/event-queue": "^0.1.1",
-    "@heliks/ecs": "^0.0.0"
+    "@heliks/ecs": "^0.0.0",
+    "@heliks/event-queue": "^0.1.1"
   },
   "description": "A scene graph like hierarchy structure",
   "devDependencies": {
+    "@heliks/ecs": "^0.0.1-alpha.0",
     "@heliks/event-queue": "^0.1.1",
-    "@heliks/ecs": "^0.0.0",
     "typescript": "^3.9.7"
   },
   "files": [
@@ -24,5 +24,5 @@
     "build:watch": "tsc -w"
   },
   "types": "lib/index.d.ts",
-  "version": "0.0.0"
+  "version": "0.0.1-alpha.0"
 }
