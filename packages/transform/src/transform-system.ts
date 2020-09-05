@@ -16,6 +16,8 @@ export class TransformSystem implements System {
   public boot(world: World): void {
     this.hierarchy = new Hierarchy(world.storage(Parent));
 
+    console.log(world.storage(Parent))
+
     // Store a group over all top-level entities (e.g. entities that don't have
     // a parent).
     this.topLevel = world.query({
@@ -58,18 +60,18 @@ export class TransformSystem implements System {
     // Maintain the entity hierarchy.
     this.hierarchy.update();
 
-    for (const entity of this.topLevel.entities) {
-      const transform = transforms.get(entity);
+    // for (const entity of this.topLevel.entities) {
+    //   const transform = transforms.get(entity);
 
-      // Entities without a parent have the same local position as world. Synchronize them
-      // if their locals have changed.
-      if (transform.isLocalDirty) {
-        transform.world[0] = transform.local[0];
-        transform.world[1] = transform.local[1];
+    // Entities without a parent have the same local position as world. Synchronize them
+    // if their locals have changed.
+    // if (transform.isLocalDirty) {
+    //  transform.world[0] = transform.local[0];
+    //  transform.world[1] = transform.local[1];
 
-        transform.isLocalDirty = false;
-      }
-    }
+    //  transform.isLocalDirty = false;
+    // }
+    // }
 
     this.transform(transforms, parents, this.topLevel.entities);
   }
