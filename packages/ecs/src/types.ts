@@ -77,13 +77,13 @@ export interface World {
   /**
    * Registers a storage for the component `T`.
    */
-  register<T>(component: ClassType<T>): Storage<T>;
+  register<T>(component: ComponentType<T>): Storage<T>;
 
   /**
    * Returns the storage for component `T`. If no storage for this component
    * exists it will be registered automatically.
    */
-  storage<T>(component: ClassType<T>): Storage<T>;
+  storage<T>(component: ComponentType<T>): Storage<T>;
 
 }
 
