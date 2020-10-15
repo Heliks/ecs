@@ -8,6 +8,13 @@ Heavily WIP
 $ npm install --save @heliks/ecs
 ```
 
+# Building
+
+```bash
+$ yarn build
+$ yarn build:watch
+```
+
 # Usage
 
 *Todo*

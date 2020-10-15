@@ -3,7 +3,7 @@
   "peerDependencies": {
     "@heliks/ecs": "^0.0.0",
     "@heliks/event-queue": "^0.1.1",
-    "@heliks/hierarchy": "^0.0.0"
+    "@heliks/ecs-hierarchy": "^0.0.0"
   },
   "description": "Simple transform system for @heliks/ecs",
   "devDependencies": {

@@ -1,5 +1,5 @@
 import { Entity, EntityGroup, Storage, System, World } from '@heliks/ecs';
-import { Hierarchy, Parent } from '@heliks/hierarchy';
+import { Hierarchy, Parent } from '@heliks/ecs-hierarchy';
 import { Transform } from './transform';
 
 // Todo: While file is a prototype.
