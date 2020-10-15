@@ -15,3 +15,4 @@ $ npm install --save @heliks/ecs
 ### Todo
 
 - [ ] Replace bit-set with bit-vector
+- [ ] Prefabs
