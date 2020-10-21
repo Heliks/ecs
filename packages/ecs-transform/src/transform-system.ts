@@ -2,8 +2,7 @@ import { Entity, EntityGroup, Storage, System, World } from '@heliks/ecs';
 import { Hierarchy, Parent } from '@heliks/ecs-hierarchy';
 import { Transform } from './transform';
 
-// Todo: While file is a prototype.
-
+// Todo: WIP!
 export class TransformSystem implements System {
 
   /** @internal */
@@ -16,13 +15,11 @@ export class TransformSystem implements System {
   public boot(world: World): void {
     this.hierarchy = new Hierarchy(world.storage(Parent));
 
-    console.log(world.storage(Parent))
-
     // Store a group over all top-level entities (e.g. entities that don't have
     // a parent).
     this.topLevel = world.query({
-      contains: [ Transform ],
-      excludes: [ Parent ]
+      contains: [Transform],
+      excludes: [Parent]
     });
   }
 
@@ -36,8 +33,8 @@ export class TransformSystem implements System {
           const cTransform = transforms.get(child);
           const pTransform = transforms.get(parents.get(child).entity);
 
-          cTransform.world[0] = cTransform.local[0] + pTransform.world[0];
-          cTransform.world[1] = cTransform.local[1] + pTransform.world[1];
+          cTransform.world.x = cTransform.local.x + pTransform.world.x;
+          cTransform.world.y = cTransform.local.y + pTransform.world.y;
 
           cTransform.isLocalDirty = false;
 
