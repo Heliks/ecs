@@ -8,8 +8,8 @@ export class TransformSystem implements System {
   /** @internal */
   private hierarchy!: Hierarchy;
 
-  /** A group that collects all entities without a parent. */
-  private topLevel!: EntityGroup;
+  /** Contains all entities with a `Transform` that *don't* have a `Parent` component. */
+  private parentless!: EntityGroup;
 
   /** @inheritDoc */
   public boot(world: World): void {
@@ -17,7 +17,7 @@ export class TransformSystem implements System {
 
     // Store a group over all top-level entities (e.g. entities that don't have
     // a parent).
-    this.topLevel = world.query({
+    this.parentless = world.query({
       contains: [Transform],
       excludes: [Parent]
     });
@@ -51,26 +51,14 @@ export class TransformSystem implements System {
 
   /** @inheritDoc */
   public update(world: World): void {
-    const transforms = world.storage(Transform);
-    const parents = world.storage(Parent);
-
     // Maintain the entity hierarchy.
     this.hierarchy.update();
 
-    // for (const entity of this.topLevel.entities) {
-    //   const transform = transforms.get(entity);
-
-    // Entities without a parent have the same local position as world. Synchronize them
-    // if their locals have changed.
-    // if (transform.isLocalDirty) {
-    //  transform.world[0] = transform.local[0];
-    //  transform.world[1] = transform.local[1];
-
-    //  transform.isLocalDirty = false;
-    // }
-    // }
-
-    this.transform(transforms, parents, this.topLevel.entities);
+    this.transform(
+      world.storage(Transform),
+      world.storage(Parent),
+      this.parentless.entities
+    );
   }
 
 }

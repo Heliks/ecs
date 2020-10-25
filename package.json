@@ -1,10 +1,4 @@
 {
-  "name": "ecs",
-  "private": true,
-  "version": "0.0.0",
-  "workspaces": [
-    "packages/*"
-  ],
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^2.31.0",
     "@typescript-eslint/parser": "^2.31.0",
@@ -14,14 +8,23 @@
     "lerna": "^3.20.2",
     "rimraf": "^3.0.2"
   },
+  "name": "ecs",
+  "private": true,
+  "publishConfig": {
+    "registry": "http://193.31.26.163:4873/"
+  },
   "scripts": {
-    "lint": "eslint \"packages/**/src/**/*.ts\" --config .eslintrc.json",
-    "link": "lerna link",
-    "test": "lerna run --stream --sort test",
     "build": "lerna run --stream --sort build",
     "build:clean": "rimraf packages/*/*/lib",
     "build:watch": "lerna run build:watch --no-prefix --parallel",
-    "clean": "lerna clean && rimraf && rm -rf node_modules",
-    "publish": "yarn build:clean && yarn build && lerna publish"
-  }
+    "clean": "yarn build:clean && lerna clean && rimraf && rm -rf node_modules",
+    "link": "lerna link",
+    "lint": "eslint \"packages/**/src/**/*.ts\" --config .eslintrc.json",
+    "publish": "npx lerna publish --registry=http://193.31.26.163:4873/",
+    "test": "lerna run --stream --sort test"
+  },
+  "version": "0.0.0",
+  "workspaces": [
+    "packages/*"
+  ]
 }
