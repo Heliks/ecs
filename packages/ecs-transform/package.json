@@ -2,13 +2,13 @@
   "author": "Felix Wolf",
   "peerDependencies": {
     "@heliks/ecs": "^0.0.0",
-    "@heliks/event-queue": "^0.1.1",
-    "@heliks/ecs-hierarchy": "^0.0.0"
+    "@heliks/ecs-hierarchy": "^0.0.0",
+    "@heliks/event-queue": "^0.1.1"
   },
   "description": "Simple transform system for @heliks/ecs",
   "devDependencies": {
-    "@heliks/ecs": "^0.0.1-alpha.1",
-    "@heliks/ecs-hierarchy": "^0.0.1-alpha.1",
+    "@heliks/ecs": "^0.0.1-alpha.2",
+    "@heliks/ecs-hierarchy": "^0.0.1-alpha.2",
     "@heliks/event-queue": "^0.1.1",
     "typescript": "^3.9.7"
   },
@@ -26,5 +26,5 @@
     "build:watch": "tsc -w"
   },
   "types": "lib/index.d.ts",
-  "version": "0.0.1-alpha.1"
+  "version": "0.0.1-alpha.2"
 }
