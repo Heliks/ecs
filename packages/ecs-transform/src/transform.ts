@@ -70,5 +70,16 @@ export class Transform {
     return this;
   }
 
+  /**
+   * Calculates an euclidean vector (= direction vector) based on the current rotation
+   * and assigns the result to `out`.
+   */
+  public getDirectionVector(out: Vec2 = { x: 0, y: 0}): Vec2 {
+    out.x = Math.sin(this.rotation);
+    out.y = Math.cos(this.rotation);
+
+    return out;
+  }
+
 }
 
