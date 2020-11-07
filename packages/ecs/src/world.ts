@@ -3,10 +3,11 @@ import { EntityGroup } from './entity-group';
 import { EntityManager } from './entity-manager';
 import { Filter } from './filter';
 import { Storage } from './storage';
-import { ClassType, Query } from './types';
-import { EntityBuilder } from './entity-builder';
+import { ComponentType, Query } from './types';
 import { Changes } from './changes';
 import { Entity } from './entity';
+import { LazyBuilder } from './lazy-builder';
+import { Builder } from './builder';
 
 export class World {
 
@@ -23,7 +24,7 @@ export class World {
    * Contains all registered component storages, mapped to the component which
    * they are storing.
    */
-  protected readonly storages = new Map<ClassType, Storage>();
+  protected readonly storages = new Map<ComponentType, Storage>();
 
   /**
    * The index that is assigned to the next component storage with `register`.
@@ -32,7 +33,7 @@ export class World {
   private nextStorageIndex = 0;
 
   /** @inheritDoc */
-  public register<T>(component: ClassType<T>): Storage<T> {
+  public register<T>(component: ComponentType<T>): Storage<T> {
     const storage = new Storage<T>(1 << this.nextStorageIndex++, component, this.changes);
 
     this.storages.set(component, storage);
@@ -41,14 +42,14 @@ export class World {
   }
 
   /** @inheritDoc */
-  public storage<T>(component: ClassType<T>): Storage<T> {
+  public storage<T>(component: ComponentType<T>): Storage<T> {
     const storage = this.storages.get(component) as Storage<T>;
 
     return storage ? storage : this.register(component);
   }
 
   /** @hidden */
-  public createComposition(components: ClassType[]): BitSet {
+  public createComposition(components: ComponentType[]): BitSet {
     const bits = new BitSet();
 
     for (const component of components) {
@@ -72,15 +73,15 @@ export class World {
   }
 
   /**
-   * Creates an entity. If any `components` are given they will be automatically added
-   * to it.
+   * Creates a new entity. If any `components` are given they will be automatically
+   * attached to it.
    */
-  public create(components?: ClassType[]): Entity {
+  public create(components?: object[]): Entity {
     const entity = this.entities.create();
 
     if (components) {
       for (const component of components) {
-        this.storage(component).add(entity);
+        this.storage(component.constructor as ComponentType).set(entity, component);
       }
     }
 
@@ -178,12 +179,20 @@ export class World {
   }
 
   /**
-   * Returns a new entity builder that can be used to compose entities with
-   * different components. The entity is created and added to the world
-   * instantly.
+   * Returns an entity builder that can be used to compose entities. The entity is
+   * created and added to the world instantly.
    */
-  public builder(): EntityBuilder {
-    return new EntityBuilder(this.create(), this);
+  public builder(): Builder {
+    return new Builder(this.create(), this);
+  }
+
+
+  /**
+   * Returns an entity builder that can be used to compose entities. The entity is
+   * created and added to the world after the entity is build.
+   */
+  public lazy(): LazyBuilder {
+    return new LazyBuilder(this);
   }
 
 }

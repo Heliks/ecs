@@ -1,6 +1,8 @@
+export * from './builder';
 export * from './entity';
 export * from './entity-group';
 export * from './filter';
+export * from './lazy-builder';
 export * from './system';
 export * from './world';
 

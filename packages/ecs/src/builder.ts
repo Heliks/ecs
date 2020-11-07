@@ -1,7 +1,8 @@
-import { ClassType, World } from './types';
 import { Entity } from './entity';
+import { ClassType, World } from './types';
 
-export class EntityBuilder {
+/** An entity builder to easily compose entities. */
+export class Builder {
 
   constructor(
     private readonly entity: Entity,
@@ -18,7 +19,7 @@ export class EntityBuilder {
     return this;
   }
 
-  /** Directly adds the given `component` instance to the entity. */
+  /** Adds the given `component` instance to the entity. */
   public use<T>(component: T): this {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     this.world.storage((component as any).constructor).set(this.entity, component);
@@ -26,7 +27,7 @@ export class EntityBuilder {
     return this;
   }
 
-  /** Returns the entity.*/
+  /** Returns the entity. */
   public build(): Entity {
     return this.entity;
   }

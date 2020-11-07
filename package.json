@@ -20,7 +20,7 @@
     "clean": "yarn build:clean && lerna clean && rimraf && rm -rf node_modules",
     "link": "lerna link",
     "lint": "eslint \"packages/**/src/**/*.ts\" --config .eslintrc.json",
-    "publish": "npx lerna publish --registry=http://193.31.26.163:4873/",
+    "publish": "yarn build && npx lerna publish --registry=http://193.31.26.163:4873/",
     "test": "lerna run --stream --sort test"
   },
   "version": "0.0.0",

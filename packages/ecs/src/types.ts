@@ -3,6 +3,11 @@ import { Entity } from './entity';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
 export type ClassType<T = unknown> = new (...params: any[]) => T;
+
+/**
+ * Type alias for ClassType<T> to indicate that the constructor we are expecting
+ * is that of a component.
+ */
 export type ComponentType<T = unknown> = ClassType<T>;
 
 /** */
@@ -75,15 +80,21 @@ export interface Storage<T> {
 export interface World {
 
   /**
+   * Creates a new entity. If any `components` are given they will be automatically
+   * attached to it.
+   */
+  create(components?: object[]): Entity;
+
+  /**
    * Registers a storage for the component `T`.
    */
-  register<T>(component: ComponentType<T>): Storage<T>;
+  register<T>(component: ClassType<T>): Storage<T>;
 
   /**
    * Returns the storage for component `T`. If no storage for this component
    * exists it will be registered automatically.
    */
-  storage<T>(component: ComponentType<T>): Storage<T>;
+  storage<T>(component: ClassType<T>): Storage<T>;
 
 }
 

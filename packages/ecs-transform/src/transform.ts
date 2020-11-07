@@ -26,8 +26,6 @@ export class Transform {
   /** Absolute position in the world. */
   public readonly world: Vec2 = { x: 0, y: 0 };
 
-  /** Contains `true` if the [[local]] coordinates of this component were updated. */
-  public isLocalDirty = true;
 
   /**
    * @param x World position on x axis.
@@ -46,8 +44,6 @@ export class Transform {
   public setLocal(x: number, y: number): this {
     this.local.x = x;
     this.local.y = y;
-
-    this.isLocalDirty = true;
 
     return this;
   }

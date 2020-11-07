@@ -1,4 +1,4 @@
-import { ClassType, ComponentEvent, ComponentEventType, Storage as Base } from './types';
+import { ComponentEvent, ComponentEventType, ComponentType, Storage as Base } from './types';
 import { EventQueue } from '@heliks/event-queue';
 import { Changes } from './changes';
 import { Entity } from './entity';
@@ -18,7 +18,7 @@ export class Storage<T = unknown> implements Base<T> {
    */
   constructor(
     public readonly id: number,
-    public readonly type: ClassType<T>,
+    public readonly type: ComponentType<T>,
     public readonly changes: Changes
   ) {}
 
