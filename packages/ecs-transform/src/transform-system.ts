@@ -18,8 +18,6 @@ export class TransformSystem implements System {
   public boot(world: World): void {
     this.hierarchy = new Hierarchy(world.storage(Parent));
 
-    world.query().has(Transform);
-
     this.group = world.query({
       contains: [Transform],
       excludes: [Parent]
