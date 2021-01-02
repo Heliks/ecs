@@ -1,13 +1,11 @@
 {
   "author": "Felix Wolf",
   "peerDependencies": {
-    "@heliks/ecs": "^0.0.1",
+    "@heliks/ecs": "^0.0.2",
     "@heliks/event-queue": "^0.1.1"
   },
   "description": "A scene graph like hierarchy structure for @heliks/ecs",
   "devDependencies": {
-    "@heliks/ecs": "^0.0.2",
-    "@heliks/event-queue": "^0.1.1",
     "typescript": "^3.9.7"
   },
   "files": [
