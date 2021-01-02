@@ -36,10 +36,10 @@ describe('Storage', () => {
     });
 
     it('should emit a ComponentEvent', () => {
-      const subscriber = storage.events().subscribe();
+      const subscriber = storage.subscribe();
       const component = storage.add(entity);
 
-      expect(storage.events().next(subscriber)).toEqual({
+      expect(storage.events(subscriber).next().value).toEqual({
         component,
         entity,
         type: ComponentEventType.Added
@@ -58,10 +58,10 @@ describe('Storage', () => {
     });
 
     it('should emit a ComponentEvent', () => {
-      const subscriber = storage.events().subscribe();
+      const subscriber = storage.subscribe();
       const component = storage.add(entity);
 
-      expect(storage.events().next(subscriber)).toEqual({
+      expect(storage.events(subscriber).next().value).toEqual({
         component,
         entity,
         type: ComponentEventType.Added
@@ -85,11 +85,11 @@ describe('Storage', () => {
 
       // Subscribe after component was added because we are only interested
       // in the second one when the component is removed.
-      const subscriber = storage.events().subscribe();
+      const subscriber = storage.subscribe();
 
       storage.remove(entity);
 
-      expect(storage.events().next(subscriber)).toEqual({
+      expect(storage.events(subscriber).next().value).toEqual({
         component,
         entity,
         type: ComponentEventType.Removed
@@ -109,13 +109,13 @@ describe('Storage', () => {
 
     it('should emit an event', () => {
       const component = storage.add(entity);
-      const subscriber = storage.events().subscribe();
+      const subscriber = storage.subscribe();
 
       storage.update(entity, {
         test: 'foobar'
       });
 
-      expect(storage.events().next(subscriber)).toEqual({
+      expect(storage.events(subscriber).next().value).toEqual({
         component,
         entity,
         type: ComponentEventType.Updated

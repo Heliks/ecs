@@ -1,4 +1,4 @@
-import { EventQueue } from '@heliks/event-queue';
+import { Subscriber } from '@heliks/event-queue';
 import { Entity } from './entity';
 
 // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -14,6 +14,28 @@ export type ComponentType<T = unknown> = ClassType<T>;
 export interface Query {
   contains?: ClassType[];
   excludes?: ClassType[];
+}
+
+/**
+ * Classes that implement methods to subscribe to an event queue.
+ *
+ * @typparam T Event to which we are subscribing to.
+ */
+export interface Subscribable<T> {
+  /**
+   * Subscribes to the event queue and returns a `Subscriber`. The `Subscriber` can
+   * then be used to read events from the queue.
+   *
+   * Note: Each subscriber must consume the queue or the queue is prevented from
+   * shrinking which can lead to memory leaks.
+   */
+  subscribe(): Subscriber;
+
+  /**
+   * Returns an iterator over all new events `T` since `subscriber` last consumed the
+   * event queue.
+   */
+  events(subscriber: Subscriber): IterableIterator<T>;
 }
 
 /** Possible component event types. */
@@ -38,7 +60,7 @@ export interface ComponentEvent<T> {
   type: ComponentEventType;
 }
 
-export interface Storage<T> {
+export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
 
   /** Unique Id that is assigned to the storage when it is registered in the world. */
   readonly id: number;
@@ -81,12 +103,6 @@ export interface Storage<T> {
    * Drops all stored components.
    */
   drop(): void;
-
-  /**
-   * Returns the event queue to which this storage will push events. You can subscribe
-   * to this to be notified about component changes.
-   */
-  events(): EventQueue<ComponentEvent<T>>;
 
 }
 

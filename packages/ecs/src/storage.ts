@@ -1,5 +1,5 @@
 import { ComponentEvent, ComponentEventType, ComponentType, Storage as Base } from './types';
-import { EventQueue } from '@heliks/event-queue';
+import { EventQueue, Subscriber } from '@heliks/event-queue';
 import { Changes } from './changes';
 import { Entity } from './entity';
 
@@ -119,9 +119,14 @@ export class Storage<T = unknown> implements Base<T> {
     this.components.clear();
   }
 
-  /** @inheritDoc */
-  public events(): EventQueue<ComponentEvent<T>> {
-    return this._events;
+  /** Subscribes to events in this group. */
+  public subscribe(): Subscriber {
+    return this._events.subscribe();
+  }
+
+  /** Reads the groups events. */
+  public events(subscriber: Subscriber): IterableIterator<ComponentEvent<T>> {
+    return this._events.read(subscriber);
   }
 
   public toString(): string {

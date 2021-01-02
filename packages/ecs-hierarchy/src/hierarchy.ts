@@ -18,7 +18,7 @@ export class Hierarchy {
    * @param storage Storage for `Parent` components.
    */
   constructor(private readonly storage: Storage<Parent>) {
-    this.subscriber = storage.events().subscribe();
+    this.subscriber = storage.subscribe();
   }
 
   /** Adds a `child` entity to a `parent`. */
@@ -62,7 +62,7 @@ export class Hierarchy {
   public update(): void {
     const storage = this.storage;
 
-    for (const event of storage.events().read(this.subscriber)) {
+    for (const event of storage.events(this.subscriber)) {
       const parent = storage.get(event.entity);
 
       if (ComponentEventType.Added === event.type) {

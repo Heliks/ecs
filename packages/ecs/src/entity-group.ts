@@ -2,24 +2,25 @@ import { BitSet } from './bit-set';
 import { Filter } from './filter';
 import { Entity } from './entity';
 import { EventQueue, Subscriber } from '@heliks/event-queue';
+import { Subscribable } from './types';
 
 export enum GroupEvent {
   Added,
   Removed
 }
 
-interface EventData {
+interface GroupEventData {
   entity: Entity;
   type: GroupEvent;
 }
 
-export class EntityGroup {
+export class EntityGroup implements Subscribable<GroupEventData> {
 
   /** Contains references of entity symbols that satisfy this groups requirements */
   public readonly entities: Entity[] = [];
 
   /** @internal */
-  private readonly eventQueue = new EventQueue<EventData>();
+  private readonly eventQueue = new EventQueue<GroupEventData>();
 
   /** Total amount of entities */
   public get size(): number {
@@ -80,13 +81,13 @@ export class EntityGroup {
     return this.entities.indexOf(entity);
   }
 
-  /** Subscribes to events in this group. */
+  /** @inheritDoc */
   public subscribe(): Subscriber {
     return this.eventQueue.subscribe();
   }
 
-  /** Reads the groups events. */
-  public events(subscriber: Subscriber): IterableIterator<EventData> {
+  /** @inheritDoc */
+  public events(subscriber: Subscriber): IterableIterator<GroupEventData> {
     return this.eventQueue.read(subscriber);
   }
 
