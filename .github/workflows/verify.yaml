@@ -1,0 +1,19 @@
+name: Verify code integrity
+on: push
+jobs:
+  verify-integrity:
+    name: Verify code integrity
+    runs-on: ubuntu-latest
+    steps:
+      # Checkout code and setup NodeJS
+      - name: Checkout code
+        uses: actions/checkout@v2
+      - name: Setup NodeJS
+        uses: actions/setup-node@v2-beta
+        with:
+          node-version: '12'
+      # Run tasks to verify code.
+      - run: yarn install
+      - run: yarn build
+      - run: yarn test
+      - run: yarn lint
