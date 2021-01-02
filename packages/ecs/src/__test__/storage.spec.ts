@@ -96,4 +96,30 @@ describe('Storage', () => {
       });
     });
   });
+
+  describe('update()', () => {
+    it('should update existing component data', () => {
+      storage.add(entity);
+      storage.update(entity, {
+        test: 'foobar'
+      });
+
+      expect(storage.get(entity).test).toBe('foobar');
+    });
+
+    it('should emit an event', () => {
+      const component = storage.add(entity);
+      const subscriber = storage.events().subscribe();
+
+      storage.update(entity, {
+        test: 'foobar'
+      });
+
+      expect(storage.events().next(subscriber)).toEqual({
+        component,
+        entity,
+        type: ComponentEventType.Updated
+      });
+    });
+  });
 });

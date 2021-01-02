@@ -20,8 +20,16 @@ export interface Query {
 export enum ComponentEventType {
   /** Occurs when a component is added to an entity. */
   Added,
-  /** Occurs when a component is removed from an entity. */
-  Removed
+  /**
+   * Occurs when a component is removed from an entity.
+   */
+  Removed,
+  /**
+   * Occurs every time the component of an existing entity is updated via the `update()`
+   * method of the component storage. This event does NOT occur when the component is
+   * initially added to the storage.
+   */
+  Updated
 }
 
 export interface ComponentEvent<T> {
@@ -45,7 +53,7 @@ export interface Storage<T> {
   /**
    * Directly assigns an `instance` of the stored component `T` to `entity`.
    */
-  set(entity: Entity, instance: T): void;
+  set(entity: Entity, instance: T): this;
 
   /**
    * Returns the stored component for `entity`. Throws an error if no component is
@@ -63,6 +71,11 @@ export interface Storage<T> {
    * removed and `false` otherwise.
    */
   remove(entity: Entity): boolean;
+
+  /**
+   * Updates the existing component of `entity` with `data`.
+   */
+  update(entity: Entity, data: Partial<T>): this;
 
   /**
    * Drops all stored components.

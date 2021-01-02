@@ -44,7 +44,7 @@ export class Storage<T = unknown> implements Base<T> {
   }
 
   /** @inheritDoc */
-  public set(entity: Entity, component: T): void {
+  public set(entity: Entity, component: T): this {
     this.components.set(entity, component);
     this.changes.add(entity, this.id);
 
@@ -53,6 +53,8 @@ export class Storage<T = unknown> implements Base<T> {
       entity,
       type: ComponentEventType.Added
     });
+
+    return this;
   }
 
   /** @inheritDoc */
@@ -84,6 +86,23 @@ export class Storage<T = unknown> implements Base<T> {
     }
 
     return false;
+  }
+
+  /** @inheritDoc */
+  public update(entity: Entity, data: Partial<T>): this {
+    const component = this.components.get(entity);
+
+    if (component) {
+      Object.assign(component, data);
+
+      this._events.push({
+        component,
+        entity,
+        type: ComponentEventType.Updated
+      });
+    }
+
+    return this;
   }
 
   /** @inheritDoc */
