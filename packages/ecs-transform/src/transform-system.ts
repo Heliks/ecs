@@ -5,19 +5,20 @@ import { Transform } from './transform';
 // Todo: WIP!
 export class TransformSystem implements System {
 
-  /** @internal */
-  private hierarchy!: Hierarchy;
-
   /**
    * Stores all top-level entities e.g. all entities that have a `Parent` component but
    * no `Transform`.
    */
   private group!: EntityGroup;
 
+  /**
+   * @param hierarchy The entity hierarchy that should be used to determine parent-
+   *  child relationships.
+   */
+  constructor(public readonly hierarchy: Hierarchy) {}
+
   /** @inheritDoc */
   public boot(world: World): void {
-    this.hierarchy = new Hierarchy(world.storage(Parent));
-
     this.group = world.query({
       contains: [Transform],
       excludes: [Parent]
@@ -36,6 +37,7 @@ export class TransformSystem implements System {
 
           ct.world.x = ct.local.x + pt.world.x;
           ct.world.y = ct.local.y + pt.world.y;
+          ct.world.z = ct.local.z + pt.world.z;
 
           // Get the children of the child and traverse them also.
           const _children = this.hierarchy.children.get(child);
@@ -50,9 +52,6 @@ export class TransformSystem implements System {
 
   /** @inheritDoc */
   public update(world: World): void {
-    // Maintain the entity hierarchy.
-    this.hierarchy.update();
-
     this.transform(
       world.storage(Transform),
       world.storage(Parent),
