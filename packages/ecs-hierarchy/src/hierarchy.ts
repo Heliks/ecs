@@ -11,16 +11,6 @@ export class Hierarchy {
    */
   public readonly children = new Map<Entity, Entity[]>();
 
-  /** @internal */
-  private readonly subscriber: Subscriber;
-
-  /**
-   * @param storage Storage for `Parent` components.
-   */
-  constructor(private readonly storage: Storage<Parent>) {
-    this.subscriber = storage.subscribe();
-  }
-
   /** Adds a `child` entity to a `parent`. */
   public addChild(parent: Entity, child: Entity): void {
     let children = this.children.get(parent);
@@ -57,23 +47,6 @@ export class Hierarchy {
     }
 
     return false;
-  }
-
-  public update(): void {
-    const storage = this.storage;
-
-    for (const event of storage.events(this.subscriber)) {
-      const parent = storage.get(event.entity);
-
-      if (ComponentEventType.Added === event.type) {
-        // Added entities
-        this.addChild(parent.entity, event.entity);
-      }
-      else {
-        // Removed entities
-        this.removeChild(parent.entity, event.entity);
-      }
-    }
   }
 
 }
