@@ -1,9 +1,6 @@
 import { World } from '../world';
-import { EntityGroup } from '../entity-group';
-import { Filter } from '../filter';
-import { BitSet } from '../bit-set';
-import { CompositionBit } from '../changes';
-import { Entity } from '../entity';
+import { CompositionBit, Entity, EntityGroup } from '../../entity';
+import { BitSet, Filter } from '../../common';
 
 class WorldMock extends World {
 

@@ -1,5 +1,6 @@
-import { Entity } from './entity';
-import { ClassType, World } from './types';
+import { Entity } from '../entity';
+import { ClassType } from '../common';
+import { World } from './types';
 
 /** An entity builder to easily compose entities. */
 export class Builder {

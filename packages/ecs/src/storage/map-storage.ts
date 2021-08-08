@@ -1,9 +1,13 @@
-import { ComponentEvent, ComponentEventType, ComponentType, Storage as Base } from './types';
+import { Storage } from './storage'
 import { EventQueue, Subscriber } from '@heliks/event-queue';
-import { Changes } from './changes';
-import { Entity } from './entity';
+import { Changes } from '../entity';
+import { Entity } from '../entity';
+import { ComponentEvent, ComponentEventType, ComponentType } from '../entity';
 
-export class Storage<T = unknown> implements Base<T> {
+/**
+ * Entity storage that stores component in a `Map`.
+ */
+export class MapStorage<T = unknown> implements Storage<T> {
 
   /** The event queue to which this storage will push events. */
   protected readonly _events = new EventQueue<ComponentEvent<T>>();
@@ -12,7 +16,7 @@ export class Storage<T = unknown> implements Base<T> {
   protected readonly components = new Map<Entity, T>();
 
   /**
-   * @param id The id of the storage.
+   * @param id Unique id of the storage.
    * @param type The component type that this storage is storing.
    * @param changes Change-set that keeps track of entity changes.
    */

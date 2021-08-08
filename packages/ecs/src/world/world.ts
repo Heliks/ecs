@@ -1,15 +1,12 @@
-import { BitSet } from './bit-set';
-import { EntityGroup } from './entity-group';
-import { EntityManager } from './entity-manager';
-import { Filter } from './filter';
-import { Storage } from './storage';
-import { ComponentType, Query } from './types';
-import { Changes } from './changes';
-import { Entity } from './entity';
+import { BitSet } from '../common';
+import { Changes, ComponentType, Entity, EntityGroup, EntityManager } from '../entity';
+import { Filter } from '../common/filter';
+import { MapStorage } from '../storage';
 import { LazyBuilder } from './lazy-builder';
 import { Builder } from './builder';
+import { EntityQuery, World as Base } from './types';
 
-export class World {
+export class World implements Base {
 
   /** @inheritDoc Changes */
   public readonly changes = new Changes();
@@ -24,7 +21,7 @@ export class World {
    * Contains all registered component storages, mapped to the component which
    * they are storing.
    */
-  protected readonly storages = new Map<ComponentType, Storage>();
+  protected readonly storages = new Map<ComponentType, MapStorage>();
 
   /**
    * The index that is assigned to the next component storage with `register`.
@@ -33,8 +30,8 @@ export class World {
   private nextStorageIndex = 0;
 
   /** @inheritDoc */
-  public register<T>(component: ComponentType<T>): Storage<T> {
-    const storage = new Storage<T>(1 << this.nextStorageIndex++, component, this.changes);
+  public register<T>(component: ComponentType<T>): MapStorage<T> {
+    const storage = new MapStorage<T>(1 << this.nextStorageIndex++, component, this.changes);
 
     this.storages.set(component, storage);
 
@@ -42,8 +39,8 @@ export class World {
   }
 
   /** @inheritDoc */
-  public storage<T>(component: ComponentType<T>): Storage<T> {
-    const storage = this.storages.get(component) as Storage<T>;
+  public storage<T>(component: ComponentType<T>): MapStorage<T> {
+    const storage = this.storages.get(component) as MapStorage<T>;
 
     return storage ? storage : this.register(component);
   }
@@ -60,7 +57,7 @@ export class World {
   }
 
   /** @hidden */
-  public createFilter(query: Query): Filter {
+  public createFilter(query: EntityQuery): Filter {
     return new Filter(
       this.createComposition(query.contains || []),
       this.createComposition(query.excludes || [])
@@ -147,7 +144,7 @@ export class World {
    * Queries all entities and returns an `EntityGroup` containing the result. The
    * entity group will be automatically kept in sync when `update()` is called.
    */
-  public query(query: Query): EntityGroup {
+  public query(query: EntityQuery): EntityGroup {
     const filter = this.createFilter(query);
 
     // Look for cached version of the group.

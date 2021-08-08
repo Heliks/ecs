@@ -3,6 +3,7 @@ import { Entity, ENTITY_BITS, ENTITY_MASK } from './entity';
 
 /**
  * Manages entities.
+ * @see Entity
  */
 export class EntityManager {
 

@@ -1,36 +1,51 @@
-import { BitSet } from './bit-set';
+import { BitSet } from '../common';
 import { Entity } from './entity';
 
 /**
  * A bit set that contains the Ids of all components that are contained in this
- * composition. The entity manager will store a composition for each entity.
+ * composition. The change-set will keep track of every composition of every entity.
  */
 export type Composition = BitSet;
 
 /**
- * Wrapper over `number` that represents a bit that indicates the existence of a certain
- * component kind on an entity.
+ * A bit representing the existence of a component type.
+ *
+ * @see Composition
  */
 export type CompositionBit = number;
 
 /**
- * Keeps track of entity modifications.
+ * Change-set that keeps track of modified entities.
+ *
+ * The change-set will store a composition for each entity, and if modified will push
+ * that entity in a queue that can then be processed by other systems.
+ *
+ * @see Composition
  */
 export class Changes {
 
-  /** Entities that were changed during this frame (e.g. composition updates etc.). */
+  /**
+   * Entities that were updated during this frame, either through component addition
+   * or removal.
+   * Note: Do not modify this directly.
+   */
   public readonly changed: Entity[] = [];
 
-  /** Entities that were destroyed during this frame. */
+  /**
+   * Entities that were destroyed during this frame.
+   * Note: Do not updated this directly.
+   */
   public readonly destroyed: Entity[] = [];
 
-  /** Bit sets that hold the composition of an entity. */
+  /**
+   * Bit-sets that represent the component composition of an entity.
+   *
+   * @see Composition
+   * @see CompositionBit
+   */
   private readonly compositions = new Map<Entity, Composition>();
 
-  /**
-   * Returns the composition of an entity. If it didn't exist previously it will be
-   * created automatically.
-   */
+  /** Returns the composition of an entity. */
   public composition(entity: Entity): Composition {
     let item = this.compositions.get(entity);
 

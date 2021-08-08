@@ -1,9 +1,9 @@
 import { World } from './types';
-import { Entity } from './entity';
+import { Entity } from '../entity';
 
 /**
  * A builder that unlike the normal `Builder` will only insert the entity into
- * the world after `build()` is called.
+ * the world after `build()`.
  */
 export class LazyBuilder implements LazyBuilder {
 

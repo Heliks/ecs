@@ -1,15 +1,14 @@
-import { World } from '../world';
-import { ComponentEventType } from '../types';
-import { Storage } from '../storage';
-import { Entity } from '../entity';
+import { World } from '../../world';
+import { MapStorage } from '../map-storage';
+import { ComponentEventType, Entity } from '../../entity';
 
-describe('Storage', () => {
+describe('MapStorage', () => {
   class A {
     public test = '';
   }
 
   let entity: Entity;
-  let storage: Storage<A>;
+  let storage: MapStorage<A>;
   let world: World;
 
   beforeEach(() => {
