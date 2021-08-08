@@ -1,4 +1,4 @@
-import { Subscriber } from "@heliks/event-queue";
+import { Subscriber } from '@heliks/event-queue';
 
 /**
  * Classes that implement methods to subscribe to an event queue.
