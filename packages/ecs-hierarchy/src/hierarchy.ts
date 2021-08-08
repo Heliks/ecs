@@ -1,6 +1,4 @@
-import { Subscriber } from '@heliks/event-queue';
-import { ComponentEventType, Entity, Storage } from '@heliks/ecs';
-import { Parent } from './parent';
+import { Entity } from '@heliks/ecs';
 
 /** Scene-graph like hierarchy for entities. */
 export class Hierarchy {
@@ -38,8 +36,6 @@ export class Hierarchy {
       const index = children.indexOf(child);
 
       if (~index) {
-        // We don't need to save this back to "children" because we are working on the
-        // original array reference.
         children.splice(index, 1);
 
         return true;
@@ -47,6 +43,19 @@ export class Hierarchy {
     }
 
     return false;
+  }
+
+  /** Removes `entity` from the hierarchy. */
+  public remove(entity: Entity): void {
+    // Remove entity from parents.
+    for (const parent of this.children.keys()) {
+      if (this.removeChild(parent, entity)) {
+        break;
+      }
+    }
+
+    // Remove entity as a parent.
+    this.children.delete(entity);
   }
 
 }

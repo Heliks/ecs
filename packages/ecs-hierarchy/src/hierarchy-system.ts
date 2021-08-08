@@ -22,14 +22,13 @@ export class HierarchySystem implements System {
     const storage = world.storage(Parent);
 
     for (const event of storage.events(this.subscriber)) {
-      const parent = storage.get(event.entity);
-
       switch (event.type) {
         case ComponentEventType.Added:
-          this.hierarchy.addChild(parent.entity, event.entity);
+          this.hierarchy.addChild(storage.get(event.entity).entity, event.entity);
           break;
         case ComponentEventType.Removed:
-          this.hierarchy.removeChild(parent.entity, event.entity);
+          this.hierarchy.remove(event.entity);
+
           break;
       }
     }
