@@ -1,0 +1,24 @@
+{
+  "collectCoverageFrom": [
+    "src/**/*.ts"
+  ],
+  "transform": {
+    "^.+\\.(t|j)sx?$": "ts-jest"
+  },
+  "testMatch": [
+    "**/*.spec.ts"
+  ],
+  "modulePathIgnorePatterns": [
+    "node_modules"
+  ],
+  "moduleFileExtensions": [
+    "ts",
+    "tsx",
+    "js",
+    "jsx",
+    "json",
+    "node"
+  ],
+  "verbose": true
+}
+

@@ -7,8 +7,11 @@
   },
   "description": "Simple transform system for @heliks/ecs",
   "devDependencies": {
+    "@types/jest": "^25.1.2",
+    "jest": "^25.1.0",
+    "ts-jest": "^25.2.0",
     "@heliks/ecs": "^0.0.2",
-    "@heliks/ecs-hierarchy": "^0.0.3",
+    "@heliks/ecs-hierarchy": "^0.0.4",
     "@heliks/event-queue": "^0.1.1",
     "typescript": "^3.9.7"
   },
@@ -23,7 +26,8 @@
   },
   "scripts": {
     "build": "tsc",
-    "build:watch": "tsc -w"
+    "build:watch": "tsc -w",
+    "test": "jest --config jest.config.json"
   },
   "types": "lib/index.d.ts",
   "version": "0.0.6"
