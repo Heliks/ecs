@@ -8,7 +8,7 @@
   "devDependencies": {
     "@heliks/ecs": "^0.0.2",
     "@heliks/event-queue": "^0.1.1",
-    "typescript": "^3.9.7"
+    "typescript": "^4.3.5"
   },
   "files": [
     "lib"
