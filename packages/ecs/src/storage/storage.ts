@@ -1,11 +1,15 @@
 import { Subscribable } from '../common';
-import { ComponentEvent } from '../entity';
+import { ComponentEvent, ComponentType } from '../entity';
 import { Entity } from '../entity';
+
 
 export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
 
-  /** Unique Id that is assigned to the storage when it is registered in the world. */
+  /** Unique id. */
   readonly id: number;
+
+  /** Component type that is managed by this storage. */
+  readonly type: ComponentType<T>;
 
   /**
    * Creates a new instance of the stored component `T`, assigns it to `entity` and
