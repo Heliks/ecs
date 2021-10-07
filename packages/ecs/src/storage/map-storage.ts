@@ -1,8 +1,6 @@
 import { Storage } from './storage'
 import { EventQueue, Subscriber } from '@heliks/event-queue';
-import { Changes } from '../entity';
-import { Entity } from '../entity';
-import { ComponentEvent, ComponentEventType, ComponentType } from '../entity';
+import { Changes, ComponentEvent, ComponentEventType, ComponentType, Entity } from '../entity';
 
 /**
  * Entity storage that stores component in a `Map`.
@@ -10,10 +8,13 @@ import { ComponentEvent, ComponentEventType, ComponentType } from '../entity';
 export class MapStorage<T = unknown> implements Storage<T> {
 
   /** The event queue to which this storage will push events. */
-  protected readonly _events = new EventQueue<ComponentEvent<T>>();
+  private readonly _events = new EventQueue<ComponentEvent<T>>();
 
   /** Contains all component instances mapped to the entity to which they belong. */
-  protected readonly components = new Map<Entity, T>();
+  private readonly components = new Map<Entity, T>();
+
+  /** Reverse lookup that matches a component instance to an entity. */
+  private readonly componentsReverseLookup = new Map<T, Entity>();
 
   /**
    * @param id Unique id of the storage.
@@ -27,29 +28,10 @@ export class MapStorage<T = unknown> implements Storage<T> {
   ) {}
 
   /** @inheritDoc */
-  public add(entity: Entity, data?: Partial<T>): T {
-    // eslint-disable-next-line new-cap
-    const component = new this.type();
-
-    if (data) {
-      Object.assign(component, data);
-    }
-
-    this.components.set(entity, component);
-    this.changes.add(entity, this.id);
-
-    this._events.push({
-      component,
-      entity,
-      type: ComponentEventType.Added
-    });
-
-    return component;
-  }
-
-  /** @inheritDoc */
   public set(entity: Entity, component: T): this {
     this.components.set(entity, component);
+    this.componentsReverseLookup.set(component, entity);
+
     this.changes.add(entity, this.id);
 
     this._events.push({
@@ -59,6 +41,20 @@ export class MapStorage<T = unknown> implements Storage<T> {
     });
 
     return this;
+  }
+
+  /** @inheritDoc */
+  public add(entity: Entity, data?: Partial<T>): T {
+    // eslint-disable-next-line new-cap
+    const component = new this.type();
+
+    if (data) {
+      Object.assign(component, data);
+    }
+
+    this.set(entity, component);
+
+    return component;
   }
 
   /** @inheritDoc */
@@ -78,6 +74,8 @@ export class MapStorage<T = unknown> implements Storage<T> {
       const component = this.get(entity);
 
       this.components.delete(entity);
+      this.componentsReverseLookup.delete(component);
+
       this.changes.remove(entity, this.id);
 
       this._events.push({
@@ -123,16 +121,22 @@ export class MapStorage<T = unknown> implements Storage<T> {
     this.components.clear();
   }
 
-  /** Subscribes to events in this group. */
+  /** @inheritDoc */
   public subscribe(): Subscriber {
     return this._events.subscribe();
   }
 
-  /** Reads the groups events. */
+  /** @inheritDoc */
   public events(subscriber: Subscriber): IterableIterator<ComponentEvent<T>> {
     return this._events.read(subscriber);
   }
 
+  /** @inheritDoc */
+  public owner(component: T): Entity | undefined {
+    return this.componentsReverseLookup.get(component);
+  }
+
+  /** @internal */
   public toString(): string {
     return this.type.name;
   }

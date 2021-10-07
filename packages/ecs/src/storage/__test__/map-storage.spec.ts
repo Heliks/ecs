@@ -3,18 +3,18 @@ import { MapStorage } from '../map-storage';
 import { ComponentEventType, Entity } from '../../entity';
 
 describe('MapStorage', () => {
-  class A {
+  class TestComponent {
     public test = '';
   }
 
   let entity: Entity;
-  let storage: MapStorage<A>;
+  let storage: MapStorage<TestComponent>;
   let world: World;
 
   beforeEach(() => {
     world = new World();
     entity = Math.random();
-    storage = world.storage(A);
+    storage = world.storage(TestComponent);
   });
 
   // Add component
@@ -23,7 +23,7 @@ describe('MapStorage', () => {
       storage.add(entity);
 
       // Component should now be stored for entity.
-      expect(storage.get(entity)).toBeInstanceOf(A);
+      expect(storage.get(entity)).toBeInstanceOf(TestComponent);
     });
 
     it('should update entity compositions', () => {
@@ -49,7 +49,7 @@ describe('MapStorage', () => {
   // Set component
   describe('set()', () => {
     it('should update entity compositions', () => {
-      storage.set(entity, new A());
+      storage.set(entity, new TestComponent());
 
       expect(
         world.changes.composition(entity).has(storage.id)
@@ -120,5 +120,15 @@ describe('MapStorage', () => {
         type: ComponentEventType.Updated
       });
     });
+  });
+
+  it('should return the owner of a component instance', () => {
+    const component = new TestComponent();
+
+    storage.set(entity, component);
+
+    const owner = storage.owner(component);
+
+    expect(owner).toBe(entity);
   });
 });

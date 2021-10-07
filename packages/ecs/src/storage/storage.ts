@@ -15,10 +15,14 @@ export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
    * Creates a new instance of the stored component `T`, assigns it to `entity` and
    * then returns it. If any `data` is given it will be assigned to the component
    * after its instantiation.
+   * @event OnComponentAdded
    */
   add(entity: Entity, data?: Partial<T>): T;
 
-  /** Directly assigns an `instance` of the stored component `T` to `entity`. */
+  /**
+   * Assigns an `instance` of the stored component type `T` to `entity`.
+   * @event OnComponentAdded
+   */
   set(entity: Entity, instance: T): this;
 
   /**
@@ -27,19 +31,34 @@ export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
    */
   get(entity: Entity): T;
 
-  /** Returns `true` if a component is stored for `entity`. */
+  /**
+   * Returns `true` if a component is stored for `entity`.
+   */
   has(entity: Entity): boolean;
 
   /**
    * Removes the stored component for `entity`. Returns `true` if a component was
    * removed and `false` otherwise.
+   * @event OnComponentRemoved
    */
   remove(entity: Entity): boolean;
 
-  /** Updates the existing component of `entity` with `data`. */
+  /**
+   * Updates the existing component of `entity` with `data`.
+   * @event OnComponentUpdated
+   */
   update(entity: Entity, data: Partial<T>): this;
 
-  /** Drops all stored components. */
+  /**
+   * Returns the entity that owns the given `component` instance, or `undefined` if
+   * that component is not owned by any entity.
+   */
+  owner(component: T): Entity | undefined;
+
+  /**
+   * Drops all stored components.
+   * @event OnComponentRemoved
+   */
   drop(): void;
 
 }
