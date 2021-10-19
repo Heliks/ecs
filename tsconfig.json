@@ -12,9 +12,7 @@
   "exclude": [
     "**/lib",
     "**/dist",
-    "**/__test__/**",
-    "**/node_modules/**",
-    "packages/*/lib/",
-    "packages/*/dist/"
+    "**/__test__",
+    "**/node_modules"
   ]
 }
