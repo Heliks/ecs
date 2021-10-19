@@ -7,9 +7,9 @@
   },
   "description": "Simple transform system for @heliks/ecs",
   "devDependencies": {
-    "@types/jest": "^25.1.2",
-    "jest": "^25.1.0",
-    "ts-jest": "^25.2.0",
+    "@types/jest": "^27.0.2",
+    "jest": "^27.0.7",
+    "ts-jest": "^27.0.7",
     "@heliks/ecs": "^0.0.2",
     "@heliks/ecs-hierarchy": "^0.0.4",
     "@heliks/event-queue": "^0.1.1",
