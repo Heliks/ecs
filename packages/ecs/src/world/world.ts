@@ -1,36 +1,33 @@
-import { BitSet } from '../common';
+import { BitSet, Filter } from '../common';
 import { Changes, ComponentType, Entity, EntityGroup, EntityManager } from '../entity';
-import { Filter } from '../common/filter';
-import { MapStorage } from '../storage';
+import { MapStorage, Storage } from '../storage';
 import { LazyBuilder } from './lazy-builder';
 import { Builder } from './builder';
 import { EntityQuery, World as Base } from './types';
 
+
 export class World implements Base {
 
-  /** @inheritDoc Changes */
+  /** @see Changes */
   public readonly changes = new Changes();
 
-  /** @inheritDoc EntityManager */
+  /** @see EntityManager */
   public readonly entities = new EntityManager(this.changes);
 
   /** Contains all registered entity groups. */
   protected readonly groups: EntityGroup[] = [];
 
   /**
-   * Contains all registered component storages, mapped to the component which
+   * Contains all registered component storages, mapped to the component type which
    * they are storing.
    */
-  protected readonly storages = new Map<ComponentType, MapStorage>();
+  protected readonly storages = new Map<ComponentType, Storage<unknown>>();
 
-  /**
-   * The index that is assigned to the next component storage with `register`.
-   * Will be incremented automatically.
-   */
+  /** @internal */
   private nextStorageIndex = 0;
 
   /** @inheritDoc */
-  public register<T>(component: ComponentType<T>): MapStorage<T> {
+  public register<T>(component: ComponentType<T>): Storage<T> {
     const storage = new MapStorage<T>(1 << this.nextStorageIndex++, component, this.changes);
 
     this.storages.set(component, storage);
@@ -39,10 +36,19 @@ export class World implements Base {
   }
 
   /** @inheritDoc */
-  public storage<T>(component: ComponentType<T>): MapStorage<T> {
+  public storage<T>(component: ComponentType<T>): Storage<T> {
     const storage = this.storages.get(component) as MapStorage<T>;
 
     return storage ? storage : this.register(component);
+  }
+
+  /** @inheritDoc */
+  public registerAs<A, C extends A>(component: ComponentType<C>, as: ComponentType<A>): Storage<A> {
+    const storage = this.storage(as);
+
+    this.storages.set(component, storage);
+
+    return storage;
   }
 
   /** @hidden */
@@ -64,15 +70,12 @@ export class World implements Base {
     );
   }
 
-  /** Returns `true` if `entity` is not destroyed. */
+  /** @inheritDoc */
   public alive(entity: Entity): boolean {
     return this.entities.alive(entity);
   }
 
-  /**
-   * Creates a new entity. If any `components` are given they will be automatically
-   * attached to it.
-   */
+  /** @inheritDoc */
   public create(components?: object[]): Entity {
     const entity = this.entities.create();
 
@@ -85,10 +88,7 @@ export class World implements Base {
     return entity;
   }
 
-  /**
-   * Destroys an `entity`. Components that belong to this entity will be removed lazily
-   * during the worlds [[update()]].
-   */
+  /** @inheritDoc */
   public destroy(entity: Entity): this {
     if (this.entities.destroy(entity)) {
       this.changes.destroy(entity);

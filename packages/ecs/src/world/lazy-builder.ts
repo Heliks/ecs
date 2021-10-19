@@ -1,6 +1,7 @@
 import { World } from './types';
 import { Entity } from '../entity';
 
+
 /**
  * A builder that unlike the normal `Builder` will only insert the entity into
  * the world after `build()`.

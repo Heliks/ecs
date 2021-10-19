@@ -1,5 +1,6 @@
 import { World } from './world';
 
+
 /** Where all the logic of an entity system is implemented. */
 export interface System {
   /**

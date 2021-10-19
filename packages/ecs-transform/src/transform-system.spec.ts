@@ -17,7 +17,7 @@ describe('TransformSystem', () => {
     system.boot(world);
   });
 
-  it('should update the world position of children', () => {
+  it('should update world position of children', () => {
     const transform = new Transform(0, 0);
 
     transform.local.x = 10;
@@ -44,7 +44,7 @@ describe('TransformSystem', () => {
     });
   })
 
-  it('should recursively update the world position of children', () => {
+  it('should recursively update world position of children', () => {
     const transform1 = new Transform(0, 0, 0, 5, 5);
     const transform2 = new Transform(0, 0, 0, 5, 5);
 
@@ -64,7 +64,7 @@ describe('TransformSystem', () => {
     expect(transform2.world).toMatchObject({ x: 15, y: 15 });
   });
 
-  it('should transform all entities that have children', () => {
+  it('should transform entities that have children', () => {
     system.transform = jest.fn();
 
     const parent1 = world.create([ new Transform() ]);

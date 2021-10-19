@@ -1,6 +1,8 @@
 import { World } from '../../world';
 import { MapStorage } from '../map-storage';
 import { ComponentEventType, Entity } from '../../entity';
+import { Storage } from '../storage';
+
 
 describe('MapStorage', () => {
   class TestComponent {
@@ -8,7 +10,7 @@ describe('MapStorage', () => {
   }
 
   let entity: Entity;
-  let storage: MapStorage<TestComponent>;
+  let storage: Storage<TestComponent>;
   let world: World;
 
   beforeEach(() => {
@@ -19,7 +21,7 @@ describe('MapStorage', () => {
 
   // Add component
   describe('add()', () => {
-    it('should create a new component instance for an entity', () => {
+    it('should add a component type to an entity', () => {
       storage.add(entity);
 
       // Component should now be stored for entity.
@@ -34,7 +36,7 @@ describe('MapStorage', () => {
       expect(composition.has(storage.id)).toBeTruthy();
     });
 
-    it('should emit a ComponentEvent', () => {
+    it('should emit event ComponentEventType.Added', () => {
       const subscriber = storage.subscribe();
       const component = storage.add(entity);
 
@@ -56,7 +58,7 @@ describe('MapStorage', () => {
       ).toBeTruthy();
     });
 
-    it('should emit a ComponentEvent', () => {
+    it('should emit event ComponentEventType.Added', () => {
       const subscriber = storage.subscribe();
       const component = storage.add(entity);
 
@@ -79,7 +81,7 @@ describe('MapStorage', () => {
       expect(composition.has(storage.id)).toBeFalsy();
     });
 
-    it('should emit a ComponentEvent', () => {
+    it('should emit event ComponentEventType.Removed', () => {
       const component = storage.add(entity);
 
       // Subscribe after component was added because we are only interested
@@ -106,7 +108,7 @@ describe('MapStorage', () => {
       expect(storage.get(entity).test).toBe('foobar');
     });
 
-    it('should emit an event', () => {
+    it('should emit event ComponentEventType.Updated', () => {
       const component = storage.add(entity);
       const subscriber = storage.subscribe();
 

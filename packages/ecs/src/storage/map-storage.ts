@@ -2,16 +2,15 @@ import { Storage } from './storage'
 import { EventQueue, Subscriber } from '@heliks/event-queue';
 import { Changes, ComponentEvent, ComponentEventType, ComponentType, Entity } from '../entity';
 
-/**
- * Entity storage that stores component in a `Map`.
- */
+
+/** Entity storage that stores component in a `Map`. */
 export class MapStorage<T = unknown> implements Storage<T> {
 
   /** The event queue to which this storage will push events. */
   private readonly _events = new EventQueue<ComponentEvent<T>>();
 
   /** Contains all component instances mapped to the entity to which they belong. */
-  private readonly components = new Map<Entity, T>();
+  private readonly componentLookup = new Map<Entity, T>();
 
   /** Reverse lookup that matches a component instance to an entity. */
   private readonly componentsReverseLookup = new Map<T, Entity>();
@@ -28,8 +27,13 @@ export class MapStorage<T = unknown> implements Storage<T> {
   ) {}
 
   /** @inheritDoc */
+  public components(): IterableIterator<T> {
+    return this.componentLookup.values();
+  }
+
+  /** @inheritDoc */
   public set(entity: Entity, component: T): this {
-    this.components.set(entity, component);
+    this.componentLookup.set(entity, component);
     this.componentsReverseLookup.set(component, entity);
 
     this.changes.add(entity, this.id);
@@ -59,7 +63,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
   /** @inheritDoc */
   public get(entity: Entity): T {
-    const component = this.components.get(entity) as T;
+    const component = this.componentLookup.get(entity) as T;
 
     if (! component) {
       throw new Error(`No component found for entity ${entity}`);
@@ -70,10 +74,10 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
   /** @inheritDoc */
   public remove(entity: Entity): boolean {
-    if (this.components.has(entity)) {
+    if (this.componentLookup.has(entity)) {
       const component = this.get(entity);
 
-      this.components.delete(entity);
+      this.componentLookup.delete(entity);
       this.componentsReverseLookup.delete(component);
 
       this.changes.remove(entity, this.id);
@@ -92,7 +96,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
   /** @inheritDoc */
   public update(entity: Entity, data: Partial<T>): this {
-    const component = this.components.get(entity);
+    const component = this.componentLookup.get(entity);
 
     if (component) {
       Object.assign(component, data);
@@ -109,16 +113,16 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
   /** @inheritDoc */
   public has(entity: Entity): boolean {
-    return this.components.has(entity);
+    return this.componentLookup.has(entity);
   }
 
   /** @inheritDoc */
   public drop(): void {
-    for (const entity of [...this.components.keys()]) {
+    for (const entity of [...this.componentLookup.keys()]) {
       this.changes.remove(entity, this.id);
     }
 
-    this.components.clear();
+    this.componentLookup.clear();
   }
 
   /** @inheritDoc */

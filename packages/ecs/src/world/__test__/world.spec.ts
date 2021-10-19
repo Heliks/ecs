@@ -35,31 +35,38 @@ class WorldMock extends World {
 describe('World', () => {
   let world: WorldMock;
 
-  class A {
-  }
-
-  class B {
-  }
+  // Test components.
+  class ComponentA {}
+  class ComponentB {}
 
   beforeEach(() => {
     world = new WorldMock();
   });
 
   it('should register component storages', () => {
-    const storage1 = world.register(A);
-    const storage2 = world.register(A);
-    const storage3 = world.register(A);
+    const storage1 = world.register(ComponentA);
+    const storage2 = world.register(ComponentA);
+    const storage3 = world.register(ComponentA);
 
     expect(storage1.id).toBe(1);
     expect(storage2.id).toBe(2);
     expect(storage3.id).toBe(4);
   });
 
-  it('should create compositions', () => {
-    const storageA = world.storage(A);
-    const storageB = world.storage(B);
+  it('should map a component type to the storage of a different component type', () => {
+    world.registerAs(ComponentB, ComponentA);
 
-    const composition = world.createComposition([A, B]);
+    const storageA = world.storage(ComponentA);
+    const storageB = world.storage(ComponentB);
+
+    expect(storageA.id).toBe(storageB.id);
+  });
+
+  it('should create compositions', () => {
+    const storageA = world.storage(ComponentA);
+    const storageB = world.storage(ComponentB);
+
+    const composition = world.createComposition([ComponentA, ComponentB]);
 
     expect(composition.has(storageA.id)).toBeTruthy();
     expect(composition.has(storageB.id)).toBeTruthy();

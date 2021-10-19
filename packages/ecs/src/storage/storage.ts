@@ -50,15 +50,18 @@ export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
   update(entity: Entity, data: Partial<T>): this;
 
   /**
+   * Drops all stored components.
+   * @event OnComponentRemoved
+   */
+  drop(): void;
+
+  /**
    * Returns the entity that owns the given `component` instance, or `undefined` if
    * that component is not owned by any entity.
    */
   owner(component: T): Entity | undefined;
 
-  /**
-   * Drops all stored components.
-   * @event OnComponentRemoved
-   */
-  drop(): void;
+  /** Returns an iterator over all component instances in the storage. */
+  components(): IterableIterator<T>;
 
 }

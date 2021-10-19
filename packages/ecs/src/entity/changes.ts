@@ -18,7 +18,7 @@ export type CompositionBit = number;
  * Change-set that keeps track of modified entities.
  *
  * The change-set will store a composition for each entity, and if modified will push
- * that entity in a queue that can then be processed by other systems.
+ * that entity to a queue that can then be processed by other systems.
  *
  * @see Composition
  */
