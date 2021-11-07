@@ -3,16 +3,19 @@ import { World } from './world';
 
 /** Where all the logic of an entity system is implemented. */
 export interface System {
+
   /**
-   * Setup logic for your game goes here. Will be called when the
-   * system is added to a `SystemManager`.
+   * Setup logic for your game goes here. Will be called when the system is added to
+   * the `SystemDispatcher`.
    */
   boot?(world: World): void;
+
   /**
-   * Implementation of the systems logic. Will be called once by
-   * the system manager on each frame.
+   * Logic implementation of the game system. This is executed once on each frame by
+   * the system dispatcher.
    */
   update(world: World): void;
+
 }
 
 /** Manages and updates systems. */

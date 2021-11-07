@@ -28,7 +28,13 @@ export class World implements Base {
 
   /** @inheritDoc */
   public register<T>(component: ComponentType<T>): Storage<T> {
-    const storage = new MapStorage<T>(1 << this.nextStorageIndex++, component, this.changes);
+    let storage = this.storages.get(component) as Storage<T>;
+
+    if (storage) {
+      return storage;
+    }
+
+    storage = new MapStorage<T>(1 << this.nextStorageIndex++, component, this.changes);
 
     this.storages.set(component, storage);
 

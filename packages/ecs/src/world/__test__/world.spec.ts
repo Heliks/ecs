@@ -43,24 +43,32 @@ describe('World', () => {
     world = new WorldMock();
   });
 
-  it('should register component storages', () => {
-    const storage1 = world.register(ComponentA);
-    const storage2 = world.register(ComponentA);
-    const storage3 = world.register(ComponentA);
+  describe('components', () => {
+    it('should be registered', () => {
+      const storage1 = world.register(ComponentA);
+      const storage2 = world.register(ComponentB);
 
-    expect(storage1.id).toBe(1);
-    expect(storage2.id).toBe(2);
-    expect(storage3.id).toBe(4);
+      expect(storage1.type).toBe(ComponentA);
+      expect(storage2.type).toBe(ComponentB);
+    });
+
+    it('should be mapped to an alias', () => {
+      world.registerAs(ComponentB, ComponentA);
+
+      const storageA = world.storage(ComponentA);
+      const storageB = world.storage(ComponentB);
+
+      expect(storageA.id).toBe(storageB.id);
+    });
+
+    it('storages should not receive a new id if the same component type is registered twice', () => {
+      const storage1 = world.register(ComponentA);
+      const storage2 = world.register(ComponentA);
+
+      expect(storage1.id).toBe(storage2.id);
+    });
   });
 
-  it('should map a component type to the storage of a different component type', () => {
-    world.registerAs(ComponentB, ComponentA);
-
-    const storageA = world.storage(ComponentA);
-    const storageB = world.storage(ComponentB);
-
-    expect(storageA.id).toBe(storageB.id);
-  });
 
   it('should create compositions', () => {
     const storageA = world.storage(ComponentA);
