@@ -43,7 +43,7 @@ export class Transform {
     );
   }
 
-  /** Rotates the transform so that it points towards an an observed world `point`. /b*/
+  /** Rotates the transform so that it points towards an an observed world `point`. */
   public lookAt(target: Vec2): this {
     this.rotation = Math.atan2(target.y - this.world.y, target.x - this.world.x);
 
@@ -54,7 +54,7 @@ export class Transform {
    * Calculates an euclidean vector (= direction vector) based on the current rotation
    * and assigns the result to `out`.
    */
-  public getDirectionVector(out: Vec2 = { x: 0, y: 0}): Vec2 {
+  public getDirection(out: Vec2 = { x: 0, y: 0}): Vec2 {
     out.x = Math.sin(this.rotation);
     out.y = Math.cos(this.rotation);
 
