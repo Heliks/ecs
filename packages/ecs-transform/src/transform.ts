@@ -9,15 +9,15 @@ interface Vec2 {
  * are arbitrary and depend of the implementation of the game.
  *
  * The position is split into "local" and "world", where the world position is the
- * absolute position that the entity occupies, while the local position is the position
- * relative to its own parent.
+ * absolute position that the entity occupies in the world space, while the local
+ * position is the position relative to its own parent.
  */
 export class Transform {
 
-  /** Position relative to the parent of this transform. */
+  /** Entity position relative to its parent (if it has one). */
   public readonly local: Vec2 = { x: 0, y: 0 };
 
-  /** Absolute position in the world. */
+  /** Entity position in the game world. */
   public readonly world: Vec2 = { x: 0, y: 0 };
 
   /**

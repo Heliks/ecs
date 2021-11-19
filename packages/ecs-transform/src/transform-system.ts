@@ -2,6 +2,7 @@ import { Entity, EntityGroup, Storage, System, World } from '@heliks/ecs';
 import { Hierarchy, Parent } from '@heliks/ecs-hierarchy';
 import { Transform } from './transform';
 
+
 // Todo: WIP!
 export class TransformSystem implements System {
 

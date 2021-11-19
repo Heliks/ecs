@@ -3,6 +3,7 @@ import { Subscriber } from '@heliks/event-queue';
 import { Parent } from './parent';
 import { Hierarchy } from './hierarchy';
 
+
 /** System that maintains parent-child relationships between entities. */
 export class HierarchySystem implements System {
 
@@ -28,7 +29,6 @@ export class HierarchySystem implements System {
           break;
         case ComponentEventType.Removed:
           this.hierarchy.remove(event.entity);
-
           break;
       }
     }
