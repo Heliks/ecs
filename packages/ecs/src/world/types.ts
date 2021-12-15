@@ -20,7 +20,7 @@ export interface World {
    * Creates a new entity. If any `components` are given they will be automatically
    * attached to it.
    */
-  create(components?: object[]): Entity;
+  create(...components: object[]): Entity;
 
   /**
    * Destroys an `entity`. Components that belong to this entity will be removed lazily

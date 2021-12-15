@@ -82,7 +82,7 @@ export class World implements Base {
   }
 
   /** @inheritDoc */
-  public create(components?: object[]): Entity {
+  public create(...components: object[]): Entity {
     const entity = this.entities.create();
 
     if (components) {
@@ -184,6 +184,7 @@ export class World implements Base {
   /**
    * Returns an entity builder that can be used to compose entities. The entity is
    * created and added to the world instantly.
+   * @see Builder
    */
   public builder(): Builder {
     return new Builder(this.create(), this);
@@ -193,6 +194,7 @@ export class World implements Base {
   /**
    * Returns an entity builder that can be used to compose entities. The entity is
    * created and added to the world after the entity is build.
+   * @see LazyBuilder
    */
   public lazy(): LazyBuilder {
     return new LazyBuilder(this);
