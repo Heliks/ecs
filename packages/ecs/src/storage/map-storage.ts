@@ -118,7 +118,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
   /** @inheritDoc */
   public drop(): void {
-    for (const entity of [...this.componentLookup.keys()]) {
+    for (const entity of this.componentLookup.keys()) {
       this.changes.remove(entity, this.id);
     }
 

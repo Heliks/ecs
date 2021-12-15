@@ -38,6 +38,8 @@
     "quotes": ["error", "single"],
     "space-unary-ops": ["off"],
     "unicorn/no-fn-reference-in-iterator": "off",
-    "unicorn/prevent-abbreviations": "off"
+    "unicorn/prevent-abbreviations": "off",
+    "unicorn/no-object-as-default-parameter": "off",
+    "unicorn/numeric-separators-style": "off"
   }
 }
