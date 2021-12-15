@@ -190,7 +190,6 @@ export class World implements Base {
     return new Builder(this.create(), this);
   }
 
-
   /**
    * Returns an entity builder that can be used to compose entities. The entity is
    * created and added to the world after the entity is build.

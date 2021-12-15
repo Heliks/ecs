@@ -3,10 +3,14 @@ import { Entity } from '../entity';
 
 
 /**
- * A builder that unlike the normal `Builder` will only insert the entity into
- * the world after `build()`.
+ * Entity builder.
+ *
+ * Unlike the normal builder this one inserts the entity only after the `build()`
+ * method has been called.
+ *
+ * @see Builder
  */
-export class LazyBuilder implements LazyBuilder {
+export class LazyBuilder {
 
   /** @internal */
   private readonly components: object[] = [];
@@ -25,7 +29,7 @@ export class LazyBuilder implements LazyBuilder {
 
   /** Builds the entity. */
   public build(): Entity {
-    return this.world.create(this.components);
+    return this.world.create(...this.components);
   }
 
 }
