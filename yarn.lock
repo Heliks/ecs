@@ -683,10 +683,10 @@
   resolved "https://registry.yarnpkg.com/@gar/promisify/-/promisify-1.1.2.tgz#30aa825f11d438671d585bd44e7fd564535fc210"
   integrity sha512-82cpyJyKRoQoRi+14ibCeGPu0CwypgtBAdBhq1WfvagpCZNKqwXbKwXllYSMG91DhmG4jt9gN8eP6lGOtozuaw==
 
-"@heliks/event-queue@^0.1.1":
-  version "0.1.1"
-  resolved "https://registry.yarnpkg.com/@heliks/event-queue/-/event-queue-0.1.1.tgz#c8461f6bd57d2b01358cb2446890715ab5765b84"
-  integrity sha512-6/EJ8WjVUaWK7jpdZA7E3ZRZMvNIVdOn/MoY69r3boxAA4VVC6f2wi1bsIZhtzzfSduK8Qo4/JimT61W+Rdaww==
+"@heliks/event-queue@^0.2.2":
+  version "0.2.2"
+  resolved "http://193.31.26.163:4873/@heliks%2fevent-queue/-/event-queue-0.2.2.tgz#46d3e94cc637eb99fc3a41afb9c47a4d432079e2"
+  integrity sha512-diooo7sorw3x+FMSgheJ7tgRi9mjLCf/UvDRSVkOXprPvH2nsUiOc1sCnzhsxHw0QJhcNtRQsRzaDuuj0KYrow==
 
 "@humanwhocodes/config-array@^0.9.2":
   version "0.9.2"
