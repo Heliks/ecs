@@ -8,19 +8,21 @@ export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
   /** Unique id. */
   readonly id: number;
 
-  /** Component type that is managed by this storage. */
+  /** Component type that is stored here. */
   readonly type: ComponentType<T>;
 
   /**
    * Creates a new instance of the stored component `T`, assigns it to `entity` and
    * then returns it. If any `data` is given it will be assigned to the component
    * after its instantiation.
+   *
    * @event OnComponentAdded
    */
   add(entity: Entity, data?: Partial<T>): T;
 
   /**
    * Assigns an `instance` of the stored component type `T` to `entity`.
+   *
    * @event OnComponentAdded
    */
   set(entity: Entity, instance: T): this;
@@ -39,18 +41,21 @@ export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
   /**
    * Removes the stored component for `entity`. Returns `true` if a component was
    * removed and `false` otherwise.
+   *
    * @event OnComponentRemoved
    */
   remove(entity: Entity): boolean;
 
   /**
    * Updates the existing component of `entity` with `data`.
+   *
    * @event OnComponentUpdated
    */
   update(entity: Entity, data: Partial<T>): this;
 
   /**
    * Drops all stored components.
+   *
    * @event OnComponentRemoved
    */
   drop(): void;
@@ -61,7 +66,10 @@ export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
    */
   owner(component: T): Entity | undefined;
 
-  /** Returns an iterator over all component instances in the storage. */
+  /** Returns an iterator over all stored component instances. */
   components(): IterableIterator<T>;
+
+  /** Returns an iterator over all entities that store a component instance here. */
+  entities(): IterableIterator<Entity>;
 
 }

@@ -32,6 +32,11 @@ export class MapStorage<T = unknown> implements Storage<T> {
   }
 
   /** @inheritDoc */
+  public entities(): IterableIterator<Entity> {
+    return this.componentLookup.keys();
+  }
+
+  /** @inheritDoc */
   public set(entity: Entity, component: T): this {
     this.componentLookup.set(entity, component);
     this.componentsReverseLookup.set(component, entity);
