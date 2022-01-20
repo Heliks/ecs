@@ -7,8 +7,8 @@
   },
   "description": "Simple transform system for @heliks/ecs",
   "devDependencies": {
-    "@heliks/ecs": "^0.1.4",
-    "@heliks/ecs-hierarchy": "^0.1.4",
+    "@heliks/ecs": "^0.1.5",
+    "@heliks/ecs-hierarchy": "^0.1.5",
     "@heliks/event-queue": "^0.2.2",
     "@types/jest": "^27.0.2",
     "jest": "^27.0.7",
@@ -29,5 +29,5 @@
     "build:watch": "tsc -w"
   },
   "types": "lib/index.d.ts",
-  "version": "0.1.4"
+  "version": "0.1.5"
 }
