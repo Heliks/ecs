@@ -11,8 +11,8 @@ $ npm install --save @heliks/ecs
 # Building
 
 ```bash
-$ yarn build
-$ yarn build:watch
+$ pnpm build
+$ pnpm build:watch
 ```
 
 # Usage
