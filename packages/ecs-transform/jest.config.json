@@ -6,7 +6,7 @@
     "^.+\\.(t|j)sx?$": "ts-jest"
   },
   "testMatch": [
-    "./src/**/*.spec.ts"
+    "**/*.spec.ts"
   ],
   "modulePathIgnorePatterns": [
     "node_modules"

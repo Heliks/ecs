@@ -1,7 +1,8 @@
-import { BitSet, Subscribable } from '../common';
-import { Filter } from '../common/filter';
-import { Entity } from './entity';
-import { EventQueue, Subscriber } from '@heliks/event-queue';
+import { BitSet } from '../common';
+import { Changes, Entity } from '../entity';
+import { EventQueue } from '@heliks/event-queue';
+import { Filter } from './filter';
+
 
 /**
  * Event that occurs in reaction to changes in an entity group.
@@ -25,23 +26,34 @@ interface EntityGroupEventData {
   type: EntityGroupEvent;
 }
 
-/**
- * Pools entities together.
- *
- * Each group has its own filter which determines which entities are eligible to be
- * added to the group, but it is possible to directly add non-eligible entities.
- *
- * @event EntityGroupEvent
- */
-export class EntityGroup implements Subscribable<EntityGroupEventData> {
 
-  /** Entities contained in this group. */
+/**
+ * A query that matches entities based on their component identities.
+ *
+ * Queries are re-usable, which means that their result only stays valid for a single
+ * frame. The result is empty until they are synchronized with changed entities.
+ */
+export class Query {
+
+  /**
+   * Contains all entities that were matched by this query. This is essentially the query
+   * result. Saving a reference to this array will not preserve its current state because
+   * queries will update their result once per frame.
+   */
   public readonly entities: Entity[] = [];
 
-  /** @internal */
-  private readonly _events = new EventQueue<EntityGroupEventData>();
+  /**
+   * Emits events based on changes to the query result.
+   *
+   * @see EntityGroupEventData
+   */
+  public readonly events = new EventQueue<EntityGroupEventData>();
 
-  /** Total amount of entities */
+  /**
+   * Total amount of entities that match this query.
+   *
+   * @see entities
+   */
   public get size(): number {
     return this.entities.length;
   }
@@ -51,16 +63,6 @@ export class EntityGroup implements Subscribable<EntityGroupEventData> {
    */
   constructor(public readonly filter = new Filter()) {}
 
-  /** @inheritDoc */
-  public subscribe(): Subscriber {
-    return this._events.subscribe();
-  }
-
-  /** @inheritDoc */
-  public events(subscriber: Subscriber): IterableIterator<EntityGroupEventData> {
-    return this._events.read(subscriber);
-  }
-
   /** Returns true if the entity satisfies the groups requirements */
   public test(composition: BitSet): boolean {
     return this.filter.test(composition);
@@ -69,7 +71,7 @@ export class EntityGroup implements Subscribable<EntityGroupEventData> {
   /** Add an entity to the group. */
   public add(entity: Entity): this {
     this.entities.push(entity);
-    this._events.push({
+    this.events.push({
       entity,
       type: EntityGroupEvent.Added
     });
@@ -86,7 +88,7 @@ export class EntityGroup implements Subscribable<EntityGroupEventData> {
   public remove(entity: Entity): this {
     if (this.has(entity)) {
       this.entities.splice(this.index(entity), 1);
-      this._events.push({
+      this.events.push({
         entity,
         type: EntityGroupEvent.Removed
       });
@@ -108,6 +110,32 @@ export class EntityGroup implements Subscribable<EntityGroupEventData> {
    */
   public index(entity: Entity): number {
     return this.entities.indexOf(entity);
+  }
+
+  /**
+   * Synchronizes the query result based on the given `changes`. Will be called once per
+   * frame internally using the entity manager change set.
+   */
+  public sync(changes: Changes): void {
+    for (const entity of changes.changed) {
+      const composition = changes.composition(entity);
+
+      // If the entity no longer matches the query filter, remove it from the query
+      // result. If the entity is not part of the result but should be, add it.
+      if (this.has(entity)) {
+        if (! this.test(composition)) {
+          this.remove(entity);
+        }
+      }
+      else if (this.test(composition)) {
+        this.add(entity);
+      }
+    }
+
+    // Entities that were destroyed can just be removed.
+    for (const entity of changes.destroyed) {
+      this.remove(entity);
+    }
   }
 
 }

@@ -1,4 +1,4 @@
-import { Entity, EntityGroup, Storage, System, World } from '@heliks/ecs';
+import { Entity, Query, Storage, System, World } from '@heliks/ecs';
 import { Hierarchy, Parent } from '@heliks/ecs-hierarchy';
 import { Transform } from './transform';
 
@@ -7,11 +7,10 @@ import { Transform } from './transform';
 export class TransformSystem implements System {
 
   /**
-   * Stores all top-level entities e.g. all entities that have a `Transform`, but no
-   * `Parent` component. Only available after the the `boot()` method was called on
-   * this system.
+   * Query that matches all top level entities (e.g. all entities that are not the child
+   * of another entity). This is only available after {@link boot} has been called.
    */
-  public group!: EntityGroup;
+  public query!: Query;
 
   /** @internal */
   private parents!: Storage<Parent>;
@@ -30,10 +29,11 @@ export class TransformSystem implements System {
     this.parents = world.storage(Parent);
     this.transforms = world.storage(Transform);
 
-    this.group = world.query({
-      contains: [Transform],
-      excludes: [Parent]
-    });
+    this.query = world
+      .query()
+      .contains(Transform)
+      .excludes(Parent)
+      .build();
   }
 
   /** Recursively updates the transform values of an entity and it's children. */
@@ -55,7 +55,9 @@ export class TransformSystem implements System {
 
   /** @inheritDoc */
   public update(): void {
-    for (const entity of this.group.entities) {
+    for (const entity of this.query.entities) {
+      console.log('HALLO', this.query.entities)
+
       this.transform(entity);
     }
   }

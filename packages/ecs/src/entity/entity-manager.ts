@@ -1,11 +1,16 @@
 import { Changes } from './changes';
 import { Entity, ENTITY_BITS, ENTITY_MASK } from './entity';
+import { ComponentRegistry } from './component-registry';
+
 
 /**
  * Manages entities.
+ *
  * @see Entity
  */
 export class EntityManager {
+
+  public readonly components = new ComponentRegistry();
 
   /** Contains all existing entities, both living ones and destroyed ones. */
   public readonly entities: Entity[] = [];
@@ -16,7 +21,7 @@ export class EntityManager {
   /**
    * @param changes Change-set used to track entity modifications.
    */
-  constructor(protected readonly changes = new Changes()) {}
+  constructor(public readonly changes = new Changes()) {}
 
   /** Creates a new entity and returns it. */
   public create(): Entity {

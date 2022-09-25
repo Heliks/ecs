@@ -3,6 +3,7 @@ import { Hierarchy, Parent } from '@heliks/ecs-hierarchy';
 import { Transform } from './transform';
 import { TransformSystem } from './transform-system';
 
+
 describe('TransformSystem', () => {
   let hierarchy: Hierarchy;
   let system: TransformSystem;
@@ -17,7 +18,7 @@ describe('TransformSystem', () => {
     system.boot(world);
   });
 
-  it('should update world position of children', () => {
+  it.only('should update world position of children', () => {
     const transform = new Transform(0, 0);
 
     transform.local.x = 10;
@@ -70,8 +71,8 @@ describe('TransformSystem', () => {
     const parent1 = world.create([ new Transform() ]);
     const parent2 = world.create([ new Transform() ]);
 
-    system.group.add(parent1);
-    system.group.add(parent2);
+    system.query.add(parent1);
+    system.query.add(parent2);
 
     // Update the system
     system.update();

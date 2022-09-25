@@ -17,13 +17,13 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
   /**
    * @param id Unique id of the storage.
-   * @param type The component type that this storage is storing.
    * @param changes Change-set that keeps track of entity changes.
+   * @param type The component type that this storage is storing.
    */
   constructor(
     public readonly id: number,
-    public readonly type: ComponentType<T>,
-    public readonly changes: Changes
+    public readonly changes: Changes,
+    public readonly type: ComponentType<T>
   ) {}
 
   /** @inheritDoc */
@@ -71,7 +71,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
     const component = this.componentLookup.get(entity) as T;
 
     if (! component) {
-      throw new Error(`No component found for entity ${entity}`);
+      throw new Error(`${entity} does not have a ${this.type.name} component`);
     }
 
     return component;
