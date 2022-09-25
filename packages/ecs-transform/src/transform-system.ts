@@ -56,10 +56,6 @@ export class TransformSystem implements System {
   /** @inheritDoc */
   public update(): void {
     for (const entity of this.query.entities) {
-
-      
-      console.log('HALLO', this.query.entities)
-
       this.transform(entity);
     }
   }
