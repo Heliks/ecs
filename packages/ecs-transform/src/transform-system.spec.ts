@@ -18,15 +18,13 @@ describe('TransformSystem', () => {
     system.boot(world);
   });
 
-  it.only('should update world position of children', () => {
+  it('should update world position of children', () => {
     const transform = new Transform(0, 0);
 
     transform.local.x = 10;
     transform.local.y = 10;
 
-    const parent = world.create([
-      new Transform(5, 5)
-    ]);
+    const parent = world.create(new Transform(5, 5));
 
     hierarchy.addChild(
       parent,
@@ -68,8 +66,8 @@ describe('TransformSystem', () => {
   it('should transform entities that have children', () => {
     system.transform = jest.fn();
 
-    const parent1 = world.create([ new Transform() ]);
-    const parent2 = world.create([ new Transform() ]);
+    const parent1 = world.create(new Transform());
+    const parent2 = world.create(new Transform());
 
     system.query.add(parent1);
     system.query.add(parent2);
