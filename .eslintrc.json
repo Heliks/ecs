@@ -1,8 +1,8 @@
 {
   "env": {"browser": true, "es6": true},
-  "extends": ["plugin:@typescript-eslint/recommended", "plugin:unicorn/recommended"],
+  "extends": ["plugin:@typescript-eslint/recommended"],
   "parser": "@typescript-eslint/parser",
-  "plugins": ["@typescript-eslint", "unicorn"],
+  "plugins": ["@typescript-eslint"],
   "rules": {
     "@typescript-eslint/explicit-function-return-type": [
       "warn", {"allowExpressions": true, "allowTypedFunctionExpressions": false}
@@ -36,10 +36,6 @@
     "keyword-spacing": "error",
     "new-cap": ["error", {"capIsNewExceptions": ["Injectable", "Inject", "Optional", "b2*"]}],
     "quotes": ["error", "single"],
-    "space-unary-ops": ["off"],
-    "unicorn/no-fn-reference-in-iterator": "off",
-    "unicorn/prevent-abbreviations": "off",
-    "unicorn/no-object-as-default-parameter": "off",
-    "unicorn/numeric-separators-style": "off"
+    "space-unary-ops": ["off"]
   }
 }

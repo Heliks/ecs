@@ -1,4 +1,5 @@
-import { BitSet } from './bit-set';
+import { BitSet } from '../common';
+
 
 export class Filter {
 
@@ -13,14 +14,12 @@ export class Filter {
 
   /** Returns `true` if the `composition` satisfies this filter. */
   public test(composition: BitSet): boolean {
-    return this.inclusions.contains(composition)
-      && this.exclusions.excludes(composition);
+    return this.inclusions.contains(composition) && this.exclusions.excludes(composition);
   }
 
   /** Returns true if `filter` is equal to this one. */
   public equals(filter: Filter): boolean {
-    return this.inclusions.equals(filter.inclusions)
-      && this.exclusions.equals(filter.exclusions);
+    return this.inclusions.equals(filter.inclusions) && this.exclusions.equals(filter.exclusions);
   }
 
 }

@@ -1,11 +1,19 @@
 import { ClassType } from '../common';
 import { Entity } from './entity';
 
+
+/**
+ * A bit that is assigned to a component type when it is first initialized. Each bit
+ * is unique for each type across an entity world.
+ */
+export type ComponentId = number;
+
 /**
  * Type alias for ClassType<T> to indicate that the constructor we are expecting
  * is that of a component.
  */
 export type ComponentType<T = unknown> = ClassType<T>;
+
 
 /** Possible component event types. */
 export enum ComponentEventType {
@@ -44,3 +52,6 @@ export type ComponentEvent<C> =
   OnComponentAdded<C> |
   OnComponentRemoved<C> |
   OnComponentUpdated<C>;
+
+
+

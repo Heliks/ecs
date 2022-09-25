@@ -1,18 +1,26 @@
 /**
- * An entity identifier to which components can be attached.
+ * An entity to which components can be attached.
  *
- * The 32 bit `number` type is split into two parts, one being the index that the entity
- * occupies in memory, and the second is the version, or the "generation" in which the
- * entity exists.
+ * Entities are represented by a 32-bit integer (e.g. `number` type) that is split into
+ * two segments: an index and a version. The index is the actual index that the entity
+ * occupies in memory and the version is the generation in which the entity exists. If
+ * an entity is destroyed and the index is recycled, the version is increased by one,
+ * which leaves the previous entity that occupied that index as invalid.
  *
- * For simplicities sake lets pretend the entity is an 8 bit identifier instead, where the
- * last two bits are reserved for the version:
+ * If we'd pretend that the entity is an 8-bit integer where we occupy 6 bits for the
+ * index and 2 bits for the version, it would look like this:
  *
+ * ```
  * Entity = 00100100
  *          001001[00] <-- steal two bits for version
+ *          001001    00
+ *            ^       ^
+ *          index   version
+ * ```
  *
- * Which leaves us with an index part 001001 (9) for the entity index, and 00 (0) for the
- * entity version.
+ * This leave us with 001001 (9) as entity index and 00 (0) as entity version. For real
+ * entities the index occupies 20 bits, which allows for a maximum of 1048575 entities
+ * to exist in the same world at the same time.
  */
 export type Entity = number;
 

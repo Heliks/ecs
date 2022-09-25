@@ -1,21 +1,21 @@
-import { Entity } from '../entity';
-import { ClassType } from '../common';
+import { ComponentType, Entity } from '../entity';
 import { World } from './types';
 
 
 /** An entity builder to easily compose entities. */
 export class Builder {
 
-  constructor(
-    private readonly entity: Entity,
-    private readonly world: World
-  ) {}
+  /**
+   * @param entity The entity that is being composed.
+   * @param world World in which the entity exists.
+   */
+  constructor(private readonly entity: Entity, private readonly world: World) {}
 
   /**
    * Adds an instance of `component` to the entity. If any `data` is given it
    * will be applied to the component after its instantiation.
    */
-  public add<T>(component: ClassType<T>, data?: Partial<T>): this {
+  public add<T>(component: ComponentType<T>, data?: Partial<T>): this {
     this.world.storage(component).add(this.entity, data);
 
     return this;

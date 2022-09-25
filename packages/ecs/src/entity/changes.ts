@@ -1,48 +1,35 @@
 import { BitSet } from '../common';
 import { Entity } from './entity';
+import { ComponentId } from './component';
+
 
 /**
- * A bit set that contains the Ids of all components that are contained in this
- * composition. The change-set will keep track of every composition of every entity.
+ * Bitset that contains the IDs of all components that are attached to an entity. The
+ * change set will store a composition for all existing entities. Each entity can have
+ * up to one instance of a component type.
+ *
+ * As this determines what type of components an entity owns, the ownership of a type is
+ * effectively removed when its respective ID is removed from the composition, even if
+ * the component is still stored somewhere else.
+ *
+ * @see Changes
  */
 export type Composition = BitSet;
 
 /**
- * A bit representing the existence of a component type.
- *
- * @see Composition
- */
-export type CompositionBit = number;
-
-/**
- * Change-set that keeps track of modified entities.
- *
- * The change-set will store a composition for each entity, and if modified will push
- * that entity to a queue that can then be processed by other systems.
+ * Keeps track of changes to entity compositions.
  *
  * @see Composition
  */
 export class Changes {
 
-  /**
-   * Entities that were updated during this frame, either through component addition
-   * or removal.
-   * Note: Do not modify this directly.
-   */
+  /** Entities that had their composition changed. */
   public readonly changed: Entity[] = [];
 
-  /**
-   * Entities that were destroyed during this frame.
-   * Note: Do not updated this directly.
-   */
+  /** Entities that were removed from the world. */
   public readonly destroyed: Entity[] = [];
 
-  /**
-   * Bit-sets that represent the component composition of an entity.
-   *
-   * @see Composition
-   * @see CompositionBit
-   */
+  /** @internal */
   private readonly compositions = new Map<Entity, Composition>();
 
   /** Returns the composition of an entity. */
@@ -61,28 +48,37 @@ export class Changes {
   }
 
   /** @internal */
-  private setDirty(entity: Entity): void {
-    if (!this.changed.includes(entity)) {
+  private dirty(entity: Entity): this {
+    if (! this.changed.includes(entity)) {
       this.changed.push(entity);
-    }
-  }
-
-  /** Adds a composition `bit` to `entity`. */
-  public add(entity: Entity, bit: CompositionBit): void {
-    this.composition(entity).add(bit);
-    this.setDirty(entity);
-  }
-
-  /** Removes a composition `bit` to `entity`. */
-  public remove(entity: Entity, bit: CompositionBit): this {
-    if (this.composition(entity).remove(bit)) {
-      this.setDirty(entity);
     }
 
     return this;
   }
 
-  /** Flags an entity as "destroyed". */
+  /**
+   * Adds a component `id` to the component composition of `entity`, essentially flagging
+   * the entity that it has a component of that type attached to it.
+   */
+  public add(entity: Entity, id: ComponentId): this {
+    this.dirty(entity).composition(entity).add(id);
+
+    return this;
+  }
+
+  /**
+   * Removes a component `id` from the composition of `entity`, essentially flagging the
+   * entity that it no longer has a component of that type attached to it.
+   */
+  public remove(entity: Entity, bit: ComponentId): this {
+    if (this.composition(entity).remove(bit)) {
+      this.dirty(entity);
+    }
+
+    return this;
+  }
+
+  /** Flags an entity as destroyed. */
   public destroy(entity: Entity): boolean {
     if (this.destroyed.includes(entity)) {
       return false;
