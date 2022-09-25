@@ -1,6 +1,6 @@
 {
   "collectCoverageFrom": [
-    "./src/**/*.ts"
+    "./src/index.ts"
   ],
   "transform": {
     "^.+\\.(t|j)sx?$": "ts-jest"
