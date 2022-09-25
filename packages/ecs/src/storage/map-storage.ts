@@ -58,7 +58,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
     const component = new this.type();
 
     if (data) {
-      Object.assign(component, data);
+      Object.assign(component as object, data);
     }
 
     this.set(entity, component);

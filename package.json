@@ -4,7 +4,6 @@
     "@typescript-eslint/parser": "^5.7.0",
     "eslint": "^8.4.1",
     "eslint-plugin-import": "^2.25.3",
-    "lerna": "^4.0.0",
     "rimraf": "^3.0.2",
     "typescript": "^4.3.5"
   },
@@ -14,14 +13,14 @@
     "registry": "http://193.31.26.163:4873/"
   },
   "scripts": {
-    "build": "lerna run --stream --sort build",
-    "build:clean": "rimraf packages/*/*/lib",
-    "build:watch": "lerna run build:watch --no-prefix --parallel",
-    "clean": "yarn build:clean && lerna clean && rimraf && rm -rf node_modules",
-    "link": "lerna link",
-    "lint": "eslint \"packages/**/src/**/*.ts\" --config .eslintrc.json",
+    "build": "pnpm clean:builds && pnpm -r --sort run build",
+    "build:watch": "pnpm -r --no-sort build:watch",
+    "clean:builds": "rimraf ./packages/*/lib",
+    "clean:deps": "rimraf packages/*/node_modules && rimraf node_modules",
+    "clean": "pnpm clean:builds && pnpm clean:deps",
+    "lint": "eslint packages/**/*.ts --config .eslintrc.json",
     "publish": "yarn build && npx lerna publish --registry=http://193.31.26.163:4873/",
-    "test": "lerna run --stream --sort test"
+    "test": "pnpm -r test"
   },
   "version": "0.0.0",
   "workspaces": [

@@ -1,19 +1,24 @@
-name: Verify code integrity
+name: Verify
 on: push
 jobs:
-  verify-integrity:
+  verify:
     name: Verify code integrity
     runs-on: ubuntu-latest
     steps:
-      # Checkout code and setup NodeJS
-      - name: Checkout code
+      - name: Checkout
         uses: actions/checkout@v2
-      - name: Setup NodeJS
+      - name: Setup Node
         uses: actions/setup-node@v2-beta
         with:
           node-version: '14'
-      # Run tasks to verify code.
-      - run: yarn install --frozen-lockfile
-      - run: yarn build
-      - run: yarn test
-      - run: yarn lint
+      - name: Install
+        run: |
+          npm install -g pnpm
+          pnpm install
+      - name: Build Packages
+        run: pnpm build
+      - name: Unit tests
+        run: pnpm test
+      - name: Lint
+        run: pnpm lint
+
