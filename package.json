@@ -20,10 +20,11 @@
     "build": "pnpm clean:builds && pnpm -r --sort run build",
     "build:watch": "pnpm -r --no-sort build:watch",
     "clean:builds": "rimraf ./packages/*/lib",
-    "clean:deps": "rimraf packages/*/node_modules && rimraf node_modules",
+    "clean:deps": "rimraf ./packages/*/node_modules && rimraf ./node_modules",
     "clean": "pnpm clean:builds && pnpm clean:deps",
     "lint": "eslint packages/**/*.ts --config .eslintrc.json",
-    "deploy": "pnpm clean && pnpm build && pnpm -r publish",
+    "publish": "pnpm clean:builds && pnpm build && pnpm -r publish",
+    "publish:dry": "pnpm clean:builds && pnpm build && pnpm -r publish --dry-run",
     "test": "pnpm -r test"
   },
   "version": "0.0.0",

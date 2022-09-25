@@ -1,6 +1,6 @@
 Simple data oriented [Entity Component System](https://en.wikipedia.org/wiki/Entity%E2%80%93component%E2%80%93system)
 
-Heavily WIP
+WIP
 
 # Install
 
@@ -8,7 +8,19 @@ Heavily WIP
 $ npm install --save @heliks/ecs
 ```
 
-# Building
+# Development
+
+## Requirements
+
+- Node 14
+
+Install pnpm if it is not already installed on your system: 
+
+```bash
+$ npm install -g pnpm
+```
+
+## Building
 
 ```bash
 $ pnpm build
