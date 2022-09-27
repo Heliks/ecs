@@ -44,7 +44,7 @@ export class QueryManager {
    * be called once on each frame.
    */
   public sync(changes: Changes): void {
-    if (changes.changed.length > 0) {
+    if (changes.dirty) {
       for (const query of this.items) {
         query.sync(changes);
       }

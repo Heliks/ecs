@@ -32,6 +32,14 @@ export class Changes {
   /** @internal */
   private readonly compositions = new Map<Entity, Composition>();
 
+  /**
+   * Contains `true` if there are any modifications to an entity composition. This
+   * includes entities that are destroyed.
+   */
+  public get dirty(): boolean {
+    return this.changed.length > 0 || this.destroyed.length > 0;
+  }
+
   /** Returns the composition of an entity. */
   public composition(entity: Entity): Composition {
     let item = this.compositions.get(entity);
@@ -48,7 +56,7 @@ export class Changes {
   }
 
   /** @internal */
-  private dirty(entity: Entity): this {
+  private setDirty(entity: Entity): this {
     if (! this.changed.includes(entity)) {
       this.changed.push(entity);
     }
@@ -61,7 +69,7 @@ export class Changes {
    * the entity that it has a component of that type attached to it.
    */
   public add(entity: Entity, id: ComponentId): this {
-    this.dirty(entity).composition(entity).add(id);
+    this.setDirty(entity).composition(entity).add(id);
 
     return this;
   }
@@ -72,7 +80,7 @@ export class Changes {
    */
   public remove(entity: Entity, bit: ComponentId): this {
     if (this.composition(entity).remove(bit)) {
-      this.dirty(entity);
+      this.setDirty(entity);
     }
 
     return this;
