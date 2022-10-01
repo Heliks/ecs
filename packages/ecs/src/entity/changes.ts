@@ -80,7 +80,7 @@ export class Changes {
    */
   public remove(entity: Entity, bit: ComponentId): this {
     if (this.composition(entity).remove(bit)) {
-      this.dirty(entity);
+      this.setDirty(entity);
     }
 
     return this;
