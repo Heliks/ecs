@@ -37,4 +37,20 @@ describe('World', () => {
       expect(storage1.id).toBe(storage2.id);
     });
   });
+
+  describe('on update', () => {
+    it('should remove detached components from storages', () => {
+      const entity = world.create(new ComponentA());
+
+      world
+        .detach(entity, ComponentA)
+        .update();
+
+      const exists = world
+        .storage(ComponentA)
+        .has(entity);
+
+      expect(exists).toBeFalsy();
+    });
+  });
 });

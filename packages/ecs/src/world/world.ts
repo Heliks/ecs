@@ -23,6 +23,16 @@ export class World implements Base {
    */
   protected readonly storages = new Map<ComponentType, Storage<unknown>>();
 
+  /**
+   * Contains component types that are detached from an entity, and the entities from
+   * which they are detached from. The layout of this array looks like this:
+   *
+   * `[Entity, ComponentType, Entity, ComponentType]`.
+   *
+   * @see detach
+   */
+  private detachments: (Entity | ComponentType)[] = [];
+
   /** @inheritDoc */
   public register<T>(type: ComponentType<T>): Storage<T> {
     let storage = this.storages.get(type) as Storage<T>;
@@ -83,6 +93,33 @@ export class World implements Base {
     return this;
   }
 
+  /** @internal */
+  private removeDetachedComponents(): void {
+    let i = 0;
+
+    while (i < this.detachments.length) {
+      const entity = this.detachments[i++] as Entity;
+      const type = this.detachments[i++] as ComponentType;
+
+      this
+        .storage(type)
+        .remove(entity);
+    }
+  }
+
+  /**
+   * Detaches the component instance of the given `type` from an `entity`.
+   *
+   * Components that are detached can still be accessed via the appropriate component
+   * storage like normal, but will be removed on the next world {@link update()}. This
+   * is useful if a component needs to be removed from an entity lazily.
+   */
+  public detach(entity: Entity, type: ComponentType): this {
+    this.detachments.push(entity, type);
+
+    return this;
+  }
+
   /**
    * Returns a builder with which an entity query can be created.
    *
@@ -114,6 +151,8 @@ export class World implements Base {
 
   /** Updates the entity world. Should be called once per frame. */
   public update(): void {
+    this.removeDetachedComponents();
+
     this.queries.sync(this.changes);
     this.changes.clear();
   }

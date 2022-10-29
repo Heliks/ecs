@@ -53,5 +53,3 @@ export type ComponentEvent<C> =
   OnComponentRemoved<C> |
   OnComponentUpdated<C>;
 
-
-
