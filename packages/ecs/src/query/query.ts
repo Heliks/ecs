@@ -2,29 +2,7 @@ import { BitSet } from '../common';
 import { Changes, Entity } from '../entity';
 import { EventQueue } from '@heliks/event-queue';
 import { Filter } from './filter';
-
-
-/**
- * Event that occurs in reaction to changes in an entity group.
- * @see EntityGroupEventData
- */
-export enum EntityGroupEvent {
-  /** Occurs when an entity is added to the group. */
-  Added,
-  /** Occurs when an entity is removed from the group. */
-  Removed
-}
-
-/**
- * Event data that is emitted for group events.
- * @see EntityGroupEvent
- */
-interface EntityGroupEventData {
-  /** The entity that was added / removed. */
-  entity: Entity;
-  /** Event type. */
-  type: EntityGroupEvent;
-}
+import { QueryEvent } from './query-event';
 
 
 /**
@@ -47,7 +25,7 @@ export class Query {
    *
    * @see EntityGroupEventData
    */
-  public readonly events = new EventQueue<EntityGroupEventData>();
+  public readonly events = new EventQueue<QueryEvent>();
 
   /**
    * Total amount of entities that match this query.
@@ -71,10 +49,7 @@ export class Query {
   /** Add an entity to the group. */
   public add(entity: Entity): this {
     this.entities.push(entity);
-    this.events.push({
-      entity,
-      type: EntityGroupEvent.Added
-    });
+    this.events.push(QueryEvent.added(entity));
 
     return this;
   }
@@ -88,10 +63,7 @@ export class Query {
   public remove(entity: Entity): this {
     if (this.has(entity)) {
       this.entities.splice(this.index(entity), 1);
-      this.events.push({
-        entity,
-        type: EntityGroupEvent.Removed
-      });
+      this.events.push(QueryEvent.removed(entity))
     }
 
     return this;
