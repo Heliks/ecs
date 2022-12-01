@@ -1,20 +1,7 @@
-import { BitSet } from '../common';
 import { Entity } from './entity';
 import { ComponentId } from './component';
+import { Composition } from './composition';
 
-
-/**
- * Bitset that contains the IDs of all components that are attached to an entity. The
- * change set will store a composition for all existing entities. Each entity can have
- * up to one instance of a component type.
- *
- * As this determines what type of components an entity owns, the ownership of a type is
- * effectively removed when its respective ID is removed from the composition, even if
- * the component is still stored somewhere else.
- *
- * @see Changes
- */
-export type Composition = BitSet;
 
 /**
  * Keeps track of changes to entity compositions.
@@ -48,7 +35,7 @@ export class Changes {
       return item;
     }
 
-    item = new BitSet();
+    item = new Composition();
 
     this.compositions.set(entity, item);
 
@@ -69,7 +56,7 @@ export class Changes {
    * the entity that it has a component of that type attached to it.
    */
   public add(entity: Entity, id: ComponentId): this {
-    this.setDirty(entity).composition(entity).add(id);
+    this.setDirty(entity).composition(entity).set(id);
 
     return this;
   }

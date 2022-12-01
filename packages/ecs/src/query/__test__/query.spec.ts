@@ -25,7 +25,7 @@ describe('Query', () => {
       const filter = new Filter();
 
       for (const type of contains) {
-        filter.inclusions.add(entities.components.id(type));
+        filter.inclusions.set(entities.components.id(type));
       }
 
       return new Query(filter);
@@ -47,7 +47,7 @@ describe('Query', () => {
       expect(query.entities).toHaveLength(0);
     });
 
-    it('should add eligible entities to the group', () => {
+    it('should add eligible entities to query result', () => {
       const entityA = 1;
       const entityB = 2;
 

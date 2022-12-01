@@ -3,8 +3,13 @@ import { Entity } from './entity';
 
 
 /**
- * A bit that is assigned to a component type when it is first initialized. Each bit
- * is unique for each type across an entity world.
+ * Total amount of unique {@link ComponentType} that can exist within a world. This
+ * should always be a power of 32.
+ */
+export const COMPONENT_TYPE_LIMIT = 64;
+
+/**
+ * A unique ID for a {@link ComponentType}.
  */
 export type ComponentId = number;
 

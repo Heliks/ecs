@@ -2,9 +2,10 @@ import { ComponentId, ComponentType } from './component';
 
 
 /**
- * Manages component ID assignment to component types.
+ * Manages known component types.
  *
  * @see ComponentId
+ * @see ComponentType
  */
 export class ComponentRegistry {
 
@@ -12,13 +13,14 @@ export class ComponentRegistry {
   private readonly ids = new Map<ComponentType, ComponentId>();
 
   /** @internal */
-  private nextIdx = 0;
+  private nextId = 0;
 
   /**
-   * Registers a component `type` and returns the component ID that was assigned to
-   * it. If it was already initialized, the existing ID will be returned.
+   * Registers a {@link ComponentType} and returns its unique {@link ComponentId}.
    *
-   * @see ComponentId
+   * Component types can only be registered once. This means that if the same type is
+   * registered twice, it will retain the original {@link ComponentId} that was assigned
+   * to it when it was first registered.
    */
   public register(type: ComponentType): ComponentId {
     let id = this.ids.get(type);
@@ -27,12 +29,7 @@ export class ComponentRegistry {
       return id;
     }
 
-    // Create new bit. Basically:
-    // idx: 0 = id 1
-    // idx: 1 = id 2
-    // idx: 2 = id 4
-    // ...etc
-    id = 1 << this.nextIdx++;
+    id = this.nextId++;
 
     this.ids.set(type, id);
 
@@ -40,10 +37,8 @@ export class ComponentRegistry {
   }
 
   /**
-   * Returns the component ID for a component `type`. If that type has no ID yet, it
-   * will be registered in the process.
-   *
-   * @see register
+   * Returns the {@link ComponentId component ID} for a component `type`. If that type
+   * is not known to the registry, it will be {@link register registered} in the process.
    */
   public id(type: ComponentType): ComponentId {
     return this.ids.get(type) ?? this.register(type);

@@ -50,8 +50,3 @@ $ pnpm run publish:dry
 # Usage
 
 *Todo*
-
-### Todo
-
-- [ ] Replace bit-set with bit-vector
-- [ ] Prefabs

@@ -25,7 +25,7 @@ export class QueryBuilder {
    * match entities that have components of that type attached to them.
    */
   public contains(type: ComponentType): this {
-    this.filter.inclusions.add(this.entities.components.id(type));
+    this.filter.inclusions.set(this.entities.components.id(type));
 
     return this;
   }
@@ -35,7 +35,7 @@ export class QueryBuilder {
    * match entities that *do not* have components of that type attached to them.
    */
   public excludes(type: ComponentType): this {
-    this.filter.exclusions.add(this.entities.components.id(type));
+    this.filter.exclusions.set(this.entities.components.id(type));
 
     return this;
   }

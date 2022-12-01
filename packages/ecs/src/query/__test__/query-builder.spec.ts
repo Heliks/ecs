@@ -1,7 +1,6 @@
 import { QueryBuilder } from '../query-builder';
-import { EntityManager } from '../../entity';
+import { Composition, EntityManager } from '../../entity';
 import { QueryManager } from '../query-manager';
-import { BitSet } from '../../common';
 
 
 describe('QueryBuilder', () => {
@@ -32,13 +31,13 @@ describe('QueryBuilder', () => {
       .excludes(CompC)
       .build();
 
-    const inclusions = new BitSet();
-    const exclusions = new BitSet();
+    const inclusions = new Composition();
+    const exclusions = new Composition();
 
-    inclusions.add(entities.components.id(CompA));
-    inclusions.add(entities.components.id(CompB));
+    inclusions.set(entities.components.id(CompA));
+    inclusions.set(entities.components.id(CompB));
 
-    exclusions.add(entities.components.id(CompC));
+    exclusions.set(entities.components.id(CompC));
 
     expect(inclusions.equals(query.filter.inclusions)).toBeTruthy();
     expect(exclusions.equals(query.filter.exclusions)).toBeTruthy();
