@@ -1,4 +1,4 @@
-import { BitSet } from '../common';
+import { BitVec } from '../common';
 import { COMPONENT_TYPE_LIMIT } from './component';
 
 
@@ -11,7 +11,7 @@ import { COMPONENT_TYPE_LIMIT } from './component';
  * removes ownership of that component type, even if an instance of that type is still
  * stored somewhere else.
  */
-export class Composition extends BitSet {
+export class Composition extends BitVec {
 
   constructor() {
     super(COMPONENT_TYPE_LIMIT);

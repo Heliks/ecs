@@ -1,10 +1,10 @@
-import { BitSet } from '../bit-set';
+import { BitVec } from '../bit-vec';
 
 describe('BitSet', () => {
-  let fixture: BitSet;
+  let fixture: BitVec;
 
   beforeEach(() => {
-    fixture = new BitSet(64);
+    fixture = new BitVec(64);
   });
 
   it.each([
@@ -13,7 +13,7 @@ describe('BitSet', () => {
     [32, true],
     [33, false]
   ])('should set bit index %i', (index, expected) => {
-    const vec = new BitSet(64);
+    const vec = new BitVec(64);
 
     vec.set(1);
     vec.set(33);
@@ -28,7 +28,7 @@ describe('BitSet', () => {
     [32, true],
     [33, false]
   ])('should remove bit index %s', (index, expected) => {
-    const vec = new BitSet(64);
+    const vec = new BitVec(64);
 
     vec.set(0);
     vec.set(32);
@@ -54,8 +54,8 @@ describe('BitSet', () => {
       vec2: [0, 1, 32]
     }
   ])('should test if vec1 fully contains vec2', data => {
-    const vec1 = new BitSet(64);
-    const vec2 = new BitSet(64);
+    const vec1 = new BitVec(64);
+    const vec2 = new BitVec(64);
 
     for (const bit of data.vec1) {
       vec1.set(bit);
@@ -87,8 +87,8 @@ describe('BitSet', () => {
       vec2: [0, 1, 32]
     }
   ])('should test if two vectors are equal', data => {
-    const vec1 = new BitSet(64);
-    const vec2 = new BitSet(64);
+    const vec1 = new BitVec(64);
+    const vec2 = new BitVec(64);
 
     for (const bit of data.vec1) {
       vec1.set(bit);

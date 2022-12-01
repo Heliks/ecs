@@ -1,5 +1,5 @@
 import { Filter } from '../filter';
-import { BitSet } from '../../common';
+import { BitVec } from '../../common';
 import { COMPONENT_TYPE_LIMIT, Composition } from '../../entity';
 
 
@@ -34,7 +34,7 @@ describe('Filter', () => {
       expected: false
     }
   ])('should check if compositions $composition includes $inclusions and excludes $exclusions', data => {
-    const composition = BitSet.fromArray(COMPONENT_TYPE_LIMIT, data.composition);
+    const composition = BitVec.fromArray(COMPONENT_TYPE_LIMIT, data.composition);
     const filter = new Filter(
       Composition.fromArray(COMPONENT_TYPE_LIMIT, data.inclusions),
       Composition.fromArray(COMPONENT_TYPE_LIMIT, data.exclusions)

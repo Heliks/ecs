@@ -19,7 +19,7 @@ function getBit(index: number): number {
  * main benefit however is that they can have any arbitrary size while normal bitsets
  * are limited to a total of 32 bits.
  */
-export class BitSet {
+export class BitVec {
 
   /**
    * Stores the individual `Number` bit-masks that make-up the bit-vector. Since we need
@@ -45,8 +45,8 @@ export class BitSet {
    * console.log(vec.has(5)); // true
    * ```
    */
-  public static fromArray(size: number, bits: number[]): BitSet {
-    const vec = new BitSet(size);
+  public static fromArray(size: number, bits: number[]): BitVec {
+    const vec = new BitVec(size);
 
     for (const bit of bits) {
       vec.set(bit);
@@ -97,7 +97,7 @@ export class BitSet {
   }
 
   /** Returns `true` if this vector is equal to `vec`. */
-  public equals(vec: BitSet): boolean {
+  public equals(vec: BitVec): boolean {
     for (let i = 0; i < Math.max(this.values.length, vec.values.length); i++) {
       if (this.values[i] !== vec.values[i]) {
         return false;
@@ -108,7 +108,7 @@ export class BitSet {
   }
 
   /** Returns `true` if this vector has every bit set that is set in `vec`. */
-  public contains(vec: BitSet): boolean {
+  public contains(vec: BitVec): boolean {
     for (let i = 0; i < Math.max(this.values.length, vec.values.length); i++) {
       if ((this.values[i] & vec.values[i]) !== vec.values[i]) {
         return false;
@@ -119,7 +119,7 @@ export class BitSet {
   }
 
   /** Returns `true` if this vector does not have any bit set that is set in `vec`. */
-  public excludes(vec: BitSet): boolean {
+  public excludes(vec: BitVec): boolean {
     for (let i = 0; i < Math.max(this.values.length, vec.values.length); i++) {
       if ((vec.values[i] & this.values[i]) !== 0) {
         return false;
