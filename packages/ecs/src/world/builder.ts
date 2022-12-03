@@ -9,7 +9,7 @@ export class Builder {
    * @param entity The entity that is being composed.
    * @param world World in which the entity exists.
    */
-  constructor(private readonly entity: Entity, private readonly world: World) {}
+  constructor(protected readonly entity: Entity, protected readonly world: World) {}
 
   /**
    * Adds an instance of `component` to the entity. If any `data` is given it

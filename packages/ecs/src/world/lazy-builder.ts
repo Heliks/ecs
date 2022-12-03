@@ -18,7 +18,7 @@ export class LazyBuilder {
   /**
    * @param world Instance of the world in which the entity should be inserted.
    */
-  constructor(private readonly world: World) {}
+  constructor(protected readonly world: World) {}
 
   /** @inheritDoc */
   public use(component: object): this {
