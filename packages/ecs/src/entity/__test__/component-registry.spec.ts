@@ -27,7 +27,7 @@ describe('ComponentRegistry', () => {
 
       const id = registry.register(A);
 
-      expect(id).toBe(1);
+      expect(id).toBe(0);
     });
   });
 });

@@ -25,7 +25,7 @@ export class ComponentRegistry {
   public register(type: ComponentType): ComponentId {
     let id = this.ids.get(type);
 
-    if (id) {
+    if (id !== undefined) {
       return id;
     }
 
