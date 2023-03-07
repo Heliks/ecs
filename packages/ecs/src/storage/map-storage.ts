@@ -128,6 +128,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
     }
 
     this.componentLookup.clear();
+    this.componentsReverseLookup.clear();
   }
 
   /** @inheritDoc */

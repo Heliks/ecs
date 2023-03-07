@@ -10,6 +10,7 @@ import { ComponentRegistry } from './component-registry';
  */
 export class EntityManager {
 
+  /** {@see ComponentRegistry} */
   public readonly components = new ComponentRegistry();
 
   /** Contains all existing entities, both living ones and destroyed ones. */

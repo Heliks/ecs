@@ -84,8 +84,8 @@ export class Changes {
     return true;
   }
 
-  /** Clears all changes. Should be called once at the end of each frame. */
-  public clear(): void {
+  /** Drops all changes. Should be called once at the end of each frame. */
+  public drop(): void {
     this.changed.length = 0;
     this.destroyed.length = 0;
   }

@@ -69,8 +69,12 @@ export class Query {
     return this;
   }
 
-  /** Removes all entities from this group. */
-  public clear(): this {
+  /** Drops all entities from this group. */
+  public drop(): this {
+    for (const entity of this.entities) {
+      this.remove(entity);
+    }
+
     this.entities.length = 0;
 
     return this;

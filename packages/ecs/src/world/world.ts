@@ -154,7 +154,16 @@ export class World implements Base {
     this.removeDetachedComponents();
 
     this.queries.sync(this.changes);
-    this.changes.clear();
+    this.changes.drop();
+  }
+
+  /** Drops all existing entities. */
+  public drop(): this {
+    for (const entity of this.entities.entities) {
+      this.destroy(entity);
+    }
+
+    return this;
   }
 
 }
