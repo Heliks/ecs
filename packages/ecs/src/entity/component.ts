@@ -1,4 +1,3 @@
-import { ClassType } from '../common';
 import { Entity } from './entity';
 
 
@@ -17,8 +16,8 @@ export type ComponentId = number;
  * Type alias for ClassType<T> to indicate that the constructor we are expecting
  * is that of a component.
  */
-export type ComponentType<T = unknown> = ClassType<T>;
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ComponentType<T = unknown> = new (...params: any[]) => T;
 
 /** Possible component event types. */
 export enum ComponentEventType {

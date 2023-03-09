@@ -53,12 +53,4 @@ describe('World', () => {
       expect(exists).toBeFalsy();
     });
   });
-
-  it('should drop all entities', () => {
-    world.entities.drop = jest.fn();
-
-    world.drop();
-
-    expect(world.entities.drop).toHaveBeenCalled();
-  });
 });

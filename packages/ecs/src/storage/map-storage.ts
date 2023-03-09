@@ -53,20 +53,6 @@ export class MapStorage<T = unknown> implements Storage<T> {
   }
 
   /** @inheritDoc */
-  public add(entity: Entity, data?: Partial<T>): T {
-    // eslint-disable-next-line new-cap
-    const component = new this.type();
-
-    if (data) {
-      Object.assign(component as object, data);
-    }
-
-    this.set(entity, component);
-
-    return component;
-  }
-
-  /** @inheritDoc */
   public get(entity: Entity): T {
     const component = this.componentLookup.get(entity) as T;
 
