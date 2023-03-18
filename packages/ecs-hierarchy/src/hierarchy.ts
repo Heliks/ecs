@@ -58,4 +58,19 @@ export class Hierarchy {
     this.children.delete(entity);
   }
 
+  /** Returns a flat hierarchy of all entities below `parent`. */
+  public flat(parent: Entity, result: Entity[] = []): Entity[] {
+    const children = this.children.get(parent);
+
+    if (children) {
+      for (const child of children) {
+        result.push(child);
+
+        this.flat(child, result);
+      }
+    }
+
+    return result;
+  }
+
 }
