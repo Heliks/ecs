@@ -10,7 +10,7 @@
     "@heliks/ecs": "workspace:^",
     "@heliks/ecs-hierarchy": "workspace:^",
     "@heliks/event-queue": "file:../../../event-queue",
-    "typescript": "^4.8.3"
+    "typescript": "^5.2.2"
   },
   "files": [
     "lib"
