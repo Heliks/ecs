@@ -5,7 +5,7 @@
   },
   "description": "Typescript entity component system (ECS)",
   "devDependencies": {
-    "typescript": "^4.8.3"
+    "typescript": "^5.2.2"
   },
   "files": [
     "lib"
