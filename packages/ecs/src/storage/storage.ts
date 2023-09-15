@@ -1,24 +1,17 @@
-import { Subscribable } from '../common';
-import { ComponentEvent, ComponentType } from '../entity';
-import { Entity } from '../entity';
+import { EventQueue } from '@heliks/event-queue';
+import { ComponentEvent, ComponentType, Entity } from '../entity';
 
 
-export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
+export interface Storage<T> {
 
   /** Unique id. */
   readonly id: number;
 
+  /** Storage events are broadcast here. */
+  readonly events: EventQueue<ComponentEvent<T>>;
+
   /** Component type that is stored here. */
   readonly type: ComponentType<T>;
-
-  /**
-   * Creates a new instance of the stored component `T`, assigns it to `entity` and
-   * then returns it. If any `data` is given it will be assigned to the component
-   * after its instantiation.
-   *
-   * @event OnComponentAdded
-   */
-  add(entity: Entity, data?: Partial<T>): T;
 
   /**
    * Assigns an `instance` of the stored component type `T` to `entity`.

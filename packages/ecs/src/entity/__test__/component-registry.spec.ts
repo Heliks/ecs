@@ -17,7 +17,7 @@ describe('ComponentRegistry', () => {
         registry.register(class D {})
       ];
 
-      expect(ids).toEqual([ 1, 2, 4, 8 ]);
+      expect(ids).toEqual([ 0, 1, 2, 3 ]);
     });
 
     it('should re-use IDs for already registered types', () => {
@@ -27,7 +27,7 @@ describe('ComponentRegistry', () => {
 
       const id = registry.register(A);
 
-      expect(id).toBe(1);
+      expect(id).toBe(0);
     });
   });
 });

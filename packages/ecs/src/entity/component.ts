@@ -1,10 +1,15 @@
-import { ClassType } from '../common';
 import { Entity } from './entity';
 
 
 /**
- * A bit that is assigned to a component type when it is first initialized. Each bit
- * is unique for each type across an entity world.
+ * Total amount of unique {@link ComponentType component types} that can exist in a
+ * world. This value should always be a power of 32.
+ */
+export const COMPONENT_TYPE_LIMIT = 64;
+
+/**
+ * The unique bit assigned to a specific {@link ComponentType component type}, which
+ * simultaneously acts as the types unique identifier.
  */
 export type ComponentId = number;
 
@@ -12,8 +17,8 @@ export type ComponentId = number;
  * Type alias for ClassType<T> to indicate that the constructor we are expecting
  * is that of a component.
  */
-export type ComponentType<T = unknown> = ClassType<T>;
-
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+export type ComponentType<T = unknown> = new (...params: any[]) => T;
 
 /** Possible component event types. */
 export enum ComponentEventType {
@@ -52,6 +57,4 @@ export type ComponentEvent<C> =
   OnComponentAdded<C> |
   OnComponentRemoved<C> |
   OnComponentUpdated<C>;
-
-
 

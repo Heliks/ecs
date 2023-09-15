@@ -1,20 +1,7 @@
-import { BitSet } from '../common';
 import { Entity } from './entity';
 import { ComponentId } from './component';
+import { Composition } from './composition';
 
-
-/**
- * Bitset that contains the IDs of all components that are attached to an entity. The
- * change set will store a composition for all existing entities. Each entity can have
- * up to one instance of a component type.
- *
- * As this determines what type of components an entity owns, the ownership of a type is
- * effectively removed when its respective ID is removed from the composition, even if
- * the component is still stored somewhere else.
- *
- * @see Changes
- */
-export type Composition = BitSet;
 
 /**
  * Keeps track of changes to entity compositions.
@@ -32,6 +19,14 @@ export class Changes {
   /** @internal */
   private readonly compositions = new Map<Entity, Composition>();
 
+  /**
+   * Contains `true` if there are any modifications to an entity composition. This
+   * includes entities that are destroyed.
+   */
+  public get dirty(): boolean {
+    return this.changed.length > 0 || this.destroyed.length > 0;
+  }
+
   /** Returns the composition of an entity. */
   public composition(entity: Entity): Composition {
     let item = this.compositions.get(entity);
@@ -40,7 +35,7 @@ export class Changes {
       return item;
     }
 
-    item = new BitSet();
+    item = new Composition();
 
     this.compositions.set(entity, item);
 
@@ -48,7 +43,7 @@ export class Changes {
   }
 
   /** @internal */
-  private dirty(entity: Entity): this {
+  private setDirty(entity: Entity): this {
     if (! this.changed.includes(entity)) {
       this.changed.push(entity);
     }
@@ -61,7 +56,7 @@ export class Changes {
    * the entity that it has a component of that type attached to it.
    */
   public add(entity: Entity, id: ComponentId): this {
-    this.dirty(entity).composition(entity).add(id);
+    this.setDirty(entity).composition(entity).set(id);
 
     return this;
   }
@@ -72,7 +67,7 @@ export class Changes {
    */
   public remove(entity: Entity, bit: ComponentId): this {
     if (this.composition(entity).remove(bit)) {
-      this.dirty(entity);
+      this.setDirty(entity);
     }
 
     return this;
@@ -89,8 +84,8 @@ export class Changes {
     return true;
   }
 
-  /** Clears all changes. Should be called once at the end of each frame. */
-  public clear(): void {
+  /** Drops all changes. Should be called once at the end of each frame. */
+  public drop(): void {
     this.changed.length = 0;
     this.destroyed.length = 0;
   }

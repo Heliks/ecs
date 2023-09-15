@@ -1,11 +1,12 @@
 import { Changes, ComponentType, Entity, EntityManager } from '../entity';
 import { MapStorage, Storage } from '../storage';
 import { LazyBuilder } from './lazy-builder';
-import { Builder } from './builder';
+import { EntityBuilder } from './entity-builder';
 import { World as Base } from './types';
 import { QueryBuilder, QueryManager } from '../query';
 
 
+/** @inheritDoc*/
 export class World implements Base {
 
   /** @see Changes */
@@ -48,21 +49,12 @@ export class World implements Base {
   }
 
   /** @inheritDoc */
-  public registerAs<A, C extends A>(component: ComponentType<C>, as: ComponentType<A>): Storage<A> {
-    const storage = this.storage(as);
-
-    this.storages.set(component, storage);
-
-    return storage;
-  }
-
-  /** @inheritDoc */
   public alive(entity: Entity): boolean {
     return this.entities.alive(entity);
   }
 
   /** @inheritDoc */
-  public create(...components: object[]): Entity {
+  public insert(...components: object[]): Entity {
     const entity = this.entities.create();
 
     if (components) {
@@ -96,10 +88,10 @@ export class World implements Base {
    * Returns an entity builder with which entities can be composed. The entity is
    * created and added to the world instantly.
    *
-   * @see Builder
+   * @see EntityBuilder
    */
-  public builder(): Builder {
-    return new Builder(this.create(), this);
+  public create(): EntityBuilder {
+    return new EntityBuilder(this, this.insert());
   }
 
   /**
@@ -115,8 +107,16 @@ export class World implements Base {
   /** Updates the entity world. Should be called once per frame. */
   public update(): void {
     this.queries.sync(this.changes);
-    this.changes.clear();
+    this.changes.drop();
+  }
+
+  /** Drops all existing entities. */
+  public drop(): this {
+    for (const entity of this.entities.entities) {
+      this.destroy(entity);
+    }
+
+    return this;
   }
 
 }
-

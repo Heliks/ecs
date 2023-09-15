@@ -21,15 +21,6 @@ describe('World', () => {
       expect(storage2.type).toBe(ComponentB);
     });
 
-    it('use type as an alias for a different component storage', () => {
-      world.registerAs(ComponentB, ComponentA);
-
-      const storageA = world.storage(ComponentA);
-      const storageB = world.storage(ComponentB);
-
-      expect(storageA.id).toBe(storageB.id);
-    });
-
     it('should not create storage if type is already initialized', () => {
       const storage1 = world.register(ComponentA);
       const storage2 = world.register(ComponentA);

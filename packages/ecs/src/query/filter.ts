@@ -1,4 +1,4 @@
-import { BitSet } from '../common';
+import { Composition } from '../entity';
 
 
 export class Filter {
@@ -8,13 +8,13 @@ export class Filter {
    * @param exclusions Mask with bits that are not allowed to be present to satisfy this filter.
    */
   constructor(
-    public readonly inclusions = new BitSet(),
-    public readonly exclusions = new BitSet()
+    public readonly inclusions = new Composition(),
+    public readonly exclusions = new Composition()
   ) {}
 
   /** Returns `true` if the `composition` satisfies this filter. */
-  public test(composition: BitSet): boolean {
-    return this.inclusions.contains(composition) && this.exclusions.excludes(composition);
+  public test(composition: Composition): boolean {
+    return composition.contains(this.inclusions) && composition.excludes(this.exclusions);
   }
 
   /** Returns true if `filter` is equal to this one. */

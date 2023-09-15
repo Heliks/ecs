@@ -12,14 +12,14 @@ describe('Builder', () => {
   });
 
   it('should build entities', () => {
-    const entity = world.builder().build();
+    const entity = world.create().build();
 
     expect(world.alive(entity)).toBeTruthy();
   });
 
   it('should add components', () => {
     const entity = world
-      .builder()
+      .create()
       .use(new A())
       .use(new B())
       .build();

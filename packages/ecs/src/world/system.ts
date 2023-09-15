@@ -1,54 +1,37 @@
 import { World } from './world';
 
 
-/** Where all the logic of an entity system is implemented. */
+/**
+ * Runs once per frame as part of a {@link Schedule}.
+ *
+ * Systems are the basic building block for application logic. They iterate over
+ * entities and their components and act on their state (data oriented design).
+ *
+ * @see SystemDispatcher
+ */
 export interface System {
 
   /**
-   * Setup logic for your game goes here. Will be called when the system is added to
-   * the `SystemDispatcher`.
+   * System boot.
+   *
+   * This is where setup logic for the system can be implemented. Usually this function
+   * will only be called once per {@link SystemDispatcher dispatcher} life-time, which
+   * is when the dispatcher boots the {@link Schedule} to which this system belongs.
    */
   boot?(world: World): void;
 
   /**
-   * Logic implementation of the game system. This is executed once on each frame by
-   * the system dispatcher.
+   * Update tick.
+   *
+   * This is where the logic for this system can be implemented. Usually this function
+   * will be called once per frame, when the {@link Schedule} to which this system
+   * belongs is updated by the {@link SystemDispatcher dispatcher}.
    */
   update(world: World): void;
 
 }
 
-/** Manages and updates systems. */
-export class SystemDispatcher {
 
-  /** All systems that were added to the manager. */
-  protected systems: System[] = [];
 
-  /**
-   * @param world The entity world.
-   */
-  constructor(public readonly world = new World()) {}
 
-  /** Adds the given `system`. */
-  public add(system: System): this {
-    // Boot the system if necessary.
-    if (system.boot) {
-      system.boot(this.world);
-    }
 
-    this.systems.push(system);
-
-    return this;
-  }
-
-  /**
-   * Updates all systems that were added to the manager. Should be
-   * called once on each frame.
-   */
-  public update(): void {
-    for (const system of this.systems) {
-      system.update(this.world);
-    }
-  }
-
-}

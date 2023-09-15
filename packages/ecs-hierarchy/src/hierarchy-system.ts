@@ -1,4 +1,4 @@
-import { ComponentEventType, System, World } from '@heliks/ecs';
+import { ComponentEvent, ComponentEventType, System, World } from '@heliks/ecs';
 import { Subscriber } from '@heliks/event-queue';
 import { Parent } from './parent';
 import { Hierarchy } from './hierarchy';
@@ -8,21 +8,21 @@ import { Hierarchy } from './hierarchy';
 export class HierarchySystem implements System {
 
   /** @internal */
-  private subscriber!: Subscriber;
+  private subscriber!: Subscriber<ComponentEvent<unknown>>;
 
   /** The hierarchy that should be used internally. */
   constructor(public readonly hierarchy = new Hierarchy()) {}
 
   /** @inheritDoc */
   public boot(world: World): void {
-    this.subscriber = world.storage(Parent).subscribe();
+    this.subscriber = world.storage(Parent).events.subscribe();
   }
 
   /** @inheritDoc */
   public update(world: World): void {
     const storage = world.storage(Parent);
 
-    for (const event of storage.events(this.subscriber)) {
+    for (const event of this.subscriber.read()) {
       switch (event.type) {
         case ComponentEventType.Added:
           this.hierarchy.addChild(storage.get(event.entity).entity, event.entity);

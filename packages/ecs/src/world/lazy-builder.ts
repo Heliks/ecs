@@ -3,12 +3,10 @@ import { Entity } from '../entity';
 
 
 /**
- * Entity builder.
+ * Utility to compose entities.
  *
- * Unlike the normal builder this one inserts the entity only after the `build()`
- * method has been called.
- *
- * @see Builder
+ * Unlike the normal {@link EntityBuilder entity builder} this one only inserts the
+ * entity it composes into the world after it has been {@link build}.
  */
 export class LazyBuilder {
 
@@ -18,7 +16,7 @@ export class LazyBuilder {
   /**
    * @param world Instance of the world in which the entity should be inserted.
    */
-  constructor(private readonly world: World) {}
+  constructor(protected readonly world: World) {}
 
   /** @inheritDoc */
   public use(component: object): this {
@@ -29,7 +27,7 @@ export class LazyBuilder {
 
   /** Builds the entity. */
   public build(): Entity {
-    return this.world.create(...this.components);
+    return this.world.insert(...this.components);
   }
 
 }
