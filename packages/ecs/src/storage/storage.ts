@@ -1,12 +1,14 @@
-import { Subscribable } from '../common';
-import { ComponentEvent, ComponentType } from '../entity';
-import { Entity } from '../entity';
+import { EventQueue } from '@heliks/event-queue';
+import { ComponentEvent, ComponentType, Entity } from '../entity';
 
 
-export interface Storage<T> extends Subscribable<ComponentEvent<T>> {
+export interface Storage<T> {
 
   /** Unique id. */
   readonly id: number;
+
+  /** Storage events are broadcast here. */
+  readonly events: EventQueue<ComponentEvent<T>>;
 
   /** Component type that is stored here. */
   readonly type: ComponentType<T>;

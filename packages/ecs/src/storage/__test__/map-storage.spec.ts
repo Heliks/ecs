@@ -23,8 +23,8 @@ describe('MapStorage', () => {
   });
 
   // Set component
-  describe('set()', () => {
-    it('should update entity compositions', () => {
+  describe('when assigning a component to an entity', () => {
+    it('the entity composition should be updated', () => {
       storage.set(entity, component);
 
       const composition = world.changes.composition(entity);
@@ -32,14 +32,14 @@ describe('MapStorage', () => {
       expect(composition.has(storage.id)).toBeTruthy();
     });
 
-    it('should emit event ComponentEventType.Added', () => {
-      const subscriber = storage.subscribe();
+    it('an event should be emitted', () => {
+      const subscriber = storage.events.subscribe();
 
       storage.set(entity, component);
 
-      const event = storage.events(subscriber).next().value;
+      const event = subscriber.next();
 
-      expect(event).toEqual({
+      expect(event).toMatchObject({
         component,
         entity,
         type: ComponentEventType.Added
@@ -63,11 +63,11 @@ describe('MapStorage', () => {
 
       // Subscribe after component was added because we are only interested
       // in the second event when the component is removed.
-      const subscriber = storage.subscribe();
+      const subscriber = storage.events.subscribe();
 
       storage.remove(entity);
 
-      const event = storage.events(subscriber).next().value;
+      const event = subscriber.next();
 
       expect(event).toEqual({
         component,
@@ -89,13 +89,13 @@ describe('MapStorage', () => {
     it('should emit event ComponentEventType.Updated', () => {
       storage.set(entity, component);
 
-      const subscriber = storage.subscribe();
+      const subscriber = storage.events.subscribe();
 
       storage.update(entity, {
         test: 'foobar'
       });
 
-      const event = storage.events(subscriber).next().value;
+      const event = subscriber.next();
 
       expect(event).toEqual({
         component,

@@ -7,8 +7,8 @@ import { Transform } from './transform';
 export class TransformSystem implements System {
 
   /**
-   * Query that matches all top level entities (e.g. all entities that are not the child
-   * of another entity). This is only available after {@link boot} has been called.
+   * Query matching top level entities (e.g. all entities that are not the child of
+   * another entity). This is only available after {@link boot} has been called.
    */
   public query!: Query;
 

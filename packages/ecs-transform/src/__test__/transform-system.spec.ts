@@ -1,7 +1,7 @@
 import { World } from '@heliks/ecs';
 import { Hierarchy, Parent } from '@heliks/ecs-hierarchy';
-import { Transform } from './transform';
-import { TransformSystem } from './transform-system';
+import { Transform } from '../transform';
+import { TransformSystem } from '../transform-system';
 
 
 describe('TransformSystem', () => {

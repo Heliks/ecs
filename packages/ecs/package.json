@@ -1,7 +1,7 @@
 {
   "author": "Felix Wolf",
   "dependencies": {
-    "@heliks/event-queue": "^0.2.2"
+    "@heliks/event-queue": "file:../../../event-queue"
   },
   "description": "Typescript entity component system (ECS)",
   "devDependencies": {
