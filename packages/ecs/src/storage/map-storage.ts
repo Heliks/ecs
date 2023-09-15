@@ -1,13 +1,13 @@
-import { Storage } from './storage'
-import { EventQueue, Subscriber } from '@heliks/event-queue';
+import { Storage } from './storage';
+import { EventQueue } from '@heliks/event-queue';
 import { Changes, ComponentEvent, ComponentEventType, ComponentType, Entity } from '../entity';
 
 
 /** Entity storage that stores component in a `Map`. */
 export class MapStorage<T = unknown> implements Storage<T> {
 
-  /** The event queue to which this storage will push events. */
-  private readonly _events = new EventQueue<ComponentEvent<T>>();
+  /** @inheritDoc */
+  public readonly events = new EventQueue<ComponentEvent<T>>();
 
   /** Contains all component instances mapped to the entity to which they belong. */
   private readonly componentLookup = new Map<Entity, T>();
@@ -43,7 +43,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
     this.changes.add(entity, this.id);
 
-    this._events.push({
+    this.events.push({
       component,
       entity,
       type: ComponentEventType.Added
@@ -73,7 +73,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
       this.changes.remove(entity, this.id);
 
-      this._events.push({
+      this.events.push({
         component,
         entity,
         type: ComponentEventType.Removed
@@ -92,7 +92,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
     if (component) {
       Object.assign(component, data);
 
-      this._events.push({
+      this.events.push({
         component,
         entity,
         type: ComponentEventType.Updated
@@ -115,16 +115,6 @@ export class MapStorage<T = unknown> implements Storage<T> {
 
     this.componentLookup.clear();
     this.componentsReverseLookup.clear();
-  }
-
-  /** @inheritDoc */
-  public subscribe(): Subscriber {
-    return this._events.subscribe();
-  }
-
-  /** @inheritDoc */
-  public events(subscriber: Subscriber): IterableIterator<ComponentEvent<T>> {
-    return this._events.read(subscriber);
   }
 
   /** @inheritDoc */

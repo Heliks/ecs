@@ -3,13 +3,13 @@
   "peerDependencies": {
     "@heliks/ecs": "workspace:^",
     "@heliks/ecs-hierarchy": "workspace:^",
-    "@heliks/event-queue": "^0.2.2"
+    "@heliks/event-queue": "file:../../../event-queue"
   },
   "description": "Simple transform system for @heliks/ecs",
   "devDependencies": {
     "@heliks/ecs": "workspace:^",
     "@heliks/ecs-hierarchy": "workspace:^",
-    "@heliks/event-queue": "^0.2.2",
+    "@heliks/event-queue": "file:../../../event-queue",
     "typescript": "^4.8.3"
   },
   "files": [

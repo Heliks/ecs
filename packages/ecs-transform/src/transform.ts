@@ -5,19 +5,20 @@ interface Vec2 {
 }
 
 /**
- * Transform component that gives an entity a position and a rotation. Transform units
- * are arbitrary and depend of the implementation of the game.
+ * Gives an entity a position and rotation.
  *
- * The position is split into "local" and "world", where the world position is the
- * absolute position that the entity occupies in the world space, while the local
- * position is the position relative to its own parent.
+ * All units for positions are arbitrary and depend on the local game implementation.
+ *
+ * Positions are split into a "local" and a "world" position, where the world position
+ * is the absolute position that the entity occupies in the world space. The local
+ * position is the position relative to its {@link Parent parent}.
  */
 export class Transform {
 
-  /** Entity position relative to its parent (if it has one). */
+  /** Position relative to its parent (if it has one). */
   public readonly local: Vec2 = { x: 0, y: 0 };
 
-  /** Entity position in the game world. */
+  /** Position in the game world. */
   public readonly world: Vec2 = { x: 0, y: 0 };
 
   /**
@@ -43,7 +44,7 @@ export class Transform {
     );
   }
 
-  /** Rotates the transform so that it points towards an an observed world `point`. */
+  /** Rotates the transform so that it points towards an observed world `point`. */
   public lookAt(target: Vec2): this {
     this.rotation = Math.atan2(target.y - this.world.y, target.x - this.world.x);
 
@@ -51,8 +52,8 @@ export class Transform {
   }
 
   /**
-   * Calculates an euclidean vector (= direction vector) based on the current rotation
-   * and assigns the result to `out`.
+   * Calculates a euclidean vector (= direction vector) based on the current
+   * transform {@link rotation}.
    */
   public getDirection(out: Vec2 = { x: 0, y: 0}): Vec2 {
     out.x = Math.sin(this.rotation);
