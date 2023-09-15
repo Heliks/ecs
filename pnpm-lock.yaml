@@ -1,9 +1,5 @@
 lockfileVersion: '6.0'
 
-settings:
-  autoInstallPeers: true
-  excludeLinksFromLockfile: false
-
 importers:
 
   .:
@@ -39,8 +35,8 @@ importers:
   packages/ecs:
     dependencies:
       '@heliks/event-queue':
-        specifier: file:../../../event-queue
-        version: file:../event-queue
+        specifier: 0.3.0-rc.2
+        version: 0.3.0-rc.2
     devDependencies:
       typescript:
         specifier: ^5.2.2
@@ -52,8 +48,8 @@ importers:
         specifier: workspace:^
         version: link:../ecs
       '@heliks/event-queue':
-        specifier: file:../../../event-queue
-        version: file:../event-queue
+        specifier: 0.3.0-rc.2
+        version: 0.3.0-rc.2
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -67,8 +63,8 @@ importers:
         specifier: workspace:^
         version: link:../ecs-hierarchy
       '@heliks/event-queue':
-        specifier: file:../../../event-queue
-        version: file:../event-queue
+        specifier: 0.3.0-rc.2
+        version: 0.3.0-rc.2
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -453,6 +449,9 @@ packages:
     resolution: {integrity: sha512-1S8uAY/MTJqVx0SC4epBq+N2yhuwtNwLbJYNZyhL2pO1ZVKn5HFXav5T41Ryzy9K9V7ZId2JB2oy/W4aCd9/2w==}
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
+
+  /@heliks/event-queue@0.3.0-rc.2:
+    resolution: {integrity: sha512-IckMnO8fFhLXkTvh5Xm5ZazFM957KJWM3WrVN3dydmpAwC72tWq7UzguGYyZW1NTuCTliZwf7FfQmUndZ0t1nQ==}
 
   /@humanwhocodes/config-array@0.11.11:
     resolution: {integrity: sha512-N2brEuAadi0CcdeMXUkhbZB84eskAc8MEX1By6qEchoVywSgXPIjou4rYsl0V3Hj0ZnuGycGCjdNgockbzeWNA==}
@@ -3787,6 +3786,6 @@ packages:
     engines: {node: '>=10'}
     dev: true
 
-  file:../event-queue:
-    resolution: {directory: ../event-queue, type: directory}
-    name: '@heliks/event-queue'
+settings:
+  autoInstallPeers: true
+  excludeLinksFromLockfile: false
