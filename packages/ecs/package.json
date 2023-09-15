@@ -1,10 +1,11 @@
 {
   "author": "Felix Wolf",
-  "dependencies": {
+  "peetDependencies": {
     "@heliks/event-queue": "0.3.0"
   },
   "description": "Typescript entity component system (ECS)",
   "devDependencies": {
+    "@heliks/event-queue": "0.3.0",
     "typescript": "^5.2.2"
   },
   "files": [
@@ -22,5 +23,5 @@
     "test": "jest --config jest.config.json"
   },
   "types": "lib/index.d.ts",
-  "version": "0.3.0-rc2"
+  "version": "0.3.0-rc3"
 }

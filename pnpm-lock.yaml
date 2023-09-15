@@ -33,11 +33,10 @@ importers:
         version: 5.2.2
 
   packages/ecs:
-    dependencies:
+    devDependencies:
       '@heliks/event-queue':
         specifier: 0.3.0
         version: 0.3.0
-    devDependencies:
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -452,6 +451,7 @@ packages:
 
   /@heliks/event-queue@0.3.0:
     resolution: {integrity: sha512-uQGHQW/s5ltcUKyN3iZStdCgwc6c+kW1y3kzXEkKeOhrxWHbRzsYaHPf4cY6QiwUVJycL27OEzrrzPZb5Uh10w==}
+    dev: true
 
   /@humanwhocodes/config-array@0.11.11:
     resolution: {integrity: sha512-N2brEuAadi0CcdeMXUkhbZB84eskAc8MEX1By6qEchoVywSgXPIjou4rYsl0V3Hj0ZnuGycGCjdNgockbzeWNA==}
