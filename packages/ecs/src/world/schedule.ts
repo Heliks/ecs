@@ -1,19 +1,18 @@
-import { System, World } from './index';
+import { System } from './system';
+import { World } from './world';
 
 
-/**
- * Unique identifier for a {@link Schedule}.
- */
+/** Unique identifier for a {@link Schedule}. */
 export type ScheduleId = string | number | symbol;
 
 /**
- * A schedule wraps a collection of {@link System systems} and executes them in the
- * order in which they were added.
+ * Wraps a collection of {@link System systems} and executes them in the same order
+ * in which they were added to the schedule.
  */
 export class Schedule {
 
   /**
-   * Contains all {@link System systems}, in the order they were added to the schedule.
+   * Contains all scheduled {@link System systems}.
    *
    * @internal
    */
@@ -24,21 +23,21 @@ export class Schedule {
    */
   constructor(public readonly id: ScheduleId) {}
 
-  /** Adds the given `system` to the schedule. */
+  /** Adds the given `system`. */
   public add(system: System): this {
     this.systems.push(system);
 
     return this;
   }
 
-  /** Boots all systems in the schedule. */
+  /** Boots all scheduled systems. */
   public boot(world: World): void {
     for (const system of this.systems) {
       system.boot?.(world);
     }
   }
 
-  /** Executes all systems in the schedule. */
+  /** Updates all scheduled systems. */
   public update(world: World): void {
     for (const system of this.systems) {
       system.update(world);

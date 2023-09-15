@@ -1,4 +1,4 @@
-export * from './builder';
+export * from './entity-builder';
 export * from './lazy-builder';
 export * from './schedule';
 export * from './system';

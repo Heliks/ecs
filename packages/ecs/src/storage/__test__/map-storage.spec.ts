@@ -18,7 +18,7 @@ describe('MapStorage', () => {
     component = new TestComponent();
     world = new World();
 
-    entity = world.create();
+    entity = world.insert();
     storage = world.storage(TestComponent);
   });
 

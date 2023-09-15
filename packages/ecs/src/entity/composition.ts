@@ -1,4 +1,4 @@
-import { BitVec } from '../common';
+import { BitVec } from '../utils';
 import { COMPONENT_TYPE_LIMIT } from './component';
 
 

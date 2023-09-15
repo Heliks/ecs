@@ -1,5 +1,5 @@
-import { World } from './index';
 import { Schedule, ScheduleId } from './schedule';
+import { World } from './world';
 
 
 export class SystemDispatcher {

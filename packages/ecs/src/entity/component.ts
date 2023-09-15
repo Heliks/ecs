@@ -2,13 +2,14 @@ import { Entity } from './entity';
 
 
 /**
- * Total amount of unique {@link ComponentType} that can exist within a world. This
- * should always be a power of 32.
+ * Total amount of unique {@link ComponentType component types} that can exist in a
+ * world. This value should always be a power of 32.
  */
 export const COMPONENT_TYPE_LIMIT = 64;
 
 /**
- * A unique ID for a {@link ComponentType}.
+ * The unique bit assigned to a specific {@link ComponentType component type}, which
+ * simultaneously acts as the types unique identifier.
  */
 export type ComponentId = number;
 

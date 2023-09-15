@@ -2,21 +2,31 @@ import { World } from './world';
 
 
 /**
- * Systems will run once per frame as part of a {@link Schedule}.
+ * Runs once per frame as part of a {@link Schedule}.
  *
- * In an ECS architecture, systems are the basic building block for application logic by
- * iterating entities or components and acting on their state.
+ * Systems are the basic building block for application logic. They iterate over
+ * entities and their components and act on their state (data oriented design).
+ *
+ * @see SystemDispatcher
  */
 export interface System {
 
   /**
-   * Boot hook. This is where setup logic can be implemented for your system. Will be
-   * called once when the {@link SystemDispatcher} boots the {@link Schedule} to which
-   * this system belongs.
+   * System boot.
+   *
+   * This is where setup logic for the system can be implemented. Usually this function
+   * will only be called once per {@link SystemDispatcher dispatcher} life-time, which
+   * is when the dispatcher boots the {@link Schedule} to which this system belongs.
    */
   boot?(world: World): void;
 
-  /** Implementation of the system logic. Will be executed once per frame. */
+  /**
+   * Update tick.
+   *
+   * This is where the logic for this system can be implemented. Usually this function
+   * will be called once per frame, when the {@link Schedule} to which this system
+   * belongs is updated by the {@link SystemDispatcher dispatcher}.
+   */
   update(world: World): void;
 
 }

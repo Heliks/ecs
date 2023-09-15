@@ -1,45 +1,54 @@
 import { ComponentType, Entity } from '../entity';
 import { Storage } from '../storage';
 
-
+/**
+ * Container for ECS related data and systems. Provides functionality to insert,
+ * update or destroy {@link Entity entities} that exist within this world.
+ */
 export interface World {
 
-  /**
-   * Returns `true` if `entity` is not destroyed.
-   */
+  /** Returns `true` if an `entity` is not destroyed. */
   alive(entity: Entity): boolean;
 
   /**
-   * Creates a new entity. If any `components` are given they will be automatically
-   * attached to it.
+   * Inserts an {@link Entity entity} with a set of `components` into the world and
+   * returns it.
+   *
+   * ```ts
+   *  class Foo {}
+   *  class Bar {}
+   *
+   *  const entityA = world.insert(new Foo());
+   *  const entityB = world.insert(new Foo(), new Bar());
+   * ```
    */
-  create(...components: object[]): Entity;
+  insert(...components: object[]): Entity;
 
   /**
-   * Destroys an `entity`.
+   * Destroys an {@link Entity entity}.
    *
-   * Destroys an `entity`. Components that belong to this entity will be removed lazily
-   * during the worlds [[update()]].
+   * Components that are owned by that entity will be lazily removed during the
+   * worlds next {@link update} tick.
    */
   destroy(entity: Entity): this;
 
-  /**
-   * Registers a storage for the component `T`.
-   */
-  register<T>(component: ComponentType<T>): Storage<T>;
+  /** Registers a component `type`. */
+  register<T>(type: ComponentType<T>): Storage<T>;
 
   /**
-   * Registers the component type `C`, by using the storage of component type `as`.
+   * Returns the component {@link Storage storage} for a component `type`. The type
+   * will be {@link register registered} in the process if it isn't already.
    *
-   * @typeparam A Component type that should be registered.
-   * @typeparam C Component type under which type `A` should be stored.
+   * ```ts
+   *  class Foo {}
+   *
+   *  // Register the component type.
+   *  world.register(Foo);
+   *
+   *  // Get storage.
+   *  const storage = world.storage(Foo);
+   * ```
    */
-  registerAs<A, C extends A>(component: ComponentType<C>, as: ComponentType<A>): Storage<A>;
-
-  /**
-   * Returns the storage for component `T`. If no storage for this component
-   * exists it will be registered automatically.
-   */
-  storage<T>(component: ComponentType<T>): Storage<T>;
+  storage<T>(type: ComponentType<T>): Storage<T>;
 
 }

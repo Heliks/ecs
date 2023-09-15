@@ -2,14 +2,14 @@ import { Entity } from '../entity';
 import { World } from './types';
 
 
-/** Builder to compose entities. */
-export class Builder {
+/** Utility to compose entities. */
+export class EntityBuilder {
 
   /**
    * @param entity Entity that is being composed.
    * @param world World in which the entity exists.
    */
-  constructor(protected readonly entity: Entity, protected readonly world: World) {}
+  constructor(protected readonly world: World, protected readonly entity: Entity) {}
 
   /** Adds the given `component` instance to the entity. */
   public use<T>(component: T): this {

@@ -1,11 +1,12 @@
 import { Changes, ComponentType, Entity, EntityManager } from '../entity';
 import { MapStorage, Storage } from '../storage';
 import { LazyBuilder } from './lazy-builder';
-import { Builder } from './builder';
+import { EntityBuilder } from './entity-builder';
 import { World as Base } from './types';
 import { QueryBuilder, QueryManager } from '../query';
 
 
+/** @inheritDoc*/
 export class World implements Base {
 
   /** @see Changes */
@@ -22,16 +23,6 @@ export class World implements Base {
    * they are storing.
    */
   protected readonly storages = new Map<ComponentType, Storage<unknown>>();
-
-  /**
-   * Contains component types that are detached from an entity, and the entities from
-   * which they are detached from. The layout of this array looks like this:
-   *
-   * `[Entity, ComponentType, Entity, ComponentType]`.
-   *
-   * @see detach
-   */
-  private detachments: (Entity | ComponentType)[] = [];
 
   /** @inheritDoc */
   public register<T>(type: ComponentType<T>): Storage<T> {
@@ -58,21 +49,12 @@ export class World implements Base {
   }
 
   /** @inheritDoc */
-  public registerAs<A, C extends A>(component: ComponentType<C>, as: ComponentType<A>): Storage<A> {
-    const storage = this.storage(as);
-
-    this.storages.set(component, storage);
-
-    return storage;
-  }
-
-  /** @inheritDoc */
   public alive(entity: Entity): boolean {
     return this.entities.alive(entity);
   }
 
   /** @inheritDoc */
-  public create(...components: object[]): Entity {
+  public insert(...components: object[]): Entity {
     const entity = this.entities.create();
 
     if (components) {
@@ -93,33 +75,6 @@ export class World implements Base {
     return this;
   }
 
-  /** @internal */
-  private removeDetachedComponents(): void {
-    let i = 0;
-
-    while (i < this.detachments.length) {
-      const entity = this.detachments[i++] as Entity;
-      const type = this.detachments[i++] as ComponentType;
-
-      this
-        .storage(type)
-        .remove(entity);
-    }
-  }
-
-  /**
-   * Detaches the component instance of the given `type` from an `entity`.
-   *
-   * Components that are detached can still be accessed via the appropriate component
-   * storage like normal, but will be removed on the next world {@link update()}. This
-   * is useful if a component needs to be removed from an entity lazily.
-   */
-  public detach(entity: Entity, type: ComponentType): this {
-    this.detachments.push(entity, type);
-
-    return this;
-  }
-
   /**
    * Returns a builder with which an entity query can be created.
    *
@@ -133,10 +88,10 @@ export class World implements Base {
    * Returns an entity builder with which entities can be composed. The entity is
    * created and added to the world instantly.
    *
-   * @see Builder
+   * @see EntityBuilder
    */
-  public builder(): Builder {
-    return new Builder(this.create(), this);
+  public create(): EntityBuilder {
+    return new EntityBuilder(this, this.insert());
   }
 
   /**
@@ -151,8 +106,6 @@ export class World implements Base {
 
   /** Updates the entity world. Should be called once per frame. */
   public update(): void {
-    this.removeDetachedComponents();
-
     this.queries.sync(this.changes);
     this.changes.drop();
   }
@@ -167,4 +120,3 @@ export class World implements Base {
   }
 
 }
-

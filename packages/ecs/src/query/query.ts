@@ -1,5 +1,4 @@
-import { BitVec } from '../common';
-import { Changes, Entity } from '../entity';
+import { Changes, Composition, Entity } from '../entity';
 import { EventQueue } from '@heliks/event-queue';
 import { Filter } from './filter';
 import { QueryEvent } from './query-event';
@@ -42,7 +41,7 @@ export class Query {
   constructor(public readonly filter = new Filter()) {}
 
   /** Returns true if the entity satisfies the groups requirements */
-  public test(composition: BitVec): boolean {
+  public test(composition: Composition): boolean {
     return this.filter.test(composition);
   }
 
