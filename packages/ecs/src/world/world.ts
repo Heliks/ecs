@@ -4,6 +4,7 @@ import { LazyBuilder } from './lazy-builder';
 import { EntityBuilder } from './entity-builder';
 import { World as Base } from './types';
 import { QueryBuilder, QueryManager } from '../query';
+import { Presets } from './preset';
 
 
 /** @inheritDoc*/
@@ -14,6 +15,9 @@ export class World implements Base {
 
   /** @see EntityManager */
   public readonly entities = new EntityManager(this.changes);
+
+  /** @see Presets */
+  public readonly presets = new Presets();
 
   /** @see QueryManager */
   public readonly queries = new QueryManager();
@@ -117,6 +121,13 @@ export class World implements Base {
     }
 
     return this;
+  }
+
+  /** Returns an array that contains all registered component types. */
+  public components(): Set<ComponentType> {
+    return new Set([
+      ...this.storages.keys()
+    ]);
   }
 
 }

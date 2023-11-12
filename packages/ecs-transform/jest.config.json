@@ -3,7 +3,7 @@
     "./src/index.ts"
   ],
   "transform": {
-    "^.+\\.(t|j)sx?$": "ts-jest"
+    "^.+\\.(t)sx?$": "ts-jest"
   },
   "testMatch": [
     "**/*.spec.ts"

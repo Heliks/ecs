@@ -2,22 +2,20 @@
   "author": "Felix Wolf",
   "peerDependencies": {
     "@heliks/ecs": "workspace:^",
-    "@heliks/ecs-hierarchy": "workspace:^",
-    "@heliks/event-queue": "0.3.0"
+    "reflect-metadata": "^0.1.13"
   },
-  "description": "Simple transform system for @heliks/ecs",
+  "description": "Serialization for @heliks/ecs",
   "devDependencies": {
     "@heliks/ecs": "workspace:^",
-    "@heliks/ecs-hierarchy": "workspace:^",
-    "@heliks/event-queue": "0.3.0",
-    "typescript": "^5.2.2"
+    "typescript": "^5.2.2",
+    "reflect-metadata": "^0.1.13"
   },
   "files": [
     "lib"
   ],
   "license": "MIT",
   "main": "lib/index.js",
-  "name": "@heliks/ecs-transform",
+  "name": "@heliks/ecs-serialize",
   "repository": {
     "url": "https://github.com/Heliks/ecs"
   },
