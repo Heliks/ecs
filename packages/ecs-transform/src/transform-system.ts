@@ -24,16 +24,28 @@ export class TransformSystem implements System {
    */
   constructor(public readonly hierarchy: Hierarchy) {}
 
-  /** @inheritDoc */
-  public boot(world: World): void {
-    this.parents = world.storage(Parent);
-    this.transforms = world.storage(Transform);
-
-    this.query = world
+  /**
+   * Returns the {@link Query entity query} that this system uses to pool entities. By
+   * default, this means entities that contain the {@link Transform} and {@link Parent}
+   * component.
+   *
+   * This function can be overwritten if you want to customize which entities should
+   * be affected by this system. The {@link Transform} and {@link Parent} components
+   * are always required for it to work properly however.
+   */
+  protected getQuery(world: World): Query {
+    return world
       .query()
       .contains(Transform)
       .excludes(Parent)
       .build();
+  }
+
+  /** @inheritDoc */
+  public boot(world: World): void {
+    this.parents = world.storage(Parent);
+    this.transforms = world.storage(Transform);
+    this.query = this.getQuery(world);
   }
 
   /** Recursively updates the transform values of an entity and it's children. */

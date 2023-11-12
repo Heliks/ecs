@@ -10,7 +10,7 @@
     "outDir": "./dist"
   },
   "exclude": [
-    "**/lib",
+    "**/lib/**",
     "**/dist",
     "**/__test__",
     "**/node_modules"

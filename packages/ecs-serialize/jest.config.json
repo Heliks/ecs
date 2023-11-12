@@ -2,6 +2,9 @@
   "collectCoverageFrom": [
     "./src/index.ts"
   ],
+  "setupFilesAfterEnv": [
+    "./src/__test__/setup.ts"
+  ],
   "transform": {
     "^.+\\.(t)sx?$": "ts-jest"
   },
@@ -14,10 +17,10 @@
   "moduleFileExtensions": [
     "ts",
     "tsx",
-    "js",
     "jsx",
     "json",
-    "node"
+    "node",
+    "js"
   ]
 }
 

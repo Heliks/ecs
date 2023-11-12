@@ -53,6 +53,18 @@ importers:
         specifier: ^5.2.2
         version: 5.2.2
 
+  packages/ecs-serialize:
+    devDependencies:
+      '@heliks/ecs':
+        specifier: workspace:^
+        version: link:../ecs
+      reflect-metadata:
+        specifier: ^0.1.13
+        version: 0.1.13
+      typescript:
+        specifier: ^5.2.2
+        version: 5.2.2
+
   packages/ecs-transform:
     devDependencies:
       '@heliks/ecs':
@@ -3218,6 +3230,10 @@ packages:
 
   /react-is@18.2.0:
     resolution: {integrity: sha512-xWGDIW6x921xtzPkhiULtthJHoJvBbF3q26fzloPCK0hsvxtPVelvftw3zjbHWSkR2km9Z+4uxbDDK/6Zw9B8w==}
+    dev: true
+
+  /reflect-metadata@0.1.13:
+    resolution: {integrity: sha512-Ts1Y/anZELhSsjMcU605fU9RE4Oi3p5ORujwbIKXfWa+0Zxs510Qrmrce5/Jowq3cHSZSJqBjypxmHarc+vEWg==}
     dev: true
 
   /regexp.prototype.flags@1.5.1:

@@ -1,0 +1,29 @@
+{
+  "author": "Felix Wolf",
+  "peerDependencies": {
+    "@heliks/ecs": "workspace:^",
+    "reflect-metadata": "^0.1.13"
+  },
+  "description": "Serialization for @heliks/ecs",
+  "devDependencies": {
+    "@heliks/ecs": "workspace:^",
+    "typescript": "^5.2.2",
+    "reflect-metadata": "^0.1.13"
+  },
+  "files": [
+    "lib"
+  ],
+  "license": "MIT",
+  "main": "lib/index.js",
+  "name": "@heliks/ecs-serialize",
+  "repository": {
+    "url": "https://github.com/Heliks/ecs"
+  },
+  "scripts": {
+    "build": "tsc",
+    "build:watch": "tsc -w",
+    "test": "jest --config jest.config.json"
+  },
+  "types": "lib/index.d.ts",
+  "version": "0.3.0"
+}
