@@ -27,7 +27,7 @@ export class World implements Base {
    * they are storing.
    */
   protected readonly storages = new Map<ComponentType, Storage<unknown>>();
-
+  
   /** @inheritDoc */
   public register<T>(type: ComponentType<T>): Storage<T> {
     let storage = this.storages.get(type) as Storage<T>;
@@ -123,7 +123,7 @@ export class World implements Base {
     return this;
   }
 
-  /** Returns an array that contains all registered component types. */
+  /** Returns a `Set` that contains all registered component types. */
   public components(): Set<ComponentType> {
     return new Set([
       ...this.storages.keys()
