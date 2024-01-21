@@ -33,6 +33,11 @@ export class ComponentList {
     return list;
   }
 
+  /** Returns all items in this list. */
+  public all(): readonly object[] {
+    return this.items;
+  }
+
   /** Returns the total number of components in this list. */
   public size(): number {
     return this.items.length;

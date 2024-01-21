@@ -1,4 +1,4 @@
-import { ComponentType, Entity, PresetId, World } from '@heliks/ecs';
+import { ComponentList, ComponentType, Entity, PresetId, World } from '@heliks/ecs';
 import { UUID } from './type-registry';
 
 
@@ -79,6 +79,9 @@ export interface EntitySerializer<W extends World = World> {
    * @param components (optional) List of component types that should be serialized.
    */
   serialize(world: W, entity: Entity, components?: Set<ComponentType>): EntityData;
+
+  /** Serializes the given component `list` into {@link EntityData}. */
+  list(world: W, list: ComponentList): EntityData;
 
   /**
    * Deserializes {@link EntityData entity data} and produces an entity.
