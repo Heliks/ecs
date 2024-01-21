@@ -1,4 +1,4 @@
-import { ComponentType, Entity, EntityBuilder, World } from '@heliks/ecs';
+import { ComponentList, ComponentType, Entity, EntityBuilder, World } from '@heliks/ecs';
 import { SerializationQuery } from './serialization-query';
 import { TypeSerializer } from './type-serializer';
 import { EntityData, EntitySerializer as Base, TypeData } from './types';
@@ -53,6 +53,19 @@ export class EntitySerializer implements Base {
     }
 
     return results;
+  }
+
+  /** @inheritDoc */
+  public list(world: World, list: ComponentList): EntityData {
+    const components = [];
+
+    for (const component of list.all()) {
+      components.push(this.types.serialize(world, component));
+    }
+
+    return {
+      components
+    };
   }
 
   /** @inheritDoc */

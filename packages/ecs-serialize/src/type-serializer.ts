@@ -166,8 +166,7 @@ export class TypeSerializer {
   public deserialize<T extends object>(world: World, data: TypeData<T>): T {
     const type = getTypeFromId(data.$id);
 
-    // Safety: Sadly there is no way to correctly check if the typing matches at runtime.
-    // eslint-disable-next-line @typescript-eslint/no-explicit-any, new-cap
+    // eslint-disable-next-line new-cap
     const instance = new type();
 
     if (isDeserializeable<InstanceData<T>>(instance)) {
@@ -177,8 +176,20 @@ export class TypeSerializer {
       for (const key in data.$data) {
         const value = data.$data[ key ];
 
-        instance[ key ] = isTypeData(value)
-          ? this.deserialize(world, value) : data.$data[ key ];
+        if (Array.isArray(value)) {
+          // Recursively deserialize each item that is type data.
+          instance[ key ] = value.map(
+            item => isTypeData(item)
+              ? this.deserialize(world, item)
+              : item
+          );
+        }
+        else {
+          // If value is type data, deserialize it. If not, assign value to instance as is.
+          instance[ key ] = isTypeData(value)
+            ? this.deserialize(world, value)
+            : data.$data[ key ];
+        }
       }
     }
 

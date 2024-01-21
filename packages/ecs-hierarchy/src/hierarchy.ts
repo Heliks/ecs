@@ -1,4 +1,4 @@
-import { Entity } from '@heliks/ecs';
+import { Entity, World } from '@heliks/ecs';
 
 /** Scene-graph like hierarchy for entities. */
 export class Hierarchy {
@@ -71,6 +71,40 @@ export class Hierarchy {
     }
 
     return result;
+  }
+
+  /**
+   * Destroys the given {@link entity} and all of its ancestors. Entities are destroyed
+   * from bottom to up, which means that children are destroyed before their parents.
+   *
+   * ```ts
+   *  const hierarchy = new Hierarchy();
+   *
+   *  const entity1 = world.insert();
+   *  const entity2 = world.insert();
+   *
+   *  // Set entity2 as child of entity1.
+   *  hierarchy.addChild(entity1, entity2);
+   *
+   *  // entity2 is destroyed first.
+   *  hierarchy.destroy(world, entity1);
+   * ```
+   */
+  public destroy(world: World, entity: Entity): this {
+    const children = this.children.get(entity);
+
+    if (children) {
+      for (const child of children) {
+        this.destroy(world, child);
+      }
+
+      // Drop child references.
+      this.children.delete(entity);
+    }
+
+    world.destroy(entity);
+
+    return this;
   }
 
 }
