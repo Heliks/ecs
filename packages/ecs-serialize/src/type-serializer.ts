@@ -103,7 +103,8 @@ export class TypeSerializer {
     // Check if we have a type ID.
     if (hasTypeId(instance.constructor)) {
       return {
-        $id: getTypeId(instance.constructor), $data: data
+        $id: getTypeId(instance.constructor),
+        $data: data
       };
     }
 

@@ -80,9 +80,6 @@ export interface EntitySerializer<W extends World = World> {
    */
   serialize(world: W, entity: Entity, components?: Set<ComponentType>): EntityData;
 
-  /** Serializes the given component `list` into {@link EntityData}. */
-  list(world: W, list: ComponentList): EntityData;
-
   /**
    * Deserializes {@link EntityData entity data} and produces an entity.
    *
@@ -90,5 +87,11 @@ export interface EntitySerializer<W extends World = World> {
    * @param data Entity data to deserialize.
    */
   deserialize(world: W, data: EntityData): Entity;
+
+  /** Serializes the given component `list` into {@link EntityData}. */
+  list(world: W, list: ComponentList): EntityData;
+
+  /** Extracts and deserializes all components in the given entity `data`. */
+  extract(world: W, data: EntityData): ComponentList;
 
 }

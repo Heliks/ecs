@@ -97,6 +97,19 @@ export class EntitySerializer implements Base {
     return builder.build();
   }
 
+  /** @inheritDoc */
+  public extract(world: World, data: EntityData): ComponentList {
+    const list = new ComponentList();
+
+    if (data.components) {
+      for (const typeData of data.components) {
+        list.add(this.types.deserialize(world, typeData));
+      }
+    }
+
+    return list;
+  }
+
   /** Returns a {@link SerializationQuery}. */
   public query(world: World): SerializationQuery {
     return new SerializationQuery(world, this);
