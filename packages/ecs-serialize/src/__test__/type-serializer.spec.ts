@@ -255,7 +255,7 @@ describe('TypeSerializer', () => {
         foo!: Foo
       }
 
-      const component = serializer.deserialize(world, {
+      const component = serializer.deserialize<Bar>(world, {
         $id: '0000-0000-0000-0002',
         $data: {
           foo: {

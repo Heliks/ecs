@@ -89,7 +89,9 @@ export class TypeSerializer {
       const value = this.serializeValue(world, instance[key]);
 
       if (value !== undefined) {
-        data[key] = value;
+        // Fixme: TS does not recognize "key" as a keyof InstanceData<T>.
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (data as any)[key] = value;
       }
     }
 

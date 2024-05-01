@@ -2,8 +2,17 @@ import { ComponentList, ComponentType, Entity, PresetId, World } from '@heliks/e
 import { UUID } from './type-registry';
 
 
+/**
+ * Structure of serialized class instance data. Strips all methods of type `T` and
+ * retains its properties typed as `any`.
+ *
+ * - `T`: Type of serialized instance.
+ */
 export type InstanceData<T> = {
-  [K in keyof T]?: unknown;
+  // Safety: The user can serialize a data key however they wish. Using `unknown` here
+  // would cause excessive type casting in custom serialization logic.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+  [K in keyof T as T[K] extends Function ? never : K]?: any;
 }
 
 /** Data structure for a serialized class type. */

@@ -58,6 +58,20 @@ export class Hierarchy {
     this.children.delete(entity);
   }
 
+  /**
+   * Returns a child of `parent` that is located at the given array `index`. Throws if
+   * the index does not point to a child entity.
+   */
+  public getChildAt(parent: Entity, index: number): Entity {
+    const child = this.children.get(parent)?.[index];
+
+    if (child === undefined) {
+      throw new Error(`Invalid child index ${index}`);
+    }
+
+    return child;
+  }
+
   /** Returns a flat hierarchy of all entities below `parent`. */
   public flat(parent: Entity, result: Entity[] = []): Entity[] {
     const children = this.children.get(parent);
