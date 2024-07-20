@@ -117,8 +117,25 @@ export class World implements Base {
   /** Drops all existing entities. */
   public drop(): this {
     for (const entity of this.entities.entities) {
-      this.destroy(entity);
+      // The entity will be destroyed no matter what since all entities we're iterating
+      // over here technically count as "alive", even if they're not. This can free an
+      // entity index that was already freed previously, causing the manager to allocate
+      // broken entities in the future. To avoid this we need to drop the manager after
+      // we're done destroying.
+      if (! this.entities.isFree(entity)) {
+        this.destroy(entity);
+      }
+
     }
+
+    /*
+    for (const store of this.storages.values()) {
+      store.drop()
+    }
+
+    this.entities.drop();
+    this.changes.drop();
+     */
 
     return this;
   }
