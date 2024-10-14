@@ -1,4 +1,4 @@
-import { ComponentType, Entity, EntityBuilder, World } from '@heliks/ecs';
+import { ComponentList, ComponentType, Entity, EntityBuilder, World } from '@heliks/ecs';
 import { SerializationQuery } from './serialization-query';
 import { TypeSerializer } from './type-serializer';
 import { EntityData, EntitySerializer as Base, TypeData } from './types';
@@ -56,6 +56,19 @@ export class EntitySerializer implements Base {
   }
 
   /** @inheritDoc */
+  public list(world: World, list: ComponentList): EntityData {
+    const components = [];
+
+    for (const component of list.all()) {
+      components.push(this.types.serialize(world, component));
+    }
+
+    return {
+      components
+    };
+  }
+
+  /** @inheritDoc */
   public serialize(world: World, entity: Entity, components?: Set<ComponentType>): EntityData {
     // If no whitelist is specified, use all components.
     if (! components) {
@@ -82,6 +95,19 @@ export class EntitySerializer implements Base {
     }
 
     return builder.build();
+  }
+
+  /** @inheritDoc */
+  public extract(world: World, data: EntityData): ComponentList {
+    const list = new ComponentList();
+
+    if (data.components) {
+      for (const typeData of data.components) {
+        list.add(this.types.deserialize(world, typeData));
+      }
+    }
+
+    return list;
   }
 
   /** Returns a {@link SerializationQuery}. */

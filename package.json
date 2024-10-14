@@ -10,9 +10,6 @@
     "ts-jest": "29.1.1",
     "typescript": "^5.2.2"
   },
-  "publishConfig": {
-    "registry": "http://193.31.26.163:4873/"
-  },
   "license": "MIT",
   "name": "ecs",
   "private": true,

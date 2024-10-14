@@ -1,4 +1,4 @@
-import { Entity } from '@heliks/ecs';
+import { Entity, World } from '@heliks/ecs';
 
 /** Scene-graph like hierarchy for entities. */
 export class Hierarchy {
@@ -58,6 +58,20 @@ export class Hierarchy {
     this.children.delete(entity);
   }
 
+  /**
+   * Returns a child of `parent` that is located at the given array `index`. Throws if
+   * the index does not point to a child entity.
+   */
+  public getChildAt(parent: Entity, index: number): Entity {
+    const child = this.children.get(parent)?.[index];
+
+    if (child === undefined) {
+      throw new Error(`Invalid child index ${index}`);
+    }
+
+    return child;
+  }
+
   /** Returns a flat hierarchy of all entities below `parent`. */
   public flat(parent: Entity, result: Entity[] = []): Entity[] {
     const children = this.children.get(parent);
@@ -71,6 +85,40 @@ export class Hierarchy {
     }
 
     return result;
+  }
+
+  /**
+   * Destroys the given {@link entity} and all of its ancestors. Entities are destroyed
+   * from bottom to up, which means that children are destroyed before their parents.
+   *
+   * ```ts
+   *  const hierarchy = new Hierarchy();
+   *
+   *  const entity1 = world.insert();
+   *  const entity2 = world.insert();
+   *
+   *  // Set entity2 as child of entity1.
+   *  hierarchy.addChild(entity1, entity2);
+   *
+   *  // entity2 is destroyed first.
+   *  hierarchy.destroy(world, entity1);
+   * ```
+   */
+  public destroy(world: World, entity: Entity): this {
+    const children = this.children.get(entity);
+
+    if (children) {
+      for (const child of children) {
+        this.destroy(world, child);
+      }
+
+      // Drop child references.
+      this.children.delete(entity);
+    }
+
+    world.destroy(entity);
+
+    return this;
   }
 
 }

@@ -8,14 +8,21 @@ describe('EntityManager', () => {
     em = new EntityManager();
   });
 
-  it('should create entities', () => {
-    const a = em.create();
-    const b = em.create();
+  describe('create()', () => {
+    it('should create entities', () => {
+      const a = em.create();
+      const b = em.create();
 
-    // Check if the index segment of the entity is correct.
-    expect(a & ENTITY_MASK).toBe(0);
-    expect(b & ENTITY_MASK).toBe(1);
+      // Check if the index segment of the entity is correct.
+      expect(a & ENTITY_MASK).toBe(0);
+      expect(b & ENTITY_MASK).toBe(1);
+    });
+
+    it('should add created entity to changeset', () => {
+      expect(em.changes.changed.includes(em.create())).toBeTruthy();
+    });
   });
+
 
   it('should return existing entities at the given position', () => {
     const a = em.create();

@@ -1,9 +1,18 @@
-import { ComponentType, Entity, PresetId, World } from '@heliks/ecs';
+import { ComponentList, ComponentType, Entity, PresetId, World } from '@heliks/ecs';
 import { UUID } from './type-registry';
 
 
+/**
+ * Structure of serialized class instance data. Strips all methods of type `T` and
+ * retains its properties typed as `any`.
+ *
+ * - `T`: Type of serialized instance.
+ */
 export type InstanceData<T> = {
-  [K in keyof T]?: unknown;
+  // Safety: The user can serialize a data key however they wish. Using `unknown` here
+  // would cause excessive type casting in custom serialization logic.
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any, @typescript-eslint/ban-types
+  [K in keyof T as T[K] extends Function ? never : K]?: any;
 }
 
 /** Data structure for a serialized class type. */
@@ -87,5 +96,11 @@ export interface EntitySerializer<W extends World = World> {
    * @param data Entity data to deserialize.
    */
   deserialize(world: W, data: EntityData): Entity;
+
+  /** Serializes the given component `list` into {@link EntityData}. */
+  list(world: W, list: ComponentList): EntityData;
+
+  /** Extracts and deserializes all components in the given entity `data`. */
+  extract(world: W, data: EntityData): ComponentList;
 
 }

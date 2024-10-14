@@ -47,8 +47,8 @@ describe('QueryBuilder', () => {
     const entityA = entities.create();
     const entityB = entities.create();
 
-    entities.changes.add(entityA, entities.components.id(CompA));
-    entities.changes.add(entityB, entities.components.id(CompB));
+    entities.changes.set(entityA, entities.components.id(CompA));
+    entities.changes.set(entityB, entities.components.id(CompB));
 
     const query = builder().contains(CompA).build();
 

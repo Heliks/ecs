@@ -34,7 +34,7 @@ describe('Query', () => {
     it('should remove destroyed entity from result', () => {
       const entity = entities.create();
 
-      entities.changes.add(entity, bitA);
+      entities.changes.set(entity, bitA);
 
       const query = create(CompA).add(entity);
 
@@ -51,10 +51,10 @@ describe('Query', () => {
       const entityA = 1;
       const entityB = 2;
 
-      entities.changes.add(entityA, bitA);
+      entities.changes.set(entityA, bitA);
 
-      entities.changes.add(entityB, bitA);
-      entities.changes.add(entityB, bitB);
+      entities.changes.set(entityB, bitA);
+      entities.changes.set(entityB, bitB);
 
       const query = create(CompA, CompB);
 
@@ -67,10 +67,10 @@ describe('Query', () => {
       const entityA = 1;
       const entityB = 2;
 
-      entities.changes.add(entityA, bitA);
+      entities.changes.set(entityA, bitA);
 
-      entities.changes.add(entityB, bitA);
-      entities.changes.add(entityB, bitB);
+      entities.changes.set(entityB, bitA);
+      entities.changes.set(entityB, bitB);
 
       const query = create(CompA, CompB);
 

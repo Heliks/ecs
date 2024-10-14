@@ -1,3 +1,4 @@
+export * from './component-list';
 export * from './entity-builder';
 export * from './lazy-builder';
 export * from './preset';

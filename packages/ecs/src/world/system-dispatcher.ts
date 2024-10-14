@@ -12,7 +12,7 @@ export class SystemDispatcher {
    * does not match any schedules.
    */
   public getIndex(id: ScheduleId): number {
-    return this.schedules.findIndex(layer => layer.id === id);
+    return this.schedules.findIndex(schedule => schedule.id === id);
   }
 
   /** @internal */
@@ -22,6 +22,10 @@ export class SystemDispatcher {
 
   /** Inserts a {@link Schedule schedule}, using the given {@link ScheduleId id}. */
   public add(id: ScheduleId): Schedule {
+    if (this.getIndex(id) !== -1) {
+      throw new Error(`A schedule with id ${id.toString()} already exists.`);
+    }
+
     const schedule = new Schedule(id);
 
     this.schedules.push(schedule);
