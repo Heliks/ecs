@@ -41,7 +41,7 @@ export class MapStorage<T = unknown> implements Storage<T> {
     this.componentLookup.set(entity, component);
     this.componentsReverseLookup.set(component, entity);
 
-    this.changes.add(entity, this.id);
+    this.changes.set(entity, this.id);
 
     this.events.push({
       component,

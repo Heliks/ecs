@@ -50,6 +50,7 @@ export class EntityManager {
     }
 
     this.entities.push(entity);
+    this.changes.add(entity);
 
     return entity;
   }

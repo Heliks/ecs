@@ -128,15 +128,6 @@ export class World implements Base {
 
     }
 
-    /*
-    for (const store of this.storages.values()) {
-      store.drop()
-    }
-
-    this.entities.drop();
-    this.changes.drop();
-     */
-
     return this;
   }
 
