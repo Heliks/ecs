@@ -39,8 +39,8 @@ importers:
   packages/ecs:
     devDependencies:
       '@heliks/event-queue':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: ^0.3.0
+        version: 0.3.1
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -51,8 +51,8 @@ importers:
         specifier: workspace:^
         version: link:../ecs
       '@heliks/event-queue':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: ^0.3.0
+        version: 0.3.1
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -78,8 +78,8 @@ importers:
         specifier: workspace:^
         version: link:../ecs-hierarchy
       '@heliks/event-queue':
-        specifier: 0.3.0
-        version: 0.3.0
+        specifier: ^0.3.0
+        version: 0.3.1
       typescript:
         specifier: ^5.2.2
         version: 5.2.2
@@ -502,8 +502,8 @@ packages:
     engines: {node: ^12.22.0 || ^14.17.0 || >=16.0.0}
     dev: true
 
-  /@heliks/event-queue@0.3.0:
-    resolution: {integrity: sha512-uQGHQW/s5ltcUKyN3iZStdCgwc6c+kW1y3kzXEkKeOhrxWHbRzsYaHPf4cY6QiwUVJycL27OEzrrzPZb5Uh10w==}
+  /@heliks/event-queue@0.3.1:
+    resolution: {integrity: sha512-YH9ghFsGX0IjAYBqM49JsZdczusYPuFhxyNlw0K14ALrdLV63kCI3qt9ymlDV0HepTwt7nUJEmhdAOU3SgJxSw==}
     dev: true
 
   /@humanwhocodes/config-array@0.11.11:

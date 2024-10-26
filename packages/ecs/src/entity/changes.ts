@@ -42,8 +42,8 @@ export class Changes {
     return item;
   }
 
-  /** @internal */
-  private setDirty(entity: Entity): this {
+  /** Adds the given `entity` to the list of {@link changed} entities. */
+  public add(entity: Entity): this {
     if (! this.changed.includes(entity)) {
       this.changed.push(entity);
     }
@@ -52,22 +52,22 @@ export class Changes {
   }
 
   /**
-   * Adds a component `id` to the component composition of `entity`, essentially flagging
-   * the entity that it has a component of that type attached to it.
+   * Adds a component `bit` to the composition of the given `entity. This causes the
+   * entity to be marked as {@link changed}.
    */
-  public add(entity: Entity, id: ComponentId): this {
-    this.setDirty(entity).composition(entity).set(id);
+  public set(entity: Entity, bit: ComponentId): this {
+    this.add(entity).composition(entity).set(bit);
 
     return this;
   }
 
   /**
-   * Removes a component `id` from the composition of `entity`, essentially flagging the
-   * entity that it no longer has a component of that type attached to it.
+   * Removes a component `bit` to the composition of the given `entity. This causes the
+   * entity to be marked as {@link changed}.
    */
   public remove(entity: Entity, bit: ComponentId): this {
     if (this.composition(entity).remove(bit)) {
-      this.setDirty(entity);
+      this.add(entity);
     }
 
     return this;

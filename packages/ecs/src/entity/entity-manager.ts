@@ -13,7 +13,13 @@ export class EntityManager {
   /** {@see ComponentRegistry} */
   public readonly components = new ComponentRegistry();
 
-  /** Contains all existing entities, both living ones and destroyed ones. */
+  /**
+   * Contains all existing entities, both living and destroyed.
+   *
+   * Each entity in this array *technically* counts as {@link alive}, even if it's
+   * not. This is because entities which are destroyed are kept in a not-yet-alive
+   * state until they can be re-used.
+   */
   public readonly entities: Entity[] = [];
 
   /** Contains entities that can be recycled. */
@@ -44,6 +50,7 @@ export class EntityManager {
     }
 
     this.entities.push(entity);
+    this.changes.add(entity);
 
     return entity;
   }
@@ -66,9 +73,9 @@ export class EntityManager {
 
   /** Returns `true` if `entity` is not destroyed. */
   public alive(entity: Entity): boolean {
-    // From the given entity we extract the index part and compare it with the entity
-    // that is currently occupying that index. This will fail if their versions mis-
-    // match, which means that the entity is no longer alive.
+    // Compare the given entity with the one that currently occupies its index. When
+    // their versions don't match, this will fail, indicating that the given entity
+    // is no longer alive.
     return this.entities[entity & ENTITY_MASK] === entity;
   }
 
@@ -83,6 +90,19 @@ export class EntityManager {
         this.entities[index] = (index | ((entity >> ENTITY_BITS) + 1) << ENTITY_BITS)
       );
     }
+
+    return this;
+  }
+
+  /** Returns `true` if the given entity is freed to be re-used. */
+  public isFree(entity: Entity): boolean {
+    return this.free.includes(entity);
+  }
+
+  /** Drops all entities. */
+  public drop(): this {
+    this.entities.length = 0;
+    this.free.length = 0;
 
     return this;
   }

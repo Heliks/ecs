@@ -255,7 +255,7 @@ describe('TypeSerializer', () => {
         foo!: Foo
       }
 
-      const component = serializer.deserialize(world, {
+      const component = serializer.deserialize<Bar>(world, {
         $id: '0000-0000-0000-0002',
         $data: {
           foo: {
@@ -268,6 +268,37 @@ describe('TypeSerializer', () => {
       })
 
       expect(component.foo).toBeInstanceOf(Foo);
+    });
+
+    it('should deserialize type data inside of arrays', () => {
+      @UUID('foo')
+      class Foo {
+        public items: Bar[] = [];
+      }
+
+      @UUID('bar')
+      class Bar {
+        public text = '';
+      }
+
+      const instance = serializer.deserialize<Foo>(world, {
+        $id: 'foo',
+        $data: {
+          items: [
+            {
+              $id: 'bar',
+              $data: {
+                text: 'Hello World'
+              }
+            }
+          ]
+        }
+      });
+
+      const item = instance.items[0];
+
+      expect(item).toBeInstanceOf(Bar);
+      expect(item.text).toBe('Hello World');
     });
 
     it('should use custom deserialization implementation of type', () => {

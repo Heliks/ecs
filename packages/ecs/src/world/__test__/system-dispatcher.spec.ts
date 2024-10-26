@@ -56,4 +56,23 @@ describe('SystemDispatcher', () => {
 
     expect(index).toBe(1);
   });
+
+  describe('add()', () => {
+    it('should add a new schedule', () => {
+      const schedule = 1;
+
+      dispatcher.add(schedule);
+
+      const index = dispatcher.getIndex(schedule);
+
+      expect(index).toBe(0);
+    });
+
+    it('should throw when schedule ID is not unique', () => {
+      expect(() => {
+        dispatcher.add(1);
+        dispatcher.add(1);
+      }).toThrow()
+    });
+  });
 });
