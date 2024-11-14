@@ -40,13 +40,6 @@ export interface Storage<T> {
   remove(entity: Entity): boolean;
 
   /**
-   * Updates the existing component of `entity` with `data`.
-   *
-   * @event OnComponentUpdated
-   */
-  update(entity: Entity, data: Partial<T>): this;
-
-  /**
    * Drops all stored components.
    *
    * @event OnComponentRemoved

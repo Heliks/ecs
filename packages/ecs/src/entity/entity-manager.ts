@@ -14,11 +14,11 @@ export class EntityManager {
   public readonly components = new ComponentRegistry();
 
   /**
-   * Contains all existing entities, both living and destroyed.
+   * Contains all entities. Dead or alive.
    *
-   * Each entity in this array *technically* counts as {@link alive}, even if it's
-   * not. This is because entities which are destroyed are kept in a not-yet-alive
-   * state until they can be re-used.
+   * Technically, each entity here counts as {@link alive}, even if it isn't. This is
+   * because entities which are destroyed, are kept "not-yet-alive" until they can be
+   * recycled. To iterate over all living entities, a {@link Query} can be used instead.
    */
   public readonly entities: Entity[] = [];
 
@@ -32,19 +32,16 @@ export class EntityManager {
 
   /** Creates a new entity and returns it. */
   public create(): Entity {
-    // Attempt to recycle a previously destroyed entity which minimizes garbage collection
-    // and small frame delays that could be caused by it.
     let entity = this.free.pop();
 
     if (entity) {
       return entity;
     }
 
-    // If we can't recycle, we simply initialize this with the next index, which will
-    // automatically set the version to 0.
+    // Entity is the next available index. Assigning an integer will cause this to
+    // have a version of 0.
     entity = this.entities.length;
 
-    // If we are out of bits on the index part we can't create a new entity.
     if (entity > ENTITY_MASK) {
       throw new Error('Maximum amount reached');
     }
@@ -56,14 +53,13 @@ export class EntityManager {
   }
 
   /**
-   * Returns the entity at the `index` position. This also includes destroyed entities.
-   * Throws an error if no entity exists at that index.
+   * Returns the entity at the `index` position. This also includes entities that are
+   * no longer alive. Throws an error if no entity exists at that index.
    */
   public get(index: number): Entity {
     const entity = this.entities[index];
 
-    // This hard check is required because the first entity will be "0", which would
-    // cause the ! operator to produce a false positive here.
+    // `0` is a valid entity.
     if (entity === undefined) {
       throw new Error('Out of bounds.');
     }
@@ -84,8 +80,7 @@ export class EntityManager {
     if (this.alive(entity)) {
       const index = entity & ENTITY_MASK;
 
-      // Increment the version of the entity and mark the index as free so that it
-      // can be recycled by the next entity that is created.
+      // Increase version by 1 and queue entity for recycling.
       this.free.push(
         this.entities[index] = (index | ((entity >> ENTITY_BITS) + 1) << ENTITY_BITS)
       );

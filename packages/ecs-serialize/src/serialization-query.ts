@@ -43,9 +43,18 @@ export class SerializationQuery {
    * data as an array.
    */
   public serialize(): EntityData[] {
-    return this.query.build().entities.map(
-      entity => this.serializer.serialize(this.world, entity)
-    );
+    const data = [];
+    const query = this.query.build();
+
+    for (const entity of query.entities) {
+      if (this.world.alive(entity)) {
+        data.push(
+          this.serializer.serialize(this.world, entity)
+        );
+      }
+    }
+
+    return data;
   }
 
 }
