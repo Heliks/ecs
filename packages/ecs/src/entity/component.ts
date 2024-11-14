@@ -23,8 +23,7 @@ export type ComponentType<T = unknown> = new (...params: any[]) => T;
 /** Possible component event types. */
 export enum ComponentEventType {
   Added,
-  Removed,
-  Updated
+  Removed
 }
 
 /** @internal */
@@ -41,20 +40,9 @@ export type OnComponentAdded<C> = BaseEvent<C, ComponentEventType.Added>;
 export type OnComponentRemoved<C> = BaseEvent<C, ComponentEventType.Removed>;
 
 /**
- * Event that that occurs every time the component of an existing entity is updated via
- * the `update()` method of the component storage. This event does *not* occur if the
- * component instance is manipulated directly. This means that if you want to listen for
- * a specific change on a component, you have to update it via the storage directly.
- */
-export type OnComponentUpdated<C> = BaseEvent<C, ComponentEventType.Updated>;
-
-/**
  * @see OnComponentAdded
  * @see OnComponentRemoved
  * @see OnComponentUpdated
  */
-export type ComponentEvent<C> =
-  OnComponentAdded<C> |
-  OnComponentRemoved<C> |
-  OnComponentUpdated<C>;
+export type ComponentEvent<C> = OnComponentAdded<C> | OnComponentRemoved<C>;
 

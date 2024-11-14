@@ -86,23 +86,6 @@ export class MapStorage<T = unknown> implements Storage<T> {
   }
 
   /** @inheritDoc */
-  public update(entity: Entity, data: Partial<T>): this {
-    const component = this.componentLookup.get(entity);
-
-    if (component) {
-      Object.assign(component, data);
-
-      this.events.push({
-        component,
-        entity,
-        type: ComponentEventType.Updated
-      });
-    }
-
-    return this;
-  }
-
-  /** @inheritDoc */
   public has(entity: Entity): boolean {
     return this.componentLookup.has(entity);
   }
