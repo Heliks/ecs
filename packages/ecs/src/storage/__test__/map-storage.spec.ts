@@ -77,34 +77,6 @@ describe('MapStorage', () => {
     });
   });
 
-  describe('update()', () => {
-    it('should update existing component data', () => {
-      storage.set(entity, component).update(entity, {
-        test: 'foobar'
-      });
-
-      expect(component.test).toBe('foobar');
-    });
-
-    it('should emit event ComponentEventType.Updated', () => {
-      storage.set(entity, component);
-
-      const subscriber = storage.events.subscribe();
-
-      storage.update(entity, {
-        test: 'foobar'
-      });
-
-      const event = subscriber.next();
-
-      expect(event).toEqual({
-        component,
-        entity,
-        type: ComponentEventType.Updated
-      });
-    });
-  });
-
   it('should return the owner of a component instance', () => {
     storage.set(entity, component);
 

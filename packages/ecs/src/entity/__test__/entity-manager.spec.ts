@@ -23,7 +23,6 @@ describe('EntityManager', () => {
     });
   });
 
-
   it('should return existing entities at the given position', () => {
     const a = em.create();
     const b = em.create();
