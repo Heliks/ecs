@@ -74,6 +74,14 @@ export class TypeStore {
   }
 
   /**
+   * Creates an instance of the typed object matching `id`. Throws an error if that ID
+   * doesn't belong to any known type.
+   */
+  public create<T = any>(id: TypeId): T {
+    return new (this.type(id))();
+  }
+
+  /**
    * Drops the entire type store.
    */
   public clear(): this {
