@@ -1,22 +1,20 @@
 import { EntitySerializer } from '../entity-serializer';
 import { TypeSerializer } from '../type-serializer';
-import { EntityBuilder, Preset, Presets, World } from '@heliks/ecs';
-import { clearTypeIds, UUID } from '../type-registry';
+import { EntityBuilder, World } from '@heliks/ecs';
+import { TypeStore } from '../type-store';
 
 
 describe('EntitySerializer', () => {
   let serializer: EntitySerializer;
+  let store: TypeStore;
   let world: World;
 
   beforeEach(() => {
     serializer = new EntitySerializer(new TypeSerializer());
     world = new World();
+    store = serializer.types.store;
   });
-
-  afterEach(() => {
-    clearTypeIds();
-  });
-
+  
   describe('when creating the entity builder', () => {
     it('should return an entity builder', () => {
       const builder = serializer.create(world, {});
@@ -45,15 +43,16 @@ describe('EntitySerializer', () => {
 
   describe('when serializing entity components', () => {
     it('should serialize components', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         public foo = true;
       }
 
-      @UUID('0000-0000-0000-0002')
       class Bar {
         public bar = true;
       }
+
+      store.set(Foo, 'foo');
+      store.set(Bar, 'bar');
 
       const entity = world
         .create()
@@ -70,13 +69,13 @@ describe('EntitySerializer', () => {
 
       expect(data).toEqual([
         {
-          $id: '0000-0000-0000-0001',
+          $id: 'foo',
           $data: {
             foo: true
           }
         },
         {
-          $id: '0000-0000-0000-0002',
+          $id: 'bar',
           $data: {
             bar: true
           }
@@ -84,16 +83,17 @@ describe('EntitySerializer', () => {
       ]);
     });
 
-    it('should skipt components not included in the component list', () => {
-      @UUID('0000-0000-0000-0001')
+    it('should only serialize components included in the given component list', () => {
       class Foo {
         public foo = true;
       }
 
-      @UUID('0000-0000-0000-0002')
       class Bar {
         public bar = true;
       }
+
+      store.set(Foo, 'foo');
+      store.set(Bar, 'bar');
 
       const entity = world
         .create()
@@ -109,7 +109,7 @@ describe('EntitySerializer', () => {
 
       expect(data).toEqual([
         {
-          $id: '0000-0000-0000-0002',
+          $id: 'bar',
           $data: {
             bar: true
           }
@@ -118,15 +118,16 @@ describe('EntitySerializer', () => {
     });
 
     it('should skip components without type IDs', () => {
-      // This component has no type ID and should therefore not be serialized.
+      // This component will receive no type ID and should therefore not be serialized.
       class Foo {
         public foo = true;
       }
 
-      @UUID('0000-0000-0000-0002')
       class Bar {
         public bar = true;
       }
+
+      store.set(Bar, 'bar');
 
       const entity = world
         .create()
@@ -143,7 +144,7 @@ describe('EntitySerializer', () => {
 
       expect(data).toEqual([
         {
-          $id: '0000-0000-0000-0002',
+          $id: 'bar',
           $data: {
             bar: true
           }
@@ -154,17 +155,18 @@ describe('EntitySerializer', () => {
 
   describe('when deserializing entity data', () => {
     it('should deserialize components', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         public test = false;
       }
+
+      store.set(Foo, 'foo');
 
       world.register(Foo);
 
       const entity = serializer.deserialize(world, {
         components: [
           {
-            $id: '0000-0000-0000-0001',
+            $id: 'foo',
             $data: {
               test: true
             }

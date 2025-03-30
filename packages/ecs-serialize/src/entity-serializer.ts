@@ -2,13 +2,12 @@ import { ComponentList, ComponentType, Entity, EntityBuilder, World } from '@hel
 import { SerializationQuery } from './serialization-query';
 import { TypeSerializer } from './type-serializer';
 import { EntityData, EntitySerializer as Base, TypeData } from './types';
-import { hasTypeId } from './type-registry';
 
 
 /**
  * Provides functionality for entity (de-)serialization.
  *
- * Given an {@link Entity}, all components of that entity with a {@link UUID type ID},
+ * Given an {@link Entity}, all components of that entity with a {@link ID type ID},
  * will be serialized using the {@link TypeSerializer}.
  */
 export class EntitySerializer implements Base {
@@ -32,7 +31,7 @@ export class EntitySerializer implements Base {
     const store = world.storage(component);
 
     // Only serialize components that have a type ID.
-    if (store.has(entity) && hasTypeId(store.type)) {
+    if (store.has(entity) && this.types.store.exists(store.type)) {
       return this.types.serialize(world, store.get(entity) as object);
     }
   }

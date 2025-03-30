@@ -1,4 +1,4 @@
-import { Type } from './type-registry';
+import { Type } from './type-id';
 
 
 /** @internal */

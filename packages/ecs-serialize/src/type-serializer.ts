@@ -1,7 +1,8 @@
 import { isIgnored } from './ignore';
 import { Deserialize, InstanceData, Serialize, TypeData } from './types';
 import { World } from '@heliks/ecs';
-import { getTypeFromId, getTypeId, hasTypeId } from './type-registry';
+import { Type } from './type-id';
+import { TypeStore } from './type-store';
 
 
 /** @internal */
@@ -30,10 +31,10 @@ function isTypeData<T>(target: unknown): target is TypeData<T> {
  * ### Preparing a class for serialization
  *
  * Class types require a type ID before they can be serialized. This is done by using
- * the {@link UUID} decorator. Each type requires its own unique ID.
+ * the {@link TypeId} decorator. Each type requires its own unique ID.
  *
  * ```ts
- *  @UUID('0000-0000-0000-0000')
+ *  @ID('0000-0000-0000-0000')
  *  class Foo {}
  * ```
  *
@@ -41,10 +42,10 @@ function isTypeData<T>(target: unknown): target is TypeData<T> {
  * nested types as well.
  *
  * ```ts
- *  @UUID('0000-0000-0000-0000')
+ *  @ID('0000-0000-0000-0000')
  *  class Foo {}
  *
- *  @UUID('0000-0000-0000-0001')
+ *  @ID('0000-0000-0000-0001')
  *  class Bar {
  *    foo = new Foo();
  *  }
@@ -58,7 +59,7 @@ function isTypeData<T>(target: unknown): target is TypeData<T> {
  * You can ignore certain properties using the {@link Ignore} decorator.
  *
  * ```ts
- *  @UUID('0000-0000-0000-0000')
+ *  @ID('0000-0000-0000-0000')
  *  class CustomType {
  *
  *    foo = true;
@@ -71,6 +72,8 @@ function isTypeData<T>(target: unknown): target is TypeData<T> {
  * ```
  */
 export class TypeSerializer {
+
+  constructor(public readonly store = new TypeStore()) {}
 
   /** @internal */
   private serializeObjectData<T extends object>(world: World, instance: T): InstanceData<T> {
@@ -101,11 +104,12 @@ export class TypeSerializer {
   /** @internal */
   private serializeObject<T extends object>(world: World, instance: T): InstanceData<T> | TypeData<T> {
     const data = this.serializeObjectData(world, instance);
+    const type = instance.constructor as Type;
 
     // Check if we have a type ID.
-    if (hasTypeId(instance.constructor)) {
+    if (this.store.exists(type)) {
       return {
-        $id: getTypeId(instance.constructor),
+        $id: this.store.id(type),
         $data: data
       };
     }
@@ -153,7 +157,7 @@ export class TypeSerializer {
    * instance type does not have a type id.
    */
   public serialize<T extends object>(world: World, instance: T): TypeData<T> {
-    if (! hasTypeId(instance.constructor)) {
+    if (! this.store.exists(instance.constructor as Type)) {
       throw new Error('Instance type has no type ID.');
     }
 
@@ -167,7 +171,7 @@ export class TypeSerializer {
    * it will be deserialized using that custom implementation.
    */
   public deserialize<T extends object>(world: World, data: TypeData<T>): T {
-    const type = getTypeFromId(data.$id);
+    const type = this.store.type(data.$id);
 
     // eslint-disable-next-line new-cap
     const instance = new type();
