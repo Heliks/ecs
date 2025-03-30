@@ -10,7 +10,7 @@ describe('EntitySerializer', () => {
   let world: World;
 
   beforeEach(() => {
-    serializer = new EntitySerializer(new TypeSerializer());
+    serializer = new EntitySerializer(new TypeSerializer(new TypeStore()));
     world = new World();
     store = serializer.types.store;
   });

@@ -73,7 +73,7 @@ function isTypeData<T>(target: unknown): target is TypeData<T> {
  */
 export class TypeSerializer {
 
-  constructor(public readonly store = new TypeStore()) {}
+  constructor(public readonly store: TypeStore) {}
 
   /** @internal */
   private serializeObjectData<T extends object>(world: World, instance: T): InstanceData<T> {
@@ -158,7 +158,7 @@ export class TypeSerializer {
    */
   public serialize<T extends object>(world: World, instance: T): TypeData<T> {
     if (! this.store.exists(instance.constructor as Type)) {
-      throw new Error('Instance type has no type ID.');
+      throw new Error(`Object ${instance.constructor.name} must be added to the type store.`);
     }
 
     // Safety: This will always contain type-data as the initial type that is being

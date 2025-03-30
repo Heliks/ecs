@@ -1,5 +1,6 @@
 import { Ignore } from '../ignore';
 import { TypeSerializer } from '../type-serializer';
+import { TypeStore } from '../type-store';
 import { Deserialize, Serialize } from '../types';
 import { World } from '@heliks/ecs';
 
@@ -10,7 +11,7 @@ describe('TypeSerializer', () => {
 
   beforeEach(() => {
     world = new World();
-    serializer = new TypeSerializer();
+    serializer = new TypeSerializer(new TypeStore());
   });
 
   describe('when serializing', () => {

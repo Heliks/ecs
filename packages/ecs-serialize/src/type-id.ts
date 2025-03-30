@@ -33,7 +33,7 @@ export function getTypeId(type: Ctor): TypeId {
  * will break backwards compatibility with previously serialized data.
  *
  * ```ts
- *  @ID('foo')
+ *  @TypeId('foo')
  *  class MyType {}
  * ```
  *
