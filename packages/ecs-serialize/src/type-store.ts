@@ -63,6 +63,7 @@ export class TypeStore {
    * Returns the {@link Type} that is registered under the given type `id. Throws an
    * error if that ID doesn't belong to any known type.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public type<T = any>(id: TypeId): Type<T> {
     const type = this.reverse.get(id);
 
@@ -77,6 +78,7 @@ export class TypeStore {
    * Creates an instance of the typed object matching `id`. Throws an error if that ID
    * doesn't belong to any known type.
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   public create<T = any>(id: TypeId): T {
     return new (this.type(id))();
   }

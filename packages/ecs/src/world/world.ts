@@ -5,6 +5,7 @@ import { EntityBuilder } from './entity-builder';
 import { World as Base } from './types';
 import { QueryBuilder, QueryManager } from '../query';
 import { Presets } from './preset';
+import { ComponentList } from './component-list';
 
 
 /** @inheritDoc*/
@@ -136,6 +137,21 @@ export class World implements Base {
     return new Set([
       ...this.storages.keys()
     ]);
+  }
+
+  /** Returns a {@link ComponentList} that contains all components of an entity. */
+  public list(entity: Entity): ComponentList {
+    const list = new ComponentList();
+
+    for (const type of this.storages.keys()) {
+      const store = this.storage(type);
+
+      if (store.has(entity)) {
+        list.add(store.get(entity) as object);
+      }
+    }
+
+    return list;
   }
 
 }
