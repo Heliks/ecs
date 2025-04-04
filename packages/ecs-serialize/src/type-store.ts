@@ -1,9 +1,7 @@
 import { getTypeId, Type, TypeId } from './type-id';
 
-/**
- * This database holds all known types that the {@link TypeSerializer} is able
- * to (de-)serialize.
- */
+
+/** Database that contains all known serializable types. */
 export class TypeStore {
 
   /** @internal */
