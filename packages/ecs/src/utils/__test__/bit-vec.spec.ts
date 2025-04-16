@@ -1,4 +1,4 @@
-import { BitVec } from '../bit-vec';
+import { BitVec, getBit } from '../bit-vec';
 
 describe('BitSet', () => {
   let fixture: BitVec;
@@ -101,5 +101,20 @@ describe('BitSet', () => {
     const contains = vec1.equals(vec2);
 
     expect(contains).toBe(data.expected);
+  });
+
+  describe('getBit()', () => {
+    it.each([
+      [0, 1],
+      [1, 2],
+      [2, 4],
+      [30, 1073741824],
+      [31, 1],
+      [32, 2],
+      [33, 4],
+      [34, 8],
+    ])('should convert bit index %s into bit %s', (index, bit) => {
+      expect(getBit(index)).toBe(bit);
+    });
   });
 });
