@@ -59,7 +59,9 @@ export class EntitySerializer implements Base {
     const components = [];
 
     for (const component of list.all()) {
-      components.push(this.types.serialize(world, component));
+      if (this.types.serializeable(component)) {
+        components.push(this.types.serialize(world, component));
+      }
     }
 
     return {

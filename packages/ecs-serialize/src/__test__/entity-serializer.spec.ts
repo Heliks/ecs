@@ -1,6 +1,6 @@
 import { EntitySerializer } from '../entity-serializer';
 import { TypeSerializer } from '../type-serializer';
-import { EntityBuilder, World } from '@heliks/ecs';
+import { ComponentList, EntityBuilder, World } from '@heliks/ecs';
 import { TypeStore } from '../type-store';
 
 
@@ -14,7 +14,7 @@ describe('EntitySerializer', () => {
     world = new World();
     store = serializer.types.store;
   });
-  
+
   describe('when creating the entity builder', () => {
     it('should return an entity builder', () => {
       const builder = serializer.create(world, {});
@@ -177,6 +177,31 @@ describe('EntitySerializer', () => {
       const component = world.storage(Foo).get(entity);
 
       expect(component.test).toBeTruthy();
+    });
+  });
+
+  describe('list()', () => {
+    it('should skip components that can not be serialized', () => {
+      class Foo {}
+      class Bar {}
+
+      store.set(Bar, 'bar');
+
+      const list = new ComponentList();
+
+      list.add(new Foo());
+      list.add(new Bar());
+
+      const data = serializer.list(world, list);
+
+      expect(data).toMatchObject({
+        components: [
+          {
+            $id: 'bar',
+            $data: {}
+          }
+        ]
+      });
     });
   });
 });

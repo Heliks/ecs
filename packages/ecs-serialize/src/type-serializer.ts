@@ -75,6 +75,11 @@ export class TypeSerializer {
 
   constructor(public readonly store: TypeStore) {}
 
+  /** Returns `true` if `type` can be serialized. */
+  public serializeable(instance: object): boolean {
+    return this.store.exists(instance.constructor as Type);
+  }
+
   /** @internal */
   private serializeObjectData<T extends object>(world: World, instance: T): InstanceData<T> {
     // Can object serialize itself?
@@ -157,7 +162,7 @@ export class TypeSerializer {
    * instance type does not have a type id.
    */
   public serialize<T extends object>(world: World, instance: T): TypeData<T> {
-    if (! this.store.exists(instance.constructor as Type)) {
+    if (! this.serializeable(instance)) {
       throw new Error(`Object ${instance.constructor.name} must be added to the type store.`);
     }
 
