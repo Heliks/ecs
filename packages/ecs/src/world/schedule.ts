@@ -11,12 +11,8 @@ export type ScheduleId = string | number | symbol;
  */
 export class Schedule {
 
-  /**
-   * Contains all scheduled {@link System systems}.
-   *
-   * @internal
-   */
-  private readonly systems: System[] = [];
+  /** Contains all scheduled {@link System systems}. */
+  public readonly systems: System[] = [];
 
   /**
    * @param id Unique identifier for this schedule.

@@ -9,7 +9,7 @@ import { COMPONENT_TYPE_LIMIT } from './component';
  *
  * This means that if a component ID is removed from the composition, it effectively
  * removes ownership of that component type, even if an instance of that type is still
- * stored somewhere else.
+ * stored somewhere.
  */
 export class Composition extends BitVec {
 

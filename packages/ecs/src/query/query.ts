@@ -5,35 +5,26 @@ import { QueryEvent } from './query-event';
 
 
 /**
- * A query that matches entities based on their component identities.
+ * A query that matches entities based on their {@link Composition}.
  *
- * Queries are re-usable, which means that their result only stays valid for a single
- * frame. The result is empty until they are synchronized with changed entities.
+ * The entity {@link World} will re-use existing queries and synchronize them once
+ * per update automatically. Consequently, stored queries can change their result.
  */
 export class Query {
 
-  /**
-   * Contains all entities that were matched by this query. This is essentially the query
-   * result. Saving a reference to this array will not preserve its current state because
-   * queries will update their result once per frame.
-   */
+  /** Contains all matched entities. Will be updated once per world update. */
   public readonly entities: Entity[] = [];
 
-  /**
-   * Emits events based on changes to the query result.
-   *
-   * @see EntityGroupEventData
-   */
+  /** Queue that contains events for query changes. */
   public readonly events = new EventQueue<QueryEvent>();
 
-  /**
-   * Total amount of entities that match this query.
-   *
-   * @see entities
-   */
+  /** Total number of entities that are matched by this query. */
   public get size(): number {
     return this.entities.length;
   }
+
+  /** Sparse array that maps entities to the index where they're in this query. */
+  private readonly indices: (number | undefined)[] = [];
 
   /**
    * @param filter Filter used to determine group eligibility.
@@ -47,7 +38,11 @@ export class Query {
 
   /** Add an entity to the group. */
   public add(entity: Entity): this {
+    const index = this.entities.length;
+
     this.entities.push(entity);
+    this.indices[ entity ] = index;
+
     this.events.push(QueryEvent.added(entity));
 
     return this;
@@ -55,13 +50,25 @@ export class Query {
 
   /** Returns true if the entity is contained in this group. */
   public has(entity: Entity): boolean {
-    return this.index(entity) > -1;
+    return this.indices[entity] !== undefined;
   }
 
   /** Removes an entity. */
   public remove(entity: Entity): this {
-    if (this.has(entity)) {
-      this.entities.splice(this.index(entity), 1);
+    const index = this.indices[ entity ];
+
+    if (index !== undefined) {
+      const last = this.entities[ this.entities.length - 1 ];
+
+      // Swap remove here so we can use pop() = O(1) over splice() = O(n)
+      if (index !== last) {
+        this.entities[index] = last;
+        this.indices[last] = index;
+      }
+
+      this.entities.pop();
+      this.indices[entity] = undefined;
+
       this.events.push(QueryEvent.removed(entity))
     }
 
@@ -71,26 +78,16 @@ export class Query {
   /** Drops all entities from this group. */
   public drop(): this {
     for (const entity of this.entities) {
-      this.remove(entity);
+      this.events.push(QueryEvent.removed(entity));
     }
 
     this.entities.length = 0;
+    this.indices.length = 0;
 
     return this;
   }
 
-  /**
-   * Returns the index of an entity. If the entity is not part of this
-   * group '-1' will be returned instead.
-   */
-  public index(entity: Entity): number {
-    return this.entities.indexOf(entity);
-  }
-
-  /**
-   * Synchronizes the query result based on the given `changes`. Will be called once per
-   * frame internally using the entity manager change set.
-   */
+  /** Synchronizes the query result with the given `changes`. */
   public sync(changes: Changes): void {
     for (const entity of changes.changed) {
       const composition = changes.composition(entity);

@@ -127,7 +127,9 @@ export class BitVec {
 
   /** Returns `true` if this vector has every bit set that is set in `vec`. */
   public contains(vec: BitVec): boolean {
-    for (let i = 0; i < Math.max(this.values.length, vec.values.length); i++) {
+    // Note: We assume that all bitvectors have the same length. This safes us
+    // a Math.max() function call here.
+    for (let i = 0; i < this.values.length; i++) {
       if ((this.values[i] & vec.values[i]) !== vec.values[i]) {
         return false;
       }
