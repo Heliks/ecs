@@ -1,14 +1,32 @@
-const BITS_PER_NUMBER = 32;
-
+/**
+ * Amount of bits used per number. Each number type in JS has a maximum of 32 available
+ * bits. The last bit is reserved because its equivalent to all bits being set.
+ */
+const BITS_PER_NUMBER = 31;
 
 /** @internal */
 function getVec(index: number): number {
   return Math.floor(index / BITS_PER_NUMBER);
 }
 
-/** @internal */
-function getBit(index: number): number {
-  return (1 << (index % BITS_PER_NUMBER));
+/**
+ * Converts a bit index into an appropriate bit.
+ *
+ * For example:
+ *
+ * - Index 0 -> Bit 1
+ * - Index 1 -> Bit 2
+ * - Index 2 -> Bit 4
+ * - Index 3 -> Bit 8
+ *
+ * After each 31st index, the bit value wraps. Each 32nd bit is reserved. For example:
+ *
+ * - Index 30 -> Bit 1073741824
+ * - Index 31 -> Bit 1
+ * - Index 32 -> Bit 2
+ */
+export function getBit(index: number): number {
+  return 1 << (index % BITS_PER_NUMBER);
 }
 
 /**
@@ -109,7 +127,9 @@ export class BitVec {
 
   /** Returns `true` if this vector has every bit set that is set in `vec`. */
   public contains(vec: BitVec): boolean {
-    for (let i = 0; i < Math.max(this.values.length, vec.values.length); i++) {
+    // Note: We assume that all bitvectors have the same length. This safes us
+    // a Math.max() function call here.
+    for (let i = 0; i < this.values.length; i++) {
       if ((this.values[i] & vec.values[i]) !== vec.values[i]) {
         return false;
       }

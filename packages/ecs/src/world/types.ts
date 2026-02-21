@@ -2,17 +2,20 @@ import { ComponentType, Entity } from '../entity';
 import { Storage } from '../storage';
 
 /**
- * Container for ECS related data and systems. Provides functionality to insert,
- * update or destroy {@link Entity entities} that exist within this world.
+ * The world where all entities exist.
+ *
+ * Provides functionality to insert, update or destroy {@link Entity entities}.
  */
 export interface World {
 
-  /** Returns `true` if an `entity` is not destroyed. */
+  /** Returns `true` if an {@link Entity} is alive and hasn't been destroyed. */
   alive(entity: Entity): boolean;
 
+  /** Registers a component `type`. */
+  register<T>(type: ComponentType<T>): Storage<T>;
+
   /**
-   * Inserts an {@link Entity entity} with a set of `components` into the world and
-   * returns it.
+   * Inserts an {@link Entity} with a set of `components` into the world.
    *
    * ```ts
    *  class Foo {}
@@ -25,19 +28,16 @@ export interface World {
   insert(...components: object[]): Entity;
 
   /**
-   * Destroys an {@link Entity entity}.
+   * Destroys an {@link Entity}.
    *
-   * Components that are owned by that entity will be lazily removed during the
-   * worlds next {@link update} tick.
+   * Components owned by that entity will be detached and removed from storages
+   * during the next world update.
    */
   destroy(entity: Entity): this;
 
-  /** Registers a component `type`. */
-  register<T>(type: ComponentType<T>): Storage<T>;
-
   /**
-   * Returns the component {@link Storage storage} for a component `type`. The type
-   * will be {@link register registered} in the process if it isn't already.
+   * Returns the {@link Storage} for a component `type`. If the type was previously
+   * unknown it will be registered automatically.
    *
    * ```ts
    *  class Foo {}

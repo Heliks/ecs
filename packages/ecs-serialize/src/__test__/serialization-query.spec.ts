@@ -2,13 +2,14 @@ import { EntitySerializer } from '../entity-serializer';
 import { World } from '@heliks/ecs';
 import { TypeSerializer } from '../type-serializer';
 import { SerializationQuery } from '../serialization-query';
+import { TypeStore } from '../type-store';
 
 describe('SerializationQuery', () => {
   let serializer: EntitySerializer;
   let world: World;
 
   beforeEach(() => {
-    serializer = new EntitySerializer(new TypeSerializer());
+    serializer = new EntitySerializer(new TypeSerializer(new TypeStore()));
     world = new World();
   });
 

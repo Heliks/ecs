@@ -21,8 +21,7 @@ describe('ComponentList', () => {
     const bar = new Bar();
 
     const entity = world.insert(foo, bar);
-
-    const list = ComponentList.from(world, entity);
+    const list = world.list(entity);
 
     expect(list.size()).toBe(2);
 

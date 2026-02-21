@@ -1,5 +1,5 @@
 import { ComponentList, ComponentType, Entity, PresetId, World } from '@heliks/ecs';
-import { UUID } from './type-registry';
+import { TypeId } from './type-id';
 
 
 /**
@@ -17,8 +17,8 @@ export type InstanceData<T> = {
 
 /** Data structure for a serialized class type. */
 export interface TypeData<T = unknown> {
-  /** Id of the class type that was serialized. */
-  $id: UUID;
+  /** ID of the class type that was serialized. */
+  $id: TypeId;
   /** Contains the actual serialized data of the type instance. */
   $data: InstanceData<T>;
 }
@@ -77,7 +77,7 @@ export interface EntitySerializer<W extends World = World> {
   /**
    * Serializes an `entity`.
    *
-   * The serializer will serialize all components with a {@link UUID type id} that are
+   * The serializer will serialize all components with a {@link ID type id} that are
    * attached to the entity. If a list of `components` is provided, only the component
    * types in that list will be serialized.
    *

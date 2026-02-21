@@ -1,8 +1,8 @@
 import { Ignore } from '../ignore';
 import { TypeSerializer } from '../type-serializer';
+import { TypeStore } from '../type-store';
 import { Deserialize, Serialize } from '../types';
 import { World } from '@heliks/ecs';
-import { clearTypeIds, UUID } from '../type-registry';
 
 
 describe('TypeSerializer', () => {
@@ -11,11 +11,7 @@ describe('TypeSerializer', () => {
 
   beforeEach(() => {
     world = new World();
-    serializer = new TypeSerializer();
-  });
-
-  afterEach(() => {
-    clearTypeIds();
+    serializer = new TypeSerializer(new TypeStore());
   });
 
   describe('when serializing', () => {
@@ -25,15 +21,16 @@ describe('TypeSerializer', () => {
       true,
       false
     ])('should serialize primitive "%s"', value => {
-      @UUID('0000-0000-0000-1000')
       class Foo {
         prop = value;
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const data = serializer.serialize(world, new Foo());
 
       expect(data).toMatchObject({
-        $id: '0000-0000-0000-1000',
+        $id: 'foo',
         $data: {
           prop: value
         }
@@ -41,31 +38,33 @@ describe('TypeSerializer', () => {
     });
 
     it('should ignore functions', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         public foo() {}
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const data = serializer.serialize(world, new Foo());
 
       expect(data).toMatchObject({
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: {}
       });
     });
 
     it('should ignore undefined properties', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         public p1 = undefined;
         public p2 = null;
         public p3 = true;
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const data = serializer.serialize(world, new Foo());
 
       expect(data).toMatchObject({
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: {
           p3: true
         }
@@ -73,16 +72,17 @@ describe('TypeSerializer', () => {
     });
 
     it('should ignore symbol properties', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         public p1 = Symbol();
         public p2 = true;
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const data = serializer.serialize(world, new Foo());
 
       expect(data).toMatchObject({
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: {
           p2: true
         }
@@ -90,7 +90,6 @@ describe('TypeSerializer', () => {
     });
 
     it('should ignore a specific property', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         @Ignore()
         foo = 1;
@@ -99,13 +98,14 @@ describe('TypeSerializer', () => {
         bar = 2;
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const data = serializer.serialize(world, new Foo());
 
       expect(data.$data.foo).toBeUndefined();
     });
 
     it('should serialize object properties', () => {
-      @UUID('0000-0000-0000-1000')
       class Foo {
 
         public test = {
@@ -115,10 +115,12 @@ describe('TypeSerializer', () => {
 
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const data = serializer.serialize(world, new Foo());
 
       expect(data).toMatchObject({
-        $id: '0000-0000-0000-1000',
+        $id: 'foo',
         $data: {
           test: {
             x: 1,
@@ -129,12 +131,10 @@ describe('TypeSerializer', () => {
     });
 
     it('should serialize class instance properties with type IDs as type data', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         constructor(public expected: number) {}
       }
 
-      @UUID('0000-0000-0000-0002')
       class Bar {
         // Test serialization on instance level.
         public foo = new Foo(1);
@@ -148,27 +148,30 @@ describe('TypeSerializer', () => {
         }
       }
 
+      serializer.store.set(Foo, 'foo');
+      serializer.store.set(Bar, 'bar');
+
       const data = serializer.serialize(world, new Bar());
 
       expect(data).toMatchObject({
-        $id: '0000-0000-0000-0002',
+        $id: 'bar',
         $data: {
           foo: {
-            $id: '0000-0000-0000-0001',
+            $id: 'foo',
             $data: {
               expected: 1
             }
           },
           deep: {
             foo: {
-              $id: '0000-0000-0000-0001',
+              $id: 'foo',
               $data: {
                 expected: 2
               }
             },
             deeper: {
               foo: {
-                $id: '0000-0000-0000-0001',
+                $id: 'foo',
                 $data: {
                   expected: 3
                 }
@@ -180,15 +183,16 @@ describe('TypeSerializer', () => {
     });
 
     it('should serialize array properties', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         test = [1, 'foo', { test: 10 }];
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const data = serializer.serialize(world, new Foo());
 
       expect(data).toMatchObject({
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: {
           test: [1, 'foo', { test: 10 }]
         }
@@ -196,7 +200,6 @@ describe('TypeSerializer', () => {
     });
 
     it('should use custom serialization implementation of type', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo implements Serialize<boolean> {
 
         /** @inheritDoc */
@@ -206,10 +209,12 @@ describe('TypeSerializer', () => {
 
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const result = serializer.serialize(world, new Foo());
 
       expect(result).toMatchObject({
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: true
       });
     });
@@ -217,11 +222,12 @@ describe('TypeSerializer', () => {
 
   describe('when deserializing', () => {
     it('should re-create correct class type', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {}
 
+      serializer.store.set(Foo, 'foo');
+
       const component = serializer.deserialize(world, {
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: {}
       });
 
@@ -229,13 +235,14 @@ describe('TypeSerializer', () => {
     });
 
     it('should assign deserialized data', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         public foo = false;
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const component = serializer.deserialize<Foo>(world, {
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: {
           foo: true
         }
@@ -245,21 +252,22 @@ describe('TypeSerializer', () => {
     });
 
     it('should deserialize type data properties', () => {
-      @UUID('0000-0000-0000-0001')
       class Foo {
         test!: boolean;
       }
 
-      @UUID('0000-0000-0000-0002')
       class Bar {
         foo!: Foo
       }
 
+      serializer.store.set(Foo, 'foo');
+      serializer.store.set(Bar, 'bar');
+
       const component = serializer.deserialize<Bar>(world, {
-        $id: '0000-0000-0000-0002',
+        $id: 'bar',
         $data: {
           foo: {
-            $id: '0000-0000-0000-0001',
+            $id: 'foo',
             $data: {
               test: true
             }
@@ -271,15 +279,16 @@ describe('TypeSerializer', () => {
     });
 
     it('should deserialize type data inside of arrays', () => {
-      @UUID('foo')
       class Foo {
         public items: Bar[] = [];
       }
 
-      @UUID('bar')
       class Bar {
         public text = '';
       }
+
+      serializer.store.set(Foo, 'foo');
+      serializer.store.set(Bar, 'bar');
 
       const instance = serializer.deserialize<Foo>(world, {
         $id: 'foo',
@@ -302,9 +311,6 @@ describe('TypeSerializer', () => {
     });
 
     it('should use custom deserialization implementation of type', () => {
-      const deserialize = jest.fn();
-
-      @UUID('0000-0000-0000-0001')
       class Foo implements Deserialize<boolean> {
 
         // This flag ensures the serializer is not accidentally deserializing properties
@@ -321,8 +327,10 @@ describe('TypeSerializer', () => {
 
       }
 
+      serializer.store.set(Foo, 'foo');
+
       const result = serializer.deserialize<Foo>(world, {
-        $id: '0000-0000-0000-0001',
+        $id: 'foo',
         $data: {
           skipped: false
         }

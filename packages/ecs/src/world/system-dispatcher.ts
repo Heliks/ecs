@@ -57,6 +57,11 @@ export class SystemDispatcher {
     return schedule;
   }
 
+  /** Returns all registered schedules. */
+  public all(): readonly Schedule[] {
+    return this.schedules;
+  }
+
   /** Returns the {@link Schedule} matching the given {@link ScheduleId}, if any.*/
   public get(id: ScheduleId): Schedule | undefined {
     return this.schedules[ this.getIndex(id) ];
