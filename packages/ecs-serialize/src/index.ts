@@ -2,6 +2,7 @@ import 'reflect-metadata';
 
 export * from './entity-serializer';
 export * from './ignore';
+export * from './opaque';
 export * from './serialization-query';
 export * from './type-id';
 export * from './type-serializer';

@@ -2,6 +2,7 @@ import { EntitySerializer } from '../entity-serializer';
 import { TypeSerializer } from '../type-serializer';
 import { ComponentList, EntityBuilder, World } from '@heliks/ecs';
 import { TypeStore } from '../type-store';
+import { Opaque } from '../opaque';
 
 
 describe('EntitySerializer', () => {
@@ -153,16 +154,16 @@ describe('EntitySerializer', () => {
     });
   });
 
-  describe('when deserializing entity data', () => {
-    it('should deserialize components', () => {
-      class Foo {
-        public test = false;
-      }
+  describe('deserialize()', () => {
+    class Foo {
+      constructor(public readonly test: boolean) {}
+    }
 
+    beforeEach(() => {
       store.set(Foo, 'foo');
+    });
 
-      world.register(Foo);
-
+    it('should deserialize components', () => {
       const entity = serializer.deserialize(world, {
         components: [
           {
@@ -177,6 +178,126 @@ describe('EntitySerializer', () => {
       const component = world.storage(Foo).get(entity);
 
       expect(component.test).toBeTruthy();
+    });
+
+    it('should attach opaque data for unknown component types', () => {
+      const entity = serializer.deserialize(world, {
+        components: [
+          {
+            $id: 'foo',
+            $data: {
+              key: false
+            }
+          },
+          {
+            $id: 'unknown',
+            $data: {
+              key: 'value'
+            }
+          }
+        ]
+      });
+
+      const opaque = world.storage(Opaque).get(entity);
+
+      expect(opaque.data).toMatchObject([
+        {
+          $id: 'unknown',
+          $data: {
+            key: 'value'
+          }
+        }
+      ]);
+    });
+  });
+
+  describe('serialize()', () => {
+    class Foo {
+      constructor(public readonly value: number) {}
+    }
+
+    class Bar {
+      constructor(public readonly active: boolean) {}
+    }
+
+    beforeEach(() => {
+      store.set(Foo, 'foo');
+      store.set(Bar, 'bar');
+    });
+
+    it('should serialize an entity with no components', () => {
+      const entity = world.create().build();
+      const data = serializer.serialize(world, entity);
+
+      expect(data).toMatchObject({
+        components: []
+      });
+    });
+
+    it('should serialize an entity with components', () => {
+      const entity = world.insert(
+        new Foo(1000),
+        new Bar(true)
+      );
+
+      const data = serializer.serialize(world, entity);
+
+      expect(data).toMatchObject({
+        components: [
+          {
+            $id: 'foo',
+            $data: {
+              value: 1000
+            }
+          },
+          {
+            $id: 'bar',
+            $data: {
+              active: true
+            }
+          }
+        ]
+      });
+    });
+
+    it('should serialize opaque data', () => {
+      const entity = world.insert(
+        new Foo(9999),
+        new Bar(true),
+        new Opaque([
+          {
+            $id: 'opaque',
+            $data: {
+              key: 'value'
+            }
+          }
+        ])
+      );
+
+      const data = serializer.serialize(world, entity);
+
+      expect(data).toMatchObject({
+        components: [
+          {
+            $id: 'foo',
+            $data: {
+              value: 9999
+            }
+          },
+          {
+            $id: 'bar',
+            $data: {
+              active: true
+            }
+          },
+          {
+            $id: 'opaque',
+            $data: {
+              key: 'value'
+            }
+          }
+        ]
+      });
     });
   });
 

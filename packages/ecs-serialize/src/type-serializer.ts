@@ -23,7 +23,7 @@ function isTypeData<T>(target: unknown): target is TypeData<T> {
 /**
  * Serialization for class types.
  *
- * The serializer will serialize most class types automatically, but supports custom
+ * The serializer will serialize most class types automatically but supports custom
  * serialization logic for more complex cases. It will look for implementations of
  * {@link Serialize} for serialization, and {@link Deserialize} for deserialization
  * on the type that it is trying to serialize and will use them if they are available.
@@ -77,7 +77,7 @@ export class TypeSerializer {
 
   /** Returns `true` if `type` can be serialized. */
   public serializeable(instance: object): boolean {
-    return this.store.exists(instance.constructor as Type);
+    return this.store.has(instance.constructor as Type);
   }
 
   /** @internal */
@@ -112,7 +112,7 @@ export class TypeSerializer {
     const type = instance.constructor as Type;
 
     // Check if we have a type ID.
-    if (this.store.exists(type)) {
+    if (this.store.has(type)) {
       return {
         $id: this.store.id(type),
         $data: data

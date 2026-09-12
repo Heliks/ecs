@@ -2,15 +2,25 @@ import { ComponentList, ComponentType, Entity, EntityBuilder, World } from '@hel
 import { SerializationQuery } from './serialization-query';
 import { TypeSerializer } from './type-serializer';
 import { EntityData, EntitySerializer as Base, TypeData } from './types';
+import { Opaque } from './opaque';
 
 
 /**
  * Provides functionality for entity (de-)serialization.
  *
- * Given an {@link Entity}, all components of that entity with a {@link ID type ID},
- * will be serialized using the {@link TypeSerializer}.
+ * ### Opaque data
+ *
+ * When deserializing, {@link TypeData} with an unknown {@link TypeId} is preserved
+ * inside a {@link Opaque} component. This allows entities to be deserialized and
+ * serialized again without any data loss.
+ *
+ * When an entity containing an {@link Opaque} component is serialized, its data is
+ * unpacked and included as normal {@link TypeData}.
  */
 export class EntitySerializer implements Base {
+
+  /** @internal */
+  private readonly _opaque: TypeData[] = [];
 
   /**
    * @param types {@see TypeSerializer}
@@ -31,7 +41,7 @@ export class EntitySerializer implements Base {
     const store = world.storage(component);
 
     // Only serialize components that have a type ID.
-    if (store.has(entity) && this.types.store.exists(store.type)) {
+    if (store.has(entity) && this.types.store.has(store.type)) {
       return this.types.serialize(world, store.get(entity) as object);
     }
   }
@@ -71,27 +81,41 @@ export class EntitySerializer implements Base {
 
   /** @inheritDoc */
   public serialize(world: World, entity: Entity, components?: Set<ComponentType>): EntityData {
-    // If no whitelist is specified, use all components.
-    if (! components) {
-      components = world.components();
+    const data = this.serializeEntityComponents(world, entity, components ? components : world.components())
+    const store = world.storage(Opaque);
+
+    // Unpack opaque data, if any.
+    if (store.has(entity)) {
+      data.push(...store.get(entity).data);
     }
 
     return {
-      components: this.serializeEntityComponents(
-        world,
-        entity,
-        components ? components : world.components()
-      )
+      components: data
     };
   }
 
   /** @inheritDoc */
   public deserialize(world: World, data: EntityData): Entity {
+    this._opaque.length = 0;
+
     const builder = this.create(world, data);
 
     if (data.components) {
-      for (const typeData of data.components) {
-        builder.use(this.types.deserialize(world, typeData));
+      for (const item of data.components) {
+        if (this.types.store.hasId(item.$id)) {
+          builder.use(this.types.deserialize(world, item));
+        }
+        else {
+          this._opaque.push(item);
+        }
+      }
+
+      if (this._opaque.length > 0) {
+        builder.use(
+          new Opaque([
+            ...this._opaque
+          ])
+        );
       }
     }
 
