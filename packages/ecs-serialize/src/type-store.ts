@@ -10,11 +10,6 @@ export class TypeStore {
   /** @internal */
   private readonly reverse = new Map<TypeId, Type>();
 
-  /** Returns `true` if `type` is a known type. */
-  public exists(type: Type): boolean {
-    return this.entries.has(type);
-  }
-
   /**
    * Registers the given `type`. The {@link TypeId} for this type will be resolved
    * from the type meta-data.
@@ -41,6 +36,16 @@ export class TypeStore {
     this.reverse.set(id, type);
 
     return this;
+  }
+
+  /** Returns `true` if `type` is a known type. */
+  public has(type: Type): boolean {
+    return this.entries.has(type);
+  }
+
+  /** Returns `true` if the given type `id` exists. */
+  public hasId(id: TypeId): boolean {
+    return this.reverse.has(id);
   }
 
   /**

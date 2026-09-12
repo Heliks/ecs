@@ -60,7 +60,7 @@ export class Query {
     if (index !== undefined) {
       const last = this.entities[ this.entities.length - 1 ];
 
-      // Swap remove here so we can use pop() = O(1) over splice() = O(n)
+      // Swap remove here because pop() is O(1) and splice() is O(n)
       if (index !== last) {
         this.entities[index] = last;
         this.indices[last] = index;
